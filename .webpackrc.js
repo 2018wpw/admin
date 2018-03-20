@@ -19,6 +19,7 @@ export default {
   html: {
     template: './src/index.ejs',
   },
+  devtool: 'source-map',
   publicPath: '/',
   hash: true,
 };

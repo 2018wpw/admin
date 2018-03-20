@@ -14,7 +14,7 @@ const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
 export default class LoginPage extends Component {
   state = {
     type: 'account',
-    autoLogin: true,
+    autoLogin: false,
   }
 
   onTabChange = (type) => {
@@ -68,7 +68,7 @@ export default class LoginPage extends Component {
           </Tab>
           <div>
             <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>自动登录</Checkbox>
-            <a style={{ float: 'right' }} href="">忘记密码？</a>
+            <Link style={{ float: 'right' }} to="/user/captcha">忘记密码？</Link>
           </div>
           <Submit loading={submitting}>登录</Submit>
         </Login>
