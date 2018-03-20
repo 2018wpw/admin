@@ -91,7 +91,7 @@ export default class Captcha extends React.Component {
 	                  className={styles.getCaptcha}
 	                  onClick={this.onGetCaptcha}
 	                >
-	                  {count ? `${count} s` : '获取验证码'}
+	                  {count ? `${count} s` : '发送验证码'}
 	                </Button>
 	              </Col>
 	            </Row>
