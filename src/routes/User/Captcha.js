@@ -24,18 +24,23 @@ export default class Captcha extends React.Component {
   }
 
   onGetCaptcha = () => {
-    let count = 59;
-    this.setState({ count });
-    this.interval = setInterval(() => {
-      count -= 1;
-      this.setState({ count });
-      if (count === 0) {
-        clearInterval(this.interval);
+    this.props.form.validateFields('mobile', {force: true}, (err, values) => {
+      if (!err) {
+        let count = 59;
+        this.setState({ count });
+        this.interval = setInterval(() => {
+          count -= 1;
+          this.setState({ count });
+          if (count === 0) {
+            clearInterval(this.interval);
+          }
+        }, 1000);
       }
-    }, 1000);
+    });
   };
 
   handleSubmit = (e) => {
+    e.preventDefault();
     this.props.form.validateFields({ force: true }, (err, values) => {
       if (!err) {
         this.props.dispatch({
@@ -55,7 +60,7 @@ export default class Captcha extends React.Component {
 
     return (
     	<div className={styles.main}>
-    		<h3>密码重置</h3>
+    		<h3 className={styles.subtitle}>密码重置</h3>
     		<Form onSubmit={this.handleSubmit}>
 	          <FormItem>
 	            {getFieldDecorator('mobile', {
@@ -69,7 +74,7 @@ export default class Captcha extends React.Component {
                     message: '手机号格式错误！',
                   },
                 ],
-              })(<Input size="large" type="password" placeholder="手机号" />)}
+              })(<Input size="large" placeholder="手机号" />)}
 	          </FormItem>
 
     		  <FormItem>
