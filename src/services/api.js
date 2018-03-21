@@ -68,7 +68,14 @@ export async function fakeAccountLogin(params) {
 }
 
 export async function fakeGetCaptcha(params) {
-  return request('/api/login/account', {
+  return request('/api/login/captcha', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+export async function fakeVerifyCaptcha(params) {
+  return request('/api/login/verify', {
     method: 'POST',
     body: params,
   });

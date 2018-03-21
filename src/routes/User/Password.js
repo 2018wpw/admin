@@ -8,12 +8,12 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const InputGroup = Input.Group;
 
-@connect(({ captcha, loading }) => ({
-  captcha,
-  submitting: loading.effects['captcha/submit'],
+@connect(({ password, loading }) => ({
+  password,
+  submitting: loading.effects['password/submit'],
 }))
 @Form.create()
-export default class Captcha extends React.Component {
+export default class Password extends React.Component {
   
   state = {
   	count: 0,
@@ -35,14 +35,6 @@ export default class Captcha extends React.Component {
             clearInterval(this.interval);
           }
         }, 1000);
-      
-        //send captcha
-        this.props.dispatch({
-          type: 'captcha/getCaptcha',
-          payload: {
-            ...values,
-          },
-        });
       }
     });
   };
@@ -52,7 +44,7 @@ export default class Captcha extends React.Component {
     this.props.form.validateFields({ force: true }, (err, values) => {
       if (!err) {
         this.props.dispatch({
-          type: 'captcha/submit',
+          type: 'password/submit',
           payload: {
             ...values,
           },
@@ -75,52 +67,34 @@ export default class Captcha extends React.Component {
                 rules: [
                   {
                     required: true,
-                    message: '请输入手机号！',
-                  },
-                  {
-                    pattern: /^1\d{10}$/,
-                    message: '手机号格式错误！',
+                    message: '请输入密码！',
                   },
                 ],
-              })(<Input size="large" placeholder="手机号" />)}
+              })(<Input size="large" placeholder="新密码" />)}
 	          </FormItem>
 
-    		    <FormItem>
-	            <Row gutter={8}>
-	              <Col span={16}>
-	                {getFieldDecorator('captcha', {
-	                  rules: [
-	                    {
-	                      required: true,
-	                      message: '请输入验证码！',
-	                    },
-	                  ],
-	                })(<Input size="large" placeholder="验证码" />)}
-	              </Col>
-	              <Col span={8}>
-	                <Button
-	                  size="large"
-	                  disabled={count}
-	                  className={styles.getCaptcha}
-	                  onClick={this.onGetCaptcha}
-	                >
-	                  {count ? `${count} s` : '发送验证码'}
-	                </Button>
-	              </Col>
-	            </Row>
+            <FormItem>
+              {getFieldDecorator('mobile', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入密码！',
+                  },
+                ],
+              })(<Input size="large" placeholder="确认密码" />)}
             </FormItem>
 
             <FormItem>
-	            <Button
-	              size="large"
-	              className={styles.submit}
-	              loading={submitting}
-	              type="primary"
-	              htmlType="submit"
-	            >
-	              下一步
-	            </Button>
-	          </FormItem>
+  	            <Button
+  	              size="large"
+  	              className={styles.submit}
+  	              loading={submitting}
+  	              type="primary"
+  	              htmlType="submit"
+  	            >
+  	              确定
+  	            </Button>
+  	        </FormItem>
     		</Form>
     	</div>
     )

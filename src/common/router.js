@@ -169,6 +169,9 @@ export const getRouterData = (app) => {
     '/user/captcha': {
       component: dynamicWrapper(app, ['captcha'], () => import('../routes/User/Captcha')),
     },
+    '/user/password': {
+      component: dynamicWrapper(app, ['password'], () => import('../routes/User/Password')),
+    },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());

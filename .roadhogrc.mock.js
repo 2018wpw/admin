@@ -94,6 +94,12 @@ const proxy = {
   'POST /api/register': (req, res) => {
     res.send({ status: 'ok', currentAuthority: 'user' });
   },
+  'POST /api/login/captcha': (req, res) => {
+    res.send({ status: 'ok' });
+  },
+  'POST /api/login/verify': (req, res) => {
+    res.send({ status: 'ok' });
+  },
   'GET /api/notices': getNotices,
   'GET /api/500': (req, res) => {
     res.status(500).send({
