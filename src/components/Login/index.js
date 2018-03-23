@@ -6,6 +6,7 @@ import LoginItem from './LoginItem';
 import LoginTab from './LoginTab';
 import LoginSubmit from './LoginSubmit';
 import styles from './index.less';
+import logo from '../../assets/logo.svg';
 
 @Form.create()
 class Login extends Component {
@@ -97,7 +98,10 @@ class Login extends Component {
           {
             tabs.length ? (
               <div>
-                <h2 className={styles.subtitle}>IOT 管理系统</h2>
+                <div className={styles.title}>
+                  <img alt="logo" className={styles.icon} src={logo} />
+                  <h2 className={styles.subtitle}>IOT 管理系统</h2>
+                </div>
                 <Tabs
                   animated={false}
                   className={styles.tabs}
