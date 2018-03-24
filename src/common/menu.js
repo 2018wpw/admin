@@ -6,25 +6,24 @@ const menuData = [{
   path: 'general',
 }, {
   name: '设备管理',
-  icon: 'dashboard',
-  path: 'dashboard',
+  path: 'devices',
   children: [{
     name: '设备列表',
-    path: 'analysis',
+    path: 'list',
   }, {
     name: '导入设备',
-    path: 'monitor',
+    path: 'import',
   }, {
     name: '设备地图',
-    path: 'workplace',
+    path: 'map',
     // hideInMenu: true,
   }, {
     name: '批次管理',
-    path: 'batch-mgmt',
+    path: 'batch ',
     // hideInMenu: true,
   }, {
     name: '产品类型',
-    path: 'product-type',
+    path: 'product',
     // hideInMenu: true,
   }, {
     name: '升级',
