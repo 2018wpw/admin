@@ -3,16 +3,32 @@ import { isUrl } from '../utils/utils';
 const menuData = [{
   name: '概况',
   icon: 'dashboard',
+  path: 'general',
+}, {
+  name: '设备管理',
+  icon: 'dashboard',
   path: 'dashboard',
   children: [{
-    name: '分析页',
+    name: '设备列表',
     path: 'analysis',
   }, {
-    name: '监控页',
+    name: '导入设备',
     path: 'monitor',
   }, {
-    name: '工作台',
+    name: '设备地图',
     path: 'workplace',
+    // hideInMenu: true,
+  }, {
+    name: '批次管理',
+    path: 'batch-mgmt',
+    // hideInMenu: true,
+  }, {
+    name: '产品类型',
+    path: 'product-type',
+    // hideInMenu: true,
+  }, {
+    name: '升级',
+    path: 'upgrade',
     // hideInMenu: true,
   }],
 }, {
