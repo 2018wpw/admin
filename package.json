@@ -29,6 +29,8 @@
     "classnames": "^2.2.5",
     "dva": "^2.1.0",
     "dva-loading": "^1.0.4",
+    "echarts": "^4.0.4",
+    "echarts-for-react": "^2.0.8",
     "enquire-js": "^0.1.1",
     "lodash": "^4.17.4",
     "lodash-decorators": "^4.4.1",
@@ -43,6 +45,7 @@
     "react-container-query": "^0.9.1",
     "react-document-title": "^2.0.3",
     "react-dom": "^16.2.0",
+    "react-echarts": "^0.1.1",
     "react-fittext": "^1.0.0",
     "rollbar": "^2.3.4",
     "url-polyfill": "^1.0.10"
@@ -83,7 +86,7 @@
     "**/*.less": "stylelint --syntax less"
   },
   "engines": {
-    "node" : ">=8.0.0"
+    "node": ">=8.0.0"
   },
   "browserslist": [
     "> 1%",

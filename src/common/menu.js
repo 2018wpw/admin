@@ -2,7 +2,6 @@ import { isUrl } from '../utils/utils';
 
 const menuData = [{
   name: '概况',
-  icon: 'dashboard',
   path: 'general',
 }, {
   name: '设备管理',
