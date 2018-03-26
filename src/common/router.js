@@ -95,7 +95,9 @@ export const getRouterData = (app) => {
     '/devices/batch': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/devices/Batch')),
     },
-
+    '/devices/upgrade': {
+      component: dynamicWrapper(app, ['list'], () => import('../routes/devices/Upgrade')),
+    },
 
     '/form/basic-form': {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
