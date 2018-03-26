@@ -1,5 +1,5 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col } from 'antd';
-import styles from './Product.less';
+import styles from './Batch.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 const FormItem = Form.Item;
@@ -17,7 +17,7 @@ const ProductFormCreate = Form.create()(
 
     return (
           <Modal
-            title="创建产品类型"
+            title="创建批次"
             visible={visible}
             onOk={onCreate}
             onCancel={onCancel}
@@ -49,24 +49,6 @@ const ProductFormCreate = Form.create()(
                 </FormItem>
               </Col>
             </Row>
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem label="图片信息" layout="inline">
-                  <Button className={styles.upload}>选择图片文件</Button>
-                  <Button type="primary">上传</Button>
-                </FormItem>                
-              </Col>
-            </Row>
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem label="链接方式">
-                  <Select placeholder="请选择" style={{ width: 300 }}>
-                    <Option value="0">wifi</Option>
-                    <Option value="1">2g</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-            </Row>
             <Row >
               <Col md={24} sm={24}>
                 <FormItem label="是否带PM2.5">
@@ -87,20 +69,20 @@ export default class ProductList extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
+      title: '批次名称',
+      dataIndex: 'name',
+    }, {
+      title: '描述信息',
+      dataIndex: 'description',
+    }, {
       title: '产品类型',
       dataIndex: 'type',
     }, {
       title: '产品型号',
       dataIndex: 'model',
     }, {
-      title: '描述信息',
-      dataIndex: 'description',
-    }, {
-      title: '图片信息',
-      dataIndex: 'image',
-    }, {
-      title: '链接方式',
-      dataIndex: 'connectivity',
+      title: '设备数量',
+      dataIndex: 'count',
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -117,11 +99,11 @@ export default class ProductList extends React.Component {
     this.state = {
       dataSource: [{
         key: '0',
-        type: '产品类型 0',
+        name: '批次名称 0',
         model: 'M100',
         description: '我是描述信息',
-        image: '我是图片信息',
-        connectivity: 'wifi'
+        count: '100',
+        type: '产品类型1'
       }],
       count: 1,
       visible: false
@@ -146,11 +128,11 @@ export default class ProductList extends React.Component {
     const form = this.form;
     const newData = {
         key: count,
-        type: '产品类型',
-        model: 'M00',
+        name: '批次名称 0',
+        model: 'M100',
         description: '我是描述信息',
-        image: '我是图片信息',
-        connectivity: '2g'
+        count: '100',
+        type: '产品类型1'
     };
     this.setState({
       dataSource: [...dataSource, newData],
@@ -186,7 +168,7 @@ export default class ProductList extends React.Component {
     return (
       <PageHeaderLayout>
         <div>
-          <Button className={styles.button} type="primary" onClick={this.showModal}>创建产品类型</Button>
+          <Button className={styles.button} type="primary" onClick={this.showModal}>创建批次</Button>
           <Table bordered dataSource={dataSource} columns={columns} />
         </div>
 

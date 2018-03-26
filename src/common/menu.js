@@ -18,7 +18,7 @@ const menuData = [{
     // hideInMenu: true,
   }, {
     name: '批次管理',
-    path: 'batch ',
+    path: 'batch',
     // hideInMenu: true,
   }, {
     name: '产品类型',
