@@ -1,4 +1,4 @@
-import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col } from 'antd';
+import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import styles from './Batch.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -167,10 +167,13 @@ export default class ProductList extends React.Component {
     const columns = this.columns;
     return (
       <PageHeaderLayout>
-        <div>
-          <Button className={styles.button} type="primary" onClick={this.showModal}>创建批次</Button>
-          <Table bordered dataSource={dataSource} columns={columns} />
-        </div>
+        <Card bordered={false}>
+          <div>
+            <Button className={styles.button} type="primary" onClick={this.showModal}>创建批次</Button>
+            <Table bordered dataSource={dataSource} columns={columns} />
+          </div>
+        </Card>
+
 
         <ProductFormCreate
           ref={this.saveFormRef}

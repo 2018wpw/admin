@@ -98,6 +98,10 @@ export const getRouterData = (app) => {
     '/devices/upgrade': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/devices/Upgrade')),
     },
+    '/devices/import': {
+      component: dynamicWrapper(app, ['list'], () => import('../routes/devices/Import')),
+    },
+
 
     '/form/basic-form': {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),

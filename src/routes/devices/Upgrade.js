@@ -1,4 +1,4 @@
-import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col } from 'antd';
+import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col } from 'antd';
 import styles from './Batch.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -140,9 +140,9 @@ export default class ProductList extends React.Component {
         startTime: '2018-01-01',
         endTime: '2018-01-01',
         deviceCount: '100',
-        success: 'YES',
-        fail: 'NO',
-        uncomplete: 'NO',
+        success: '90',
+        fail: '5',
+        uncomplete: '5',
         times: '5'
       }],
       historyCount: 1,
@@ -209,12 +209,15 @@ export default class ProductList extends React.Component {
 
     return (
       <PageHeaderLayout>
-        <div>
-          <Button className={styles.button} type="primary" onClick={this.showModal}>创建升级包</Button>
-          <Table bordered dataSource={dataSource} columns={columns} />
-          <p className={styles.p}>升级记录</p>
-          <Table bordered dataSource={historyData} columns={historyColumns} />
-        </div>
+        <Card bordered={false}>
+          <div>
+            <Button className={styles.button} type="primary" onClick={this.showModal}>创建升级包</Button>
+            <Table bordered dataSource={dataSource} columns={columns} />
+            <p className={styles.p}>升级记录</p>
+            <hr className={styles.line} />
+            <Table bordered dataSource={historyData} columns={historyColumns} />
+          </div>
+        </Card>
 
         <ProductFormCreate
           ref={this.saveFormRef}
