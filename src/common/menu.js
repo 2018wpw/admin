@@ -48,6 +48,19 @@ const menuData = [{
     path: 'user-info-list',
   }],
 }, {
+  name: '租赁管理',
+  path: 'rent',
+}, {
+  name: '告警管理',
+  path: 'warning',
+  children: [{
+    name: '告警记录',
+    path: 'warning-list',
+  }, {
+    name: '告警设置',
+    path: 'warning-setting',
+  },],
+}, {
   name: '列表页',
   icon: 'table',
   path: 'list',

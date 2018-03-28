@@ -118,6 +118,9 @@ export const getRouterData = (app) => {
     '/account/role-manager': {
       component: dynamicWrapper(app, ['account'], () => import('../routes/Account/RoleManager')),
     },
+    '/warning/warning-list': {
+      component: dynamicWrapper(app, ['account'], () => import('../routes/Warning/WarningList')),
+    },
     
 
     '/form/basic-form': {

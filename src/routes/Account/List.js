@@ -1,5 +1,6 @@
 import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col } from 'antd';
 import styles from './List.less';
+import commonStyles from '../Common.less'
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 const FormItem = Form.Item;
@@ -79,80 +80,82 @@ const AddAccountForm = Form.create()((props) => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="用户名"
-      >
-        {form.getFieldDecorator('name', {
-          rules: [{ required: true, message: '请输入用户名' }],
-        })(
-          <Input placeholder="请输入用户名" />
-        )}
-      </FormItem>
+      <Form className={commonStyles.formItemGap}>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="用户名"
+        >
+          {form.getFieldDecorator('name', {
+            rules: [{ required: true, message: '请输入用户名' }],
+          })(
+            <Input placeholder="请输入用户名" />
+          )}
+        </FormItem>
 
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="地区"
-      >
-        {form.getFieldDecorator('zone', {
-          rules: [{ required: true, message: '请输入地区' }],
-        })(
-          <Input placeholder="请输入地区" />
-        )}
-      </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="地区"
+        >
+          {form.getFieldDecorator('zone', {
+            rules: [{ required: true, message: '请输入地区' }],
+          })(
+            <Input placeholder="请输入地区" />
+          )}
+        </FormItem>
 
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="类型"
-      >
-        {form.getFieldDecorator('desc', {
-          rules: [{ required: true, message: '请选择类型' }],
-        })(
-          <Select placeholder="请选择" style={{ width: 300 }}>
-            <Option value="0">M100</Option>
-            <Option value="1">M200</Option>
-          </Select>
-        )}
-      </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="类型"
+        >
+          {form.getFieldDecorator('desc', {
+            rules: [{ required: true, message: '请选择类型' }],
+          })(
+            <Select placeholder="请选择" style={{ width: 300 }}>
+              <Option value="0">M100</Option>
+              <Option value="1">M200</Option>
+            </Select>
+          )}
+        </FormItem>
 
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="初始密码"
-      >
-        {form.getFieldDecorator('pwd', {
-          rules: [{ required: true, message: '请输入初始密码' }],
-        })(
-          <Input placeholder="请输入初始密码" />
-        )}
-      </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="初始密码"
+        >
+          {form.getFieldDecorator('pwd', {
+            rules: [{ required: true, message: '请输入初始密码' }],
+          })(
+            <Input placeholder="请输入初始密码" />
+          )}
+        </FormItem>
 
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="联系电话"
-      >
-        {form.getFieldDecorator('tel', {
-          rules: [{ required: true, message: '请输入联系电话' }],
-        })(
-          <Input placeholder="请输入联系电话" />
-        )}
-      </FormItem>            
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="联系电话"
+        >
+          {form.getFieldDecorator('tel', {
+            rules: [{ required: true, message: '请输入联系电话' }],
+          })(
+            <Input placeholder="请输入联系电话" />
+          )}
+        </FormItem>            
 
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="联系人"
-      >
-        {form.getFieldDecorator('contact', {
-          rules: [{ required: true, message: '请输入联系人' }],
-        })(
-          <Input placeholder="请输入联系人" />
-        )}
-      </FormItem>      
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="联系人"
+        >
+          {form.getFieldDecorator('contact', {
+            rules: [{ required: true, message: '请输入联系人' }],
+          })(
+            <Input placeholder="请输入联系人" />
+          )}
+        </FormItem>         
+      </Form>   
     </Modal>
   );
 });
