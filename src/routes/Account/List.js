@@ -5,7 +5,160 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-export default class ProductList extends React.Component {
+
+const ChangePwdForm = Form.create()((props) => {
+  const { changePwdModalVisible, form, handleChangePwd, handlePwdModalVisible } = props;
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      form.resetFields();
+      handleChangePwd(fieldsValue);
+    });
+  };
+  return (
+    <Modal
+      title="修改密码"
+      visible={changePwdModalVisible}
+      onOk={okHandle}
+      onCancel={() => handlePwdModalVisible()}
+    >
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="初始密码"
+      >
+        {form.getFieldDecorator('pwd', {
+          rules: [{ required: true, message: '请输入初始密码' }],
+        })(
+          <Input placeholder="请输入初始密码" />
+        )}
+      </FormItem> 
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="新密码"
+      >
+        {form.getFieldDecorator('name', {
+          rules: [{ required: true, message: '请输入密码' }],
+        })(
+          <Input placeholder="请输入密码" />
+        )}
+      </FormItem>
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="确认密码"
+      >
+        {form.getFieldDecorator('zone', {
+          rules: [{ required: true, message: '请输入密码' }],
+        })(
+          <Input placeholder="请输入密码" />
+        )}
+      </FormItem>
+
+    </Modal>
+  );
+});
+
+
+const AddAccountForm = Form.create()((props) => {
+  const { addAccountModalVisible, form, handleCreate, handleModalVisible } = props;
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      form.resetFields();
+      handleCreate(fieldsValue);
+    });
+  };
+  return (
+    <Modal
+      title="添加账号"
+      visible={addAccountModalVisible}
+      onOk={okHandle}
+      onCancel={() => handleModalVisible()}
+    >
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="用户名"
+      >
+        {form.getFieldDecorator('name', {
+          rules: [{ required: true, message: '请输入用户名' }],
+        })(
+          <Input placeholder="请输入用户名" />
+        )}
+      </FormItem>
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="地区"
+      >
+        {form.getFieldDecorator('zone', {
+          rules: [{ required: true, message: '请输入地区' }],
+        })(
+          <Input placeholder="请输入地区" />
+        )}
+      </FormItem>
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="类型"
+      >
+        {form.getFieldDecorator('desc', {
+          rules: [{ required: true, message: '请选择类型' }],
+        })(
+          <Select placeholder="请选择" style={{ width: 300 }}>
+            <Option value="0">M100</Option>
+            <Option value="1">M200</Option>
+          </Select>
+        )}
+      </FormItem>
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="初始密码"
+      >
+        {form.getFieldDecorator('pwd', {
+          rules: [{ required: true, message: '请输入初始密码' }],
+        })(
+          <Input placeholder="请输入初始密码" />
+        )}
+      </FormItem>
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="联系电话"
+      >
+        {form.getFieldDecorator('tel', {
+          rules: [{ required: true, message: '请输入联系电话' }],
+        })(
+          <Input placeholder="请输入联系电话" />
+        )}
+      </FormItem>            
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="联系人"
+      >
+        {form.getFieldDecorator('contact', {
+          rules: [{ required: true, message: '请输入联系人' }],
+        })(
+          <Input placeholder="请输入联系人" />
+        )}
+      </FormItem>      
+    </Modal>
+  );
+});
+
+
+export default class AccountList extends React.Component {
   constructor(props) {
     super(props);
 
@@ -35,17 +188,17 @@ export default class ProductList extends React.Component {
       dataIndex: 'operation',
       render: (text, record) => {
         return (
-            <Popconfirm title="确认删除?" onConfirm={() => this.onDelete(record.key)}>
-              <a href="#" className={styles.left}>编辑</a>
-              <a href="#" className={styles.right}>修改密码</a>
-            </Popconfirm>
+            <div>
+              <a href="" name="edit" className={styles.edit} onClick={() => {alert("alert")}}>编辑</a>
+              <a name="change" className={styles.change} onClick={() => {this.onChange()}}>修改密码</a>
+            </div>
         );
       },
     }];
 
 
     this.state = {
-      visible: false,
+      addAccountModalVisible: false,
       dataSource: [{
         key: '0',
         userName: '张三',
@@ -57,8 +210,10 @@ export default class ProductList extends React.Component {
         contact: '李四'
       }],
       dataCount: 1,
+      changePwdModalVisible: false,
     };
   }
+
   onCellChange = (key, dataIndex) => {
     return (value) => {
       const dataSource = [...this.state.dataSource];
@@ -70,28 +225,54 @@ export default class ProductList extends React.Component {
     };
   }
 
-  onDelete = (key) => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
+
+  handleModalVisible = (flag) => {
+    this.setState({
+      addAccountModalVisible: !!flag,
+    });
+  }
+
+  handlePwdModalVisible = (flag) => {
+    this.setState({
+      changePwdModalVisible: !!flag,
+    });
+  }
+
+  handleChangePwd = () => {
+    //TODO
+    this.setState({
+      changePwdModalVisible: false
+    });
+  }
+
+  onEdit = () => {
+    //TODO
+  }
+
+  onChange = () => {
+    //TODO
+    this.setState({
+      changePwdModalVisible: true
+    });
   }
 
   handleCreate = () => {
-    const { historyCount, dataSource } = this.state;
+    const { historyCount, dataSource, dataCount } = this.state;
     const form = this.form;
     const newData = {
         key: historyCount,
-        importTime: '2018-01-01',
-        importCount: '9',
-        successCount: '8',
-        failCount: '1',
-        type: '产品类型1',
-        model: 'M100',
-        times: '5'
+        userName: '张三1',
+        Zone: '北京1',
+        type: '我是谁1',
+        createTime: '2018-01-02',
+        tel: '18600000000',
+        superAccount: '上级1',
+        contact: '李四1'
     };
     this.setState({
       dataSource: [...dataSource, newData],
       dataCount: dataCount + 1,
-      visible: false
+      addAccountModalVisible: false
     });
   }
 
@@ -120,9 +301,9 @@ export default class ProductList extends React.Component {
               </Col> 
               <Col md={6} sm={24}>
                 <FormItem>
-                  <div layout="inline">
+                  <div layout="inline" align="right">
                     <Button type="primary" className={styles.button}>查询</Button>
-                    <Button type="primary" className={styles.button}>添加</Button>
+                    <Button type="primary" className={styles.button}  onClick={() => this.handleModalVisible(true)}>添加</Button>
                   </div>
                 </FormItem>
               </Col>
@@ -132,8 +313,15 @@ export default class ProductList extends React.Component {
   }
 
   render() {
-    const { dataSource } = this.state;
+    const { dataSource, addAccountModalVisible, changePwdModalVisible } = this.state;
     const dataColumns = this.dataColumns;
+
+    const parentMethods = {
+      handleCreate: this.handleCreate,
+      handleModalVisible: this.handleModalVisible,
+      handlePwdModalVisible: this.handlePwdModalVisible,
+      handleChangePwd: this.handlePwdModalVisible,
+    };
 
     return (
       <PageHeaderLayout>
@@ -146,6 +334,17 @@ export default class ProductList extends React.Component {
             <Table bordered dataSource={dataSource} columns={dataColumns} />
           </div>
         </Card>
+
+        <AddAccountForm
+          {...parentMethods}
+          addAccountModalVisible={addAccountModalVisible}
+        />
+
+        <ChangePwdForm
+          {...parentMethods}
+          changePwdModalVisible={changePwdModalVisible}
+        />
+
       </PageHeaderLayout>
     );
   }

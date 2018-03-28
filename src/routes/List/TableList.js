@@ -67,7 +67,7 @@ const columns = [
       <Fragment>
         <a href="">配置</a>
         <Divider type="vertical" />
-        <a href="">订阅警报</a>
+        <a href=""  onClick={() => {alert("alert")}}>订阅警报</a>
       </Fragment>
     ),
   },
