@@ -30,19 +30,22 @@ const menuData = [{
     // hideInMenu: true,
   }],
 }, {
-  name: '表单页',
-  icon: 'form',
-  path: 'form',
+  name: '账户管理',
+  path: 'account',
   children: [{
-    name: '基础表单',
-    path: 'basic-form',
+    name: '账号列表',
+    path: 'account-list',
   }, {
-    name: '分步表单',
-    path: 'step-form',
+    name: '角色管理',
+    path: 'role-manager',
   }, {
-    name: '高级表单',
-    authority: 'admin',
-    path: 'advanced-form',
+    name: '个人信息',
+    // authority: 'admin',
+    path: 'profile',
+  }, {
+    name: '用户列表信息',
+    // authority: 'admin',
+    path: 'user-list',
   }],
 }, {
   name: '列表页',
