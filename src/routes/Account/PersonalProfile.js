@@ -19,16 +19,6 @@ export default class AccountList extends React.Component {
   }
 
   render() {
-    const { dataSource, addAccountModalVisible, changePwdModalVisible } = this.state;
-    const dataColumns = this.dataColumns;
-
-    const parentMethods = {
-      handleCreate: this.handleCreate,
-      handleModalVisible: this.handleModalVisible,
-      handlePwdModalVisible: this.handlePwdModalVisible,
-      handleChangePwd: this.handlePwdModalVisible,
-    };
-
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
@@ -90,17 +80,17 @@ export default class AccountList extends React.Component {
           <div className={styles.tableListForm}>
 			<Form layouts="vertical" layout="inline">
 	            <Row  gutter={{ md: 8, lg: 16, xl: 24 }}>
-	              <Col md={5} sm={24}>
+	              <Col md={8} sm={24}>
 	                <FormItem label="卡号">
 	                  <Input/>
 	                </FormItem>
 	              </Col>
-	              <Col  md={5} sm={24}>
+	              <Col  md={8} sm={24}>
 	                <FormItem label="开户支行">
 	                  <Input></Input>    
 	                </FormItem>
 	              </Col>
-	              <Col md={5} sm={24}>
+	              <Col md={8} sm={24}>
 	                <FormItem label="收款方用户名">
 	                  <Input placeholder="请输入"></Input>                
 	                </FormItem>

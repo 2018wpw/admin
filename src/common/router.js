@@ -115,6 +115,9 @@ export const getRouterData = (app) => {
     '/account/personal-profile': {
       component: dynamicWrapper(app, ['account'], () => import('../routes/Account/PersonalProfile')),
     },
+    '/account/role-manager': {
+      component: dynamicWrapper(app, ['account'], () => import('../routes/Account/RoleManager')),
+    },
     
 
     '/form/basic-form': {
