@@ -41,7 +41,7 @@ const menuData = [{
   }, {
     name: '个人信息',
     // authority: 'admin',
-    path: 'profile',
+    path: 'personal-profile',
   }, {
     name: '用户信息列表',
     // authority: 'admin',
