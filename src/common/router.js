@@ -73,18 +73,21 @@ export const getRouterData = (app) => {
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
-    '/dashboard/analysis': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
+    '/general': {
+      component: dynamicWrapper(app, ['general'], () => import('../routes/Main/General')),
     },
-    '/dashboard/monitor': {
-      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
-    },
-    '/dashboard/workplace': {
-      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/Dashboard/Workplace')),
-      // hideInBreadcrumb: true,
-      // name: '工作台',
-      // authority: 'admin',
-    },
+    // '/dashboard/analysis': {
+    //   component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
+    // },
+    // '/dashboard/monitor': {
+    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
+    // },
+    // '/dashboard/workplace': {
+    //   component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/Dashboard/Workplace')),
+    //   // hideInBreadcrumb: true,
+    //   // name: '工作台',
+    //   // authority: 'admin',
+    // },
     //devices
     '/devices/list': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/devices/list')),
@@ -189,9 +192,6 @@ export const getRouterData = (app) => {
     },
     '/user/password': {
       component: dynamicWrapper(app, ['password'], () => import('../routes/User/Password')),
-    },
-    '/general': {
-      component: dynamicWrapper(app, ['general'], () => import('../routes/Main/General')),
     },
   };
   // Get name from ./menu.js or just set it in the router data.
