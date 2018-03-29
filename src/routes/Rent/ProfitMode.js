@@ -5,7 +5,7 @@ import styles from '../Common.less';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-const CreateWarningForm = Form.create()((props) => {
+const CreateProfitForm = Form.create()((props) => {
   const { visible, form, handleCreate, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
@@ -16,7 +16,7 @@ const CreateWarningForm = Form.create()((props) => {
   };
   return (
     <Modal
-      title="创建告警"
+      title="创建分润模式"
       visible={visible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
@@ -26,7 +26,7 @@ const CreateWarningForm = Form.create()((props) => {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="告警名称"
+          label="名称"
         >
           {form.getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入' }],
@@ -38,89 +38,18 @@ const CreateWarningForm = Form.create()((props) => {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="群组"
+          label="角色比例"
         >
-          {form.getFieldDecorator('group', {
+          {form.getFieldDecorator('rate', {
             rules: [{ required: true, message: '请选择' }],
           })(
-            <Select placeholder="请选择">
-              <Option value="0">M100</Option>
-              <Option value="1">M200</Option>
-            </Select>
+            <Input placeholder="请输入" />
           )}
         </FormItem>
-
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="PM2.5的值"
-        >
-          {form.getFieldDecorator('pm25', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem>  
-
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="TVOC的值"
-        >
-          {form.getFieldDecorator('tvoc', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem>           
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="甲醛"
-        >
-          {form.getFieldDecorator('formal', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem> 
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="滤网剩余天数"
-        >
-          {form.getFieldDecorator('date', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="天" />
-          )}
-        </FormItem>     
-              <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="温度"
-        >
-          {form.getFieldDecorator('temperature', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem>  
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="湿度"
-        >
-          {form.getFieldDecorator('humidity', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem>  
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="描述信息"
+          label="分润模式描述"
         >
           {form.getFieldDecorator('description', {
             rules: [{ required: true, message: '请输入' }],
@@ -134,14 +63,17 @@ const CreateWarningForm = Form.create()((props) => {
 });
 
 
-export default class WarningSetting extends React.Component {
+export default class ProfitMode extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
-      title: '告警名称',
+      title: '名称',
       dataIndex: 'name',
     }, {
-      title: '描述',
+      title: '角色比例',
+      dataIndex: 'rate',
+    }, , {
+      title: '分润模式描述',
       dataIndex: 'description',
     }, {
       title: '操作',
@@ -182,7 +114,8 @@ export default class WarningSetting extends React.Component {
     const form = this.form;
     const newData = {
         key: count,
-        name: '用户1',
+        name: '分润1',
+        rate: '10%',
         description: '我是描述信息',
     };
     this.setState({
@@ -233,12 +166,12 @@ export default class WarningSetting extends React.Component {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建新的告警</Button>
+            <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建分润模式</Button>
             <Table bordered dataSource={dataSource} columns={columns} />
           </div>          
         </Card>
 
-        <CreateWarningForm
+        <CreateProfitForm
           {...parentMethods}
           visible={visible}
         />

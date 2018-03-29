@@ -125,6 +125,16 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['warning'], () => import('../routes/Warning/WarningSetting')),
     },
 
+    '/rent/profit-mode': {
+      component: dynamicWrapper(app, ['rent'], () => import('../routes/Rent/ProfitMode')),
+    },
+    '/rent/rent-relate': {
+      component: dynamicWrapper(app, ['rent'], () => import('../routes/Rent/RentRelate')),
+    },
+    '/rent/rent-detail': {
+      component: dynamicWrapper(app, ['rent'], () => import('../routes/Rent/RentDetail')),
+    },
+
     '/form/basic-form': {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
     },

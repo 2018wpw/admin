@@ -3,11 +3,11 @@
 }
 
 .editHref {
-  float: right;
+  float: left;
 }
 
 .deleteHref {
-  float: left;
+  float: right;
 }
 
 .formItemGap {
@@ -15,9 +15,18 @@
     .ant-form-item {
       margin-bottom: 10px;
     }
+    .ant-form-item-control-wrapper {
+      flex: 1;
+      margin-bottom: 10px;
+      width: 60%;
+    }
   }
   .submitButtons {
     white-space: nowrap;
     margin-bottom: 24px;
   }
+}
+
+.centerButton {
+  text-align: center;
 }

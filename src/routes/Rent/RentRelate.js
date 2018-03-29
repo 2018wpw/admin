@@ -5,7 +5,7 @@ import styles from '../Common.less';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-const CreateWarningForm = Form.create()((props) => {
+const CreateProfitForm = Form.create()((props) => {
   const { visible, form, handleCreate, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
@@ -16,7 +16,7 @@ const CreateWarningForm = Form.create()((props) => {
   };
   return (
     <Modal
-      title="创建告警"
+      title="创建分润模式"
       visible={visible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
@@ -26,21 +26,9 @@ const CreateWarningForm = Form.create()((props) => {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="告警名称"
+          label="分润模式"
         >
-          {form.getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem>
-
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="群组"
-        >
-          {form.getFieldDecorator('group', {
+          {form.getFieldDecorator('profitMode', {
             rules: [{ required: true, message: '请选择' }],
           })(
             <Select placeholder="请选择">
@@ -53,96 +41,76 @@ const CreateWarningForm = Form.create()((props) => {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="PM2.5的值"
+          label="米微"
         >
-          {form.getFieldDecorator('pm25', {
+          {form.getFieldDecorator('miwei', {
             rules: [{ required: true, message: '请输入' }],
           })(
-            <Input placeholder="请输入" />
+            <Input placeholder="请输入"  addonAfter="%" />
           )}
-        </FormItem>  
+        </FormItem>
 
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="TVOC的值"
+          label="客户"
         >
-          {form.getFieldDecorator('tvoc', {
-            rules: [{ required: true, message: '请输入' }],
+          {form.getFieldDecorator('custom', {
+            rules: [{ required: true, message: '请选择' }],
           })(
-            <Input placeholder="请输入" />
+            <Input placeholder="请输入"  addonAfter="%" />
           )}
-        </FormItem>           
+        </FormItem>
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="甲醛"
+          label="代理"
         >
-          {form.getFieldDecorator('formal', {
-            rules: [{ required: true, message: '请输入' }],
+          {form.getFieldDecorator('proxy', {
+            rules: [{ required: true, message: '请选择' }],
           })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem> 
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="滤网剩余天数"
-        >
-          {form.getFieldDecorator('date', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="天" />
+            <Input placeholder="请输入"  addonAfter="%" />
           )}
         </FormItem>     
-              <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="温度"
-        >
-          {form.getFieldDecorator('temperature', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
-        </FormItem>  
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="湿度"
+          label="价格"
         >
-          {form.getFieldDecorator('humidity', {
-            rules: [{ required: true, message: '请输入' }],
+          {form.getFieldDecorator('price', {
+            rules: [{ required: true, message: '请选择' }],
           })(
-            <Input placeholder="请输入" />
+            <Input placeholder="请输入"   addonAfter="元"/>
           )}
-        </FormItem>  
+        </FormItem>
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
           label="描述信息"
         >
-          {form.getFieldDecorator('description', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <TextArea/>
-          )}
-        </FormItem> 
+          <TextArea/>
+        </FormItem>            
       </Form>     
     </Modal>
   );
 });
 
 
-export default class WarningSetting extends React.Component {
+export default class RentRelate extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
-      title: '告警名称',
+      title: '名称',
       dataIndex: 'name',
     }, {
-      title: '描述',
-      dataIndex: 'description',
+      title: '分润模式',
+      dataIndex: 'rateMode',
+    }, {
+      title: '各账号分润详情',
+      dataIndex: 'detail',
+    },  {
+      title: '价格',
+      dataIndex: 'price',
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -182,8 +150,10 @@ export default class WarningSetting extends React.Component {
     const form = this.form;
     const newData = {
         key: count,
-        name: '用户1',
-        description: '我是描述信息',
+        name: '分润1',
+        rateMode: '1',
+        detail: 'miwei 5%, daili 10%',
+        price: '1元/小时'
     };
     this.setState({
       dataSource: [...dataSource, newData],
@@ -233,12 +203,12 @@ export default class WarningSetting extends React.Component {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建新的告警</Button>
+            <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建分润模式</Button>
             <Table bordered dataSource={dataSource} columns={columns} />
           </div>          
         </Card>
 
-        <CreateWarningForm
+        <CreateProfitForm
           {...parentMethods}
           visible={visible}
         />

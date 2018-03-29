@@ -50,6 +50,16 @@ const menuData = [{
 }, {
   name: '租赁管理',
   path: 'rent',
+  children: [{
+    name: '分润模式',
+    path: 'profit-mode',
+  }, {
+    name: '租赁关系',
+    path: 'rent-relate',
+  },, {
+    name: '租赁详情',
+    path: 'rent-detail',
+  },],
 }, {
   name: '告警管理',
   path: 'warning',
