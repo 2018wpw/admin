@@ -104,6 +104,9 @@ export const getRouterData = (app) => {
     '/devices/import': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/devices/Import')),
     },
+    '/devices/map': {
+      component: dynamicWrapper(app, ['list'], () => import('../routes/devices/map')),
+    },
 
     //account
     '/account/account-list': {
@@ -125,6 +128,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['warning'], () => import('../routes/Warning/WarningSetting')),
     },
 
+    //rent
     '/rent/profit-mode': {
       component: dynamicWrapper(app, ['rent'], () => import('../routes/Rent/ProfitMode')),
     },

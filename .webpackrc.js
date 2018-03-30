@@ -22,4 +22,8 @@ export default {
   devtool: 'source-map',
   publicPath: '/',
   hash: true,
+  //baidu map
+  externals:{
+    'BMap':'BMap'
+  },
 };

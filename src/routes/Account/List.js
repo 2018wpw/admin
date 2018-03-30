@@ -23,6 +23,7 @@ const ChangePwdForm = Form.create()((props) => {
       onOk={okHandle}
       onCancel={() => handlePwdModalVisible()}
     >
+    <Form className={commonStyles.formItemGap}>
       <FormItem
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
@@ -58,6 +59,7 @@ const ChangePwdForm = Form.create()((props) => {
           <Input placeholder="请输入密码" />
         )}
       </FormItem>
+    </Form>
 
     </Modal>
   );
@@ -113,7 +115,7 @@ const AddAccountForm = Form.create()((props) => {
           {form.getFieldDecorator('desc', {
             rules: [{ required: true, message: '请选择类型' }],
           })(
-            <Select placeholder="请选择" style={{ width: 300 }}>
+            <Select placeholder="请选择">
               <Option value="0">M100</Option>
               <Option value="1">M200</Option>
             </Select>

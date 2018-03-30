@@ -56,7 +56,7 @@ const menuData = [{
   }, {
     name: '租赁关系',
     path: 'rent-relate',
-  },, {
+  }, {
     name: '租赁详情',
     path: 'rent-detail',
   },],
@@ -71,73 +71,15 @@ const menuData = [{
     path: 'warning-setting',
   },],
 }, {
-  name: '列表页',
-  icon: 'table',
-  path: 'list',
+  name: '滤网管理',
+  path: 'filter',
   children: [{
-    name: '查询表格',
-    path: 'table-list',
-  }, {
-    name: '标准列表',
-    path: 'basic-list',
-  }, {
-    name: '卡片列表',
-    path: 'card-list',
-  }, {
-    name: '搜索列表',
-    path: 'search',
-    children: [{
-      name: '搜索列表（文章）',
-      path: 'articles',
-    }, {
-      name: '搜索列表（项目）',
-      path: 'projects',
-    }, {
-      name: '搜索列表（应用）',
-      path: 'applications',
-    }],
+    name: '滤网列表',
+    path: 'filter-list',
   }],
 }, {
-  name: '详情页',
-  icon: 'profile',
-  path: 'profile',
-  children: [{
-    name: '基础详情页',
-    path: 'basic',
-  }, {
-    name: '高级详情页',
-    path: 'advanced',
-    authority: 'admin',
-  }],
-}, {
-  name: '结果页',
-  icon: 'check-circle-o',
-  path: 'result',
-  children: [{
-    name: '成功',
-    path: 'success',
-  }, {
-    name: '失败',
-    path: 'fail',
-  }],
-}, {
-  name: '异常页',
-  icon: 'warning',
-  path: 'exception',
-  children: [{
-    name: '403',
-    path: '403',
-  }, {
-    name: '404',
-    path: '404',
-  }, {
-    name: '500',
-    path: '500',
-  }, {
-    name: '触发异常',
-    path: 'trigger',
-    hideInMenu: true,
-  }],
+  name: '群组管理',
+  path: 'group-manager',
 }, {
   name: '账户',
   icon: 'user',
