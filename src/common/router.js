@@ -139,6 +139,18 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['rent'], () => import('../routes/Rent/RentDetail')),
     },
 
+    '/filter/filter-list': {
+      component: dynamicWrapper(app, ['group'], () => import('../routes/Filter/FilterList')),
+    },
+
+
+    //group
+    '/group': {
+      component: dynamicWrapper(app, ['group'], () => import('../routes/Group/GroupManager')),
+    },
+
+    
+
     '/form/basic-form': {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
     },

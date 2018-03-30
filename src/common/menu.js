@@ -79,7 +79,7 @@ const menuData = [{
   }],
 }, {
   name: '群组管理',
-  path: 'group-manager',
+  path: 'group',
 }, {
   name: '账户',
   icon: 'user',

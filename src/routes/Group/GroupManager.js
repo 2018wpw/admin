@@ -5,7 +5,7 @@ import styles from '../Common.less';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-const CreateProfitForm = Form.create()((props) => {
+const CreateGroupForm = Form.create()((props) => {
   const { visible, form, handleCreate, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
@@ -16,7 +16,7 @@ const CreateProfitForm = Form.create()((props) => {
   };
   return (
     <Modal
-      title="创建租赁关系"
+      title="创建群组"
       visible={visible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
@@ -26,9 +26,21 @@ const CreateProfitForm = Form.create()((props) => {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="分润模式"
+          label="群组名称"
         >
-          {form.getFieldDecorator('profitMode', {
+          {form.getFieldDecorator('name', {
+            rules: [{ required: true, message: '请输入' }],
+          })(
+            <Input placeholder="请输入" />
+          )}
+        </FormItem>
+
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="设备类型"
+        >
+          {form.getFieldDecorator('type', {
             rules: [{ required: true, message: '请选择' }],
           })(
             <Select placeholder="请选择">
@@ -41,76 +53,55 @@ const CreateProfitForm = Form.create()((props) => {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="米微"
+          label="设备型号"
         >
-          {form.getFieldDecorator('miwei', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入"  addonAfter="%" />
-          )}
-        </FormItem>
-
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="客户"
-        >
-          {form.getFieldDecorator('custom', {
+          {form.getFieldDecorator('mode', {
             rules: [{ required: true, message: '请选择' }],
           })(
-            <Input placeholder="请输入"  addonAfter="%" />
+            <Select placeholder="请选择">
+              <Option value="0">M100</Option>
+              <Option value="1">M200</Option>
+            </Select>
           )}
-        </FormItem>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="代理"
-        >
-          {form.getFieldDecorator('proxy', {
-            rules: [{ required: true, message: '请选择' }],
-          })(
-            <Input placeholder="请输入"  addonAfter="%" />
-          )}
-        </FormItem>     
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="价格"
-        >
-          {form.getFieldDecorator('price', {
-            rules: [{ required: true, message: '请选择' }],
-          })(
-            <Input placeholder="请输入"   addonAfter="元"/>
-          )}
-        </FormItem>
+        </FormItem>        
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
           label="描述信息"
         >
-          <TextArea/>
-        </FormItem>            
+          {form.getFieldDecorator('description', {
+            rules: [{ required: true, message: '请输入' }],
+          })(
+            <TextArea/>
+          )}
+        </FormItem> 
       </Form>     
     </Modal>
   );
 });
 
 
-export default class RentRelate extends React.Component {
+export default class WarningSetting extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
       title: '名称',
       dataIndex: 'name',
     }, {
-      title: '分润模式',
-      dataIndex: 'rateMode',
+      title: '描述信息',
+      dataIndex: 'description',
     }, {
-      title: '各账号分润详情',
-      dataIndex: 'detail',
-    },  {
-      title: '价格',
-      dataIndex: 'price',
+      title: '设备数量',
+      dataIndex: 'deviceCount',
+    }, {
+      title: '分配状态',
+      dataIndex: 'asignState',
+    }, {
+      title: '设备型号',
+      dataIndex: 'deviceMode',
+    }, {
+      title: '设备类型',
+      dataIndex: 'deviceType',
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -121,7 +112,10 @@ export default class RentRelate extends React.Component {
               <a href="#" className={styles.deleteHref}>删除</a>
             </Popconfirm>
         );
-      },
+      }, 
+    }, {
+      title: '是否加入租赁',
+      dataIndex: 'enableRent',
     }];
 
     this.state = {
@@ -150,10 +144,8 @@ export default class RentRelate extends React.Component {
     const form = this.form;
     const newData = {
         key: count,
-        name: '分润1',
-        rateMode: '1',
-        detail: 'miwei 5%, daili 10%',
-        price: '1元/小时'
+        name: '用户1',
+        description: '我是描述信息',
     };
     this.setState({
       dataSource: [...dataSource, newData],
@@ -203,12 +195,12 @@ export default class RentRelate extends React.Component {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建租赁关系</Button>
+            <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建群组</Button>
             <Table bordered dataSource={dataSource} columns={columns} />
           </div>          
         </Card>
 
-        <CreateProfitForm
+        <CreateGroupForm
           {...parentMethods}
           visible={visible}
         />
