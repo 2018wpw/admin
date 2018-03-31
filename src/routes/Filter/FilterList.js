@@ -142,7 +142,6 @@ export default class FilterList extends React.Component {
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
-          <Spin spinning={this.state.loading}>
             <div>
               <div style={{marginBottom: 10}}>
                 滤网报警剩余天数 <span style={{ color: 'red' }}> {this.state.left} 天</span>
@@ -156,7 +155,6 @@ export default class FilterList extends React.Component {
                 <a onClick={this.highSet}>高效重置</a>                
               </div>            
             </div>
-          </Spin>
         </Card>
 
         <SettingForm
