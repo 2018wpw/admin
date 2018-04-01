@@ -1,4 +1,4 @@
-import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Divider } from 'antd';
+import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col } from 'antd';
 import styles from './Batch.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -213,8 +213,8 @@ export default class ProductList extends React.Component {
           <div>
             <Button className={styles.button} type="primary" onClick={this.showModal}>创建升级包</Button>
             <Table bordered dataSource={dataSource} columns={columns} />
-            <p>升级记录</p>
-            <Divider/>
+            <p className={styles.p}>升级记录</p>
+            <hr className={styles.line} />
             <Table bordered dataSource={historyData} columns={historyColumns} />
           </div>
         </Card>

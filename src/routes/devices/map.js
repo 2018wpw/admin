@@ -67,7 +67,7 @@ export default class DeviceMap extends React.Component {
     ];
 
 	return(
-		<PageHeaderLayout title='设备地图'>
+		<PageHeaderLayout>
 			<Card>
 				<Map 
 				  center={{lng: 116.402544, lat: 39.928216}}

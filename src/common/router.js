@@ -90,7 +90,13 @@ export const getRouterData = (app) => {
     // },
     //devices
     '/devices/list': {
-      component: dynamicWrapper(app, ['list'], () => import('../routes/devices/list')),
+      component: dynamicWrapper(app, ['list'], () => import('../routes/devices/DeviceList')),
+    },
+    '/devices/list/list': {
+      component: dynamicWrapper(app, ['list'], () => import('../routes/devices/DeviceList/list')),
+    },
+    '/devices/list/detail': {
+      component: dynamicWrapper(app, ['list'], () => import('../routes/devices/DeviceList/detail')),
     },
     '/devices/product': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/devices/Product')),
@@ -107,7 +113,6 @@ export const getRouterData = (app) => {
     '/devices/map': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/devices/map')),
     },
-
     //account
     '/account/account-list': {
       component: dynamicWrapper(app, ['account'], () => import('../routes/Account/List')),

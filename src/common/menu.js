@@ -28,7 +28,7 @@ const menuData = [{
     name: '升级',
     path: 'upgrade',
     // hideInMenu: true,
-  }],
+  },],
 }, {
   name: '账户管理',
   path: 'account',
