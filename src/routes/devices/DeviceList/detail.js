@@ -2,6 +2,7 @@ import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row,
 import styles from './list.less';
 import React, { PureComponent, Fragment } from 'react';
 import DescriptionList from 'components/DescriptionList';
+import ReactEcharts from 'echarts-for-react';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -202,7 +203,7 @@ export default class DeviceDetail extends React.Component {
       <div>
         <div>设备基础信息</div>
         <Divider className={styles.divider}></Divider>
-        <div style={{marginLeft: 200}}>
+        <div style={{marginLeft: 180}}>
           <DescriptionList style={{ marginBottom: 24 }} col={4}>
             <Description term="设备名称">小明的设备</Description>
             <Description term="设备状态">在线</Description>
@@ -290,10 +291,53 @@ export default class DeviceDetail extends React.Component {
   }
 
   renderHostiry() {
+    const warningCount = {
+      title: {
+        subtext: "滤网报警数量",
+        x:'left',
+        y: 'top'
+      },
+      xAxis: {
+          type: 'category',
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+          type: 'value'
+      },
+      series: [{
+          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          type: 'line',
+          color: '#12938a',
+      }, {
+        data: [202, 300, 190, 193, 1200, 1300, 1300],
+        type: 'line',
+        color: '#12938a',
+      }],
+      grid: {
+        x: 30
+      }
+    };
+
     return(
       <div className={styles.divGap}>
         <div>历史记录</div>
         <Divider className={styles.divider}></Divider>
+        <Row>
+          <Col span={12}>
+            <ReactEcharts option={warningCount} />          
+          </Col>
+          <Col span={12}>
+            <ReactEcharts option={warningCount} />          
+          </Col>          
+        </Row>
+        <Row>
+          <Col span={12}>
+            <ReactEcharts option={warningCount} />          
+          </Col>
+          <Col span={12}>
+            <ReactEcharts option={warningCount} />          
+          </Col>          
+        </Row>        
       </div>
     )
   }
