@@ -8,6 +8,11 @@ export function setAuthority(data) {
   return localStorage.setItem('userName', data.userInfo.name);
 }
 
+export function clearAuthority() {
+	localStorage.setItem('token', '');
+	localStorage.setItem('userName', '');
+}
+
 export function getUserName() {
 	return localStorage.getItem('userName');
 }

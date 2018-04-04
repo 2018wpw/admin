@@ -7,3 +7,9 @@ export async function login(params) {
     body: params,
   });
 }
+
+export async function logout() {
+  return request('/admin/user/logout', {
+    method: 'POST',
+  });
+}

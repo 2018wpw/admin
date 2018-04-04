@@ -145,5 +145,6 @@ const proxy = {
 export default {
   // Forward 到另一个服务器
   'POST /admin/user/login': baseUrl,
+  'POST /admin/user/logout': baseUrl,
   // ....
 };

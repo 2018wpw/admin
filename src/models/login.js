@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
-import { login } from '../services/login';
-import { setAuthority } from '../utils/authority';
+import { login, logout } from '../services/login';
+import { setAuthority, clearAuthority } from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
 
 export default {
@@ -16,7 +16,7 @@ export default {
       yield put({
         type: 'changeLoginStatus',
         auto: payload.autoLogin,
-        payload: response,
+        payload: response.data,
       });
       // Login successfully
       if (response.errCode === 0) {
@@ -24,7 +24,8 @@ export default {
         yield put(routerRedux.push('/'));
       }
     },
-    *logout(_, { put, select }) {
+    *logout(_, { call, put, select }) {
+      const reponse = yield call(logout);
       try {
         // get location pathname
         const urlParams = new URL(window.location.href);
@@ -34,10 +35,10 @@ export default {
         window.history.replaceState(null, 'login', urlParams.href);
       } finally {
         yield put({
-          type: 'changeLoginStatus',
+          type: 'clearLoginStatus',
           payload: {
-            status: false,
-            currentAuthority: 'guest',
+            status: reponse.errCode,
+            currentAuthority: '',
           },
         });
         reloadAuthorized();
@@ -49,12 +50,20 @@ export default {
   reducers: {
     changeLoginStatus(state, { payload, auto }) {
       console.log('auto login : ', auto);
-      setAuthority(payload.data);
+      setAuthority(payload);
       return {
         ...state,
         status: payload.errCode,
         type: payload.type,
       };
+    },
+    clearLoginStatus(state, { payload }) {
+      clearAuthority();
+      return {
+        ...state,
+        status: 0,
+        type: payload.type,        
+      }
     },
   },
 };
