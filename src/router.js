@@ -22,7 +22,8 @@ function RouterConfig({ history, app }) {
       <ConnectedRouter history={history}>
         <Switch>
           <Route path="/user" component={UserLayout} />
-          <AuthorizedRoute path="/" render={props => <BasicLayout {...props} />} authority={['admin', 'user']} redirectPath="/user/login"/>
+          {/* 检查 token 参数 */}
+          <AuthorizedRoute path="/" render={props => <BasicLayout {...props} />} authority='token' redirectPath="/user/login"/>
         </Switch>
       </ConnectedRouter>
     </LocaleProvider>

@@ -4,7 +4,7 @@ import Secured from './Secured';
 import check from './CheckPermissions.js';
 
 /* eslint-disable import/no-mutable-exports */
-let CURRENT = 'NULL';
+let CURRENT = '';
 
 Authorized.Secured = Secured;
 Authorized.AuthorizedRoute = AuthorizedRoute;
@@ -23,7 +23,7 @@ const renderAuthorize = (currentAuthority) => {
       CURRENT = currentAuthority;
     }
   } else {
-    CURRENT = 'NULL';
+    CURRENT = '';
   }
   return Authorized;
 };

@@ -15,6 +15,7 @@ export default class LoginPage extends Component {
   state = {
     type: 'account',
     autoLogin: false,
+    withUserInfo: true,
   }
 
   onTabChange = (type) => {
@@ -22,13 +23,14 @@ export default class LoginPage extends Component {
   }
 
   handleSubmit = (err, values) => {
-    const { type } = this.state;
+    const { type, withUserInfo, autoLogin } = this.state;
     if (!err) {
       this.props.dispatch({
         type: 'login/login',
         payload: {
           ...values,
-          type,
+          withUserInfo,
+          autoLogin,
         },
       });
     }
@@ -48,7 +50,7 @@ export default class LoginPage extends Component {
 
   render() {
     const { login, submitting } = this.props;
-    const { type } = this.state;
+    const { type, withUserInfo } = this.state;
     return (
       <div className={styles.main}>
         <Login
@@ -57,14 +59,8 @@ export default class LoginPage extends Component {
           onSubmit={this.handleSubmit}
         >
           <Tab key="account">
-            {
-              login.status === 'error' &&
-              login.type === 'account' &&
-              !login.submitting &&
-              this.renderMessage('账户或密码错误（admin/888888）')
-            }
-            <UserName name="userName" placeholder="user" />
-            <Password name="password" placeholder="123456" />
+            <UserName name="userPhone" />
+            <Password name="userPwd" />
           </Tab>
           <div>
             <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>自动登录</Checkbox>

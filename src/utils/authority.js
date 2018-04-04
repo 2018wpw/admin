@@ -1,8 +1,20 @@
 // use localStorage to store the authority info, which might be sent from server in actual project.
 export function getAuthority() {
-  return localStorage.getItem('antd-pro-authority') || 'admin';
+  return localStorage.getItem('token');
 }
 
-export function setAuthority(authority) {
-  return localStorage.setItem('antd-pro-authority', authority);
+export function setAuthority(data) {
+  localStorage.setItem('token', data.token);
+  return localStorage.setItem('userName', data.userInfo.name);
+}
+
+export function getUserName() {
+	return localStorage.getItem('userName');
+}
+
+export function getUser() {
+	const user = {
+		name: localStorage.getItem('userName'),
+	}
+	return user;
 }

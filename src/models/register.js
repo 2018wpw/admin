@@ -21,7 +21,6 @@ export default {
 
   reducers: {
     registerHandle(state, { payload }) {
-      setAuthority('user');
       reloadAuthorized();
       return {
         ...state,

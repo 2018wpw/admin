@@ -14,6 +14,7 @@ import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
+import { getUser } from '../utils/authority';
 import logo from '../assets/logo.png';
 
 const { Content, Header, Footer } = Layout;
@@ -85,9 +86,6 @@ class BasicLayout extends React.PureComponent {
         isMobile: mobile,
       });
     });
-    this.props.dispatch({
-      type: 'user/fetchCurrent',
-    });
   }
   getPageTitle() {
     const { routerData, location } = this.props;
@@ -123,13 +121,7 @@ class BasicLayout extends React.PureComponent {
       payload: collapsed,
     });
   }
-  handleNoticeClear = (type) => {
-    message.success(`清空了${type}`);
-    this.props.dispatch({
-      type: 'global/clearNotices',
-      payload: type,
-    });
-  }
+
   handleMenuClick = ({ key }) => {
     if (key === 'triggerError') {
       this.props.dispatch(routerRedux.push('/exception/trigger'));
@@ -141,16 +133,10 @@ class BasicLayout extends React.PureComponent {
       });
     }
   }
-  handleNoticeVisibleChange = (visible) => {
-    if (visible) {
-      this.props.dispatch({
-        type: 'global/fetchNotices',
-      });
-    }
-  }
+
   render() {
     const {
-      currentUser, collapsed, fetchingNotices, notices, routerData, match, location,
+      collapsed, routerData, match, location,
     } = this.props;
     const bashRedirect = this.getBashRedirect();
     const layout = (
@@ -171,15 +157,11 @@ class BasicLayout extends React.PureComponent {
           <Header style={{ padding: 0 }}>
             <GlobalHeader
               logo={logo}
-              currentUser={currentUser}
-              fetchingNotices={fetchingNotices}
-              notices={notices}
+              currentUser={getUser()}
               collapsed={collapsed}
               isMobile={this.state.isMobile}
-              onNoticeClear={this.handleNoticeClear}
               onCollapse={this.handleMenuCollapse}
               onMenuClick={this.handleMenuClick}
-              onNoticeVisibleChange={this.handleNoticeVisibleChange}
             />
           </Header>
           <Content style={{ margin: '24px 24px 0', height: '100%' }}>
@@ -209,22 +191,6 @@ class BasicLayout extends React.PureComponent {
           </Content>
           <Footer style={{ padding: 0 }}>
             <GlobalFooter
-              // links={[{
-              //   key: 'Pro 首页',
-              //   title: 'Pro 首页',
-              //   href: 'http://pro.ant.design',
-              //   blankTarget: true,
-              // }, {
-              //   key: 'github',
-              //   title: <Icon type="github" />,
-              //   href: 'https://github.com/ant-design/ant-design-pro',
-              //   blankTarget: true,
-              // }, {
-              //   key: 'Ant Design',
-              //   title: 'Ant Design',
-              //   href: 'http://ant.design',
-              //   blankTarget: true,
-              // }]}
               copyright={
                 <Fragment>
                   IOT 管理系统 - 米微科技
@@ -246,9 +212,6 @@ class BasicLayout extends React.PureComponent {
   }
 }
 
-export default connect(({ user, global, loading }) => ({
-  currentUser: user.currentUser,
+export default connect(({ global, loading }) => ({
   collapsed: global.collapsed,
-  fetchingNotices: loading.effects['global/fetchNotices'],
-  notices: global.notices,
 }))(BasicLayout);

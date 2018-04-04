@@ -10,6 +10,10 @@ function isPromise(obj) {
   );
 }
 
+function isNull(value) {
+  return value.replace(/(^\s*)|(\s*$)/g, "").length == 0;
+}
+
 /**
  * 通用权限检查方法
  * Common check permissions method
@@ -21,6 +25,7 @@ function isPromise(obj) {
 const checkPermissions = (authority, currentAuthority, target, Exception) => {
   // 没有判定权限.默认查看所有
   // Retirement authority, return target;
+  console.log('checkPermissions: ', authority, currentAuthority);
   if (!authority) {
     return target;
   }
@@ -34,7 +39,7 @@ const checkPermissions = (authority, currentAuthority, target, Exception) => {
 
   // string 处理
   if (typeof authority === 'string') {
-    if (authority === currentAuthority) {
+    if (authority === "token" && !isNull(currentAuthority)) {
       return target;
     }
     return Exception;
