@@ -142,7 +142,7 @@ const proxy = {
   },
 };
 
-// export default noProxy ? {} : delay(proxy, 1000);
+//登录信息
 export default {
   // Forward 到另一个服务器
   'POST /admin/user/login': baseUrl,
@@ -150,7 +150,9 @@ export default {
   'POST /admin/user/resetPassword': baseUrl,
   'POST /common/verifiedCode/send': baseUrl2,
   'POST /common/verifiedCode/verify': baseUrl2,
-
-
   // ....
+
+  'POST /admin/user/editUserInfo': baseUrl,
+  'POST /admin/user/editBankInfo': baseUrl,
+  'GET /admin/user/query': baseUrl,
 };

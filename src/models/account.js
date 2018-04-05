@@ -1,41 +1,73 @@
-import { queryFakeList } from '../services/api';
+import { queryUserInfo, editBankInfo, editUserInfo } from '../services/account';
 
 export default {
   namespace: 'account',
 
   state: {
-    list: [],
+    userInfo: '',
+    bankInfo: '',
+    role: {
+      name: '',
+      id: ''
+    },
+    userCompleted: false,
+    bankCompleted: false,    
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(queryFakeList, payload);
+    *queryUserInfo({ payload }, { call, put }) {
+      const response = yield call(queryUserInfo, payload);
       yield put({
-        type: 'queryList',
-        payload: Array.isArray(response) ? response : [],
+        type: 'userInfoCallback',
+        payload: response.data,
+        errCode: response.errCode,
       });
     },
-    *appendFetch({ payload }, { call, put }) {
-      const response = yield call(queryFakeList, payload);
+    *editBankInfo({ payload }, { call, put }) {
+      const response = yield call(editBankInfo, payload);
       yield put({
-        type: 'appendList',
-        payload: Array.isArray(response) ? response : [],
+        type: 'editBankCallback',
+        errCode: response.errCode,
+      });
+    },
+    *editUserInfo({ payload }, { call, put }) {
+      const response = yield call(editUserInfo, payload);
+      yield put({
+        type: 'editUserCallback',
+        errCode: response.errCode,
       });
     },
   },
 
   reducers: {
-    queryList(state, action) {
+    userInfoCallback(state, { payload, errCode }) {
+      if (errCode === 0) {
+        return {
+          ...state,
+          ...payload,
+          errCode: 0,
+          role: payload.userInfo.role,
+        }
+      } else {
+        return {
+          ...state,
+          errCode: errCode,
+        }
+      }
+    },
+    editBankCallback(state, { errCode }) {
       return {
         ...state,
-        list: action.payload,
-      };
+        bankCompleted: true,
+        errCode: errCode,
+      }
     },
-    appendList(state, action) {
+    editUserCallback(state, { errCode }) {
       return {
         ...state,
-        list: state.list.concat(action.payload),
-      };
-    },
+        userCompleted: true,
+        errCode: errCode,
+      }
+    },    
   },
 };

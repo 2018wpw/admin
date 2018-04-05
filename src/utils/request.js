@@ -2,6 +2,7 @@ import fetch from 'dva/fetch';
 import { notification } from 'antd';
 import { routerRedux } from 'dva/router';
 import store from '../index';
+import { getToken } from './authority';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -53,6 +54,7 @@ export default function request(url, options) {
       newOptions.headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
         ...newOptions.headers,
+        'token': getToken(),
       };
       newOptions.body = JSON.stringify(newOptions.body);
     } else {
@@ -60,6 +62,7 @@ export default function request(url, options) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
+        'token': getToken(),
         ...newOptions.headers,
       };
     }
