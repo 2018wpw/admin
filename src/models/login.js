@@ -13,16 +13,17 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(login, payload);
+      // Login successfully
       yield put({
         type: 'changeLoginStatus',
         auto: payload.autoLogin,
-        payload: response.data,
+        status: response.errCode,
+        payload: response.errCode === 0 ? response.data : '',
       });
-      // Login successfully
       if (response.errCode === 0) {
         reloadAuthorized();
         yield put(routerRedux.push('/'));
-      }
+      }      
     },
     *logout(_, { call, put, select }) {
       const reponse = yield call(logout);
@@ -48,12 +49,13 @@ export default {
   },
 
   reducers: {
-    changeLoginStatus(state, { payload, auto }) {
-      console.log('auto login : ', auto);
-      setAuthority(payload);
+    changeLoginStatus(state, { payload, auto, status }) {
+      if (status === 0) {
+        setAuthority(payload);
+      }
       return {
         ...state,
-        status: payload.errCode,
+        status: status,
         type: payload.type,
       };
     },

@@ -19,26 +19,6 @@ export default class Password extends React.Component {
   	count: 0,
   };
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  onGetCaptcha = () => {
-    this.props.form.validateFields('mobile', {force: true}, (err, values) => {
-      if (!err) {
-        let count = 59;
-        this.setState({ count });
-        this.interval = setInterval(() => {
-          count -= 1;
-          this.setState({ count });
-          if (count === 0) {
-            clearInterval(this.interval);
-          }
-        }, 1000);
-      }
-    });
-  };
-
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields({ force: true }, (err, values) => {
@@ -63,7 +43,7 @@ export default class Password extends React.Component {
     		<h3 className={styles.subtitle}>密码重置</h3>
     		<Form onSubmit={this.handleSubmit}>
 	          <FormItem>
-	            {getFieldDecorator('mobile', {
+	            {getFieldDecorator('newPwd', {
                 rules: [
                   {
                     required: true,
@@ -74,7 +54,7 @@ export default class Password extends React.Component {
 	          </FormItem>
 
             <FormItem>
-              {getFieldDecorator('mobile', {
+              {getFieldDecorator('cfmPwd', {
                 rules: [
                   {
                     required: true,

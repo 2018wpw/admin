@@ -13,3 +13,22 @@ export async function logout() {
     method: 'POST',
   });
 }
+
+export async function sendCapatch() {
+	return request('/common/verifiedCode/send', {
+		method: 'POST',
+	});
+}
+
+export async function verifyCapatch() {
+	return request('/common/verifiedCode/verify', {
+		method: 'POST',
+	});
+}
+
+export async function resetPwd(params) {
+  return request('/admin/user/resetPassword', {
+    method: 'POST',
+    body: params,
+  });	
+}

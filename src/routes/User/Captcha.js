@@ -10,7 +10,7 @@ const InputGroup = Input.Group;
 
 @connect(({ captcha, loading }) => ({
   captcha,
-  submitting: loading.effects['captcha/submit'],
+  submitting: loading.effects['captcha/verifyCaptcha'],
 }))
 @Form.create()
 export default class Captcha extends React.Component {
@@ -49,10 +49,10 @@ export default class Captcha extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    this.props.form.validateFields({ force: true }, (err, values) => {
+    this.props.form.validateFields(['captcha', 'mobile'], { force: true }, (err, values) => {
       if (!err) {
         this.props.dispatch({
-          type: 'captcha/submit',
+          type: 'captcha/verifyCaptcha',
           payload: {
             ...values,
           },

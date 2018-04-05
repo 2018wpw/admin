@@ -1,4 +1,4 @@
-import { fakeGetCaptcha, fakeVerifyCaptcha } from '../services/api';
+import { sendCapatch, verifyCapatch } from '../services/login';
 import { routerRedux } from 'dva/router';
 
 export default {
@@ -9,19 +9,17 @@ export default {
   },
 
   effects: {
-    *submit({ payload }, { call, put }) {
-      const response = yield call(fakeVerifyCaptcha, payload);
-      console.log(response);
-      if (response.status === 'ok') {
+    *verifyCaptcha({ payload }, { call, put }) {
+      const response = yield call(verifyCapatch, payload);
+      if (response.errCode === 0) {
         yield put(routerRedux.push('/user/password'));
       }
     },
     *getCaptcha({ payload }, { call, put }) {
-      const response = yield call(fakeGetCaptcha, payload);
-      console.log(response);
+      const response = yield call(sendCapatch, payload);
       yield put({
         type: 'handleCaptcha',
-        payload: response,
+        payload: response.data,
       });
     }
   },
@@ -30,7 +28,7 @@ export default {
     handleCaptcha(state, {payload}) {
       return {
         ...state,
-        status: payload.status,
+        status: payload.errCode,
       };
     },
   },

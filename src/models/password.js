@@ -1,5 +1,4 @@
-import { fakeRegister } from '../services/api';
-import { fakeGetCaptcha } from '../services/api';
+import { resetPwd } from '../services/login';
 import { routerRedux } from 'dva/router';
 
 export default {
@@ -11,10 +10,24 @@ export default {
 
   effects: {
     *submit({ payload }, { call, put }) {
-      const response = yield call(fakeGetCaptcha, payload);
-      if (response.status === 'ok') {
+      const response = yield call(resetPwd, payload);
+      if (response.errCode === 0) {
         yield put(routerRedux.push('/'));
+      } else {
+        yield put({
+          type: 'errorCallback',
+          payload: response,
+        });
       }
+    },
+  },
+  reducers: {
+    errorCallback(state, { payload }) {
+      return {
+        ...state,
+        errCode: payload.errCode,
+        errMsg: payload.errMsg,
+      };
     },
   },
 };

@@ -20,6 +20,7 @@ export function getUserName() {
 export function getUser() {
 	const user = {
 		name: localStorage.getItem('userName'),
+		avater: 'https://www.baidu.com/img/baidu_jgylogo3.gif'
 	}
 	return user;
 }

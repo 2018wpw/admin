@@ -32,6 +32,7 @@ function checkStatus(response) {
   const error = new Error(errortext);
   error.name = response.status;
   error.response = response;
+  error.response.errCode = -1;
   throw error;
 }
 

@@ -11,6 +11,7 @@ import { format, delay } from 'roadhog-api-doc';
 const noProxy = process.env.NO_PROXY === 'true';
 
 const baseUrl = 'http://60.205.205.82/mockjs/1/';
+const baseUrl2 = 'http://60.205.205.82/mockjs/2/';
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
@@ -146,5 +147,10 @@ export default {
   // Forward 到另一个服务器
   'POST /admin/user/login': baseUrl,
   'POST /admin/user/logout': baseUrl,
+  'POST /admin/user/resetPassword': baseUrl,
+  'POST /common/verifiedCode/send': baseUrl2,
+  'POST /common/verifiedCode/verify': baseUrl2,
+
+
   // ....
 };
