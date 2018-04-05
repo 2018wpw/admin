@@ -1,4 +1,5 @@
 import { queryUserInfo, editBankInfo, editUserInfo } from '../services/account';
+import { queryRoleList, createRole, editRole } from '../services/account';
 
 export default {
   namespace: 'account',
@@ -37,6 +38,47 @@ export default {
         errCode: response.errCode,
       });
     },
+    *queryRoleList({ payload }, { call, put }) {
+      const response = yield call(queryRoleList, payload);
+      yield put({
+        type: 'roleListCallback',
+        payload: response.data,
+        errCode: response.errCode,
+      });
+    },
+    *createRole({ payload }, { call, put }) {
+      const response = yield call(createRole, payload);
+      if (response.errCode === 0) {
+        const response = yield call(queryRoleList, payload);
+        yield put({
+          type: 'roleListCallback',
+          payload: response.data,
+          errCode: response.errCode,
+        });        
+      }
+    },
+    *editRole({ payload }, { call, put }) {
+      const response = yield call(editRole, payload);
+      if (response.errCode === 0) {
+        const response = yield call(queryRoleList, payload);
+        yield put({
+          type: 'roleListCallback',
+          payload: response.data,
+          errCode: response.errCode,
+        });        
+      }
+    },
+    *deleteRole({ payload }, { call, put }) {
+      const response = yield call(deleteRole, payload);
+      if (response.errCode === 0) {
+        const response = yield call(queryRoleList, payload);
+        yield put({
+          type: 'roleListCallback',
+          payload: response.data,
+          errCode: response.errCode,
+        });        
+      }
+    },                 
   },
 
   reducers: {
@@ -68,6 +110,21 @@ export default {
         userCompleted: true,
         errCode: errCode,
       }
-    },    
+    },
+    roleListCallback(state, { payload, errCode }) {
+      var key = 'role|10';
+      if (errCode === 0) {
+        return {
+          ...state,
+          ...payload,
+          errCode: 0,
+        }
+      } else {
+        return {
+          ...state,
+          errCode: errCode,
+        }
+      }
+    }, 
   },
 };

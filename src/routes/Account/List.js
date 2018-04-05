@@ -194,7 +194,7 @@ export default class AccountList extends React.Component {
       render: (text, record) => {
         return (
             <div>
-              <a href="" name="edit" className={styles.edit} onClick={() => {alert("alert")}}>编辑</a>
+              <a name="edit" className={styles.edit} onClick={() => {alert("alert")}}>编辑</a>
               <a name="change" className={styles.change} onClick={() => {this.onChange()}}>修改密码</a>
             </div>
         );

@@ -1,6 +1,7 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './RoleManager.less';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -38,7 +39,7 @@ const CreateRoleForm = Form.create()((props) => {
         wrapperCol={{ span: 15 }}
         label="权限"
       >
-        {form.getFieldDecorator('permission', {
+        {form.getFieldDecorator('permissions', {
           rules: [{ required: true, message: '请输入权限' }],
         })(
           <Input placeholder="请输入权限" />
@@ -50,7 +51,7 @@ const CreateRoleForm = Form.create()((props) => {
         wrapperCol={{ span: 15 }}
         label="角色描述"
       >
-        {form.getFieldDecorator('description', {
+        {form.getFieldDecorator('descr', {
           rules: [{ required: true, message: '请输入角色描述' }],
         })(
           <TextArea/>
@@ -60,11 +61,68 @@ const CreateRoleForm = Form.create()((props) => {
   );
 });
 
+const EditRoleForm = Form.create()((props) => {
+  const { visible, form, handleEdit, hideEditModal } = props;
+  const { getFieldProps, getFieldDecorator } = form;
 
+  const okHandle = () => {
+    form.validateFields((err, values) => {
+      handleEdit(values);
+    });    
+  };
+  return (
+    <Modal
+      title="编辑角色"
+      visible={visible}
+      onOk={okHandle}
+      onCancel={() => hideEditModal()}
+    >
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="角色名称"
+      >
+      {getFieldDecorator('name')(
+          <div>名称</div> 
+      )}
+      </FormItem>
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="权限"
+      >
+      {getFieldDecorator('permissions')(
+          <div>删除</div> 
+      )}      
+      </FormItem>            
+
+      <FormItem
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 15 }}
+        label="角色描述"
+      >
+      {getFieldDecorator('descr')(
+        <TextArea placeholder='描述'/>     
+      )}        
+      </FormItem>      
+    </Modal>
+  );
+});
+
+@connect(({ account, loading }) => ({
+  account,
+  loading: loading.effects['account/queryRoleList'],
+}))
 export default class RoleManager extends React.Component {
-  constructor(props) {
-    super(props);
-    this.columns = [{
+  state = {
+      count: 1,
+      visible: false,
+      dataSource: [],
+      editVisible: false,
+  }
+
+  columns = [{
       title: '角色名称',
       dataIndex: 'name',
     }, {
@@ -75,23 +133,24 @@ export default class RoleManager extends React.Component {
       dataIndex: 'operation',
       render: (text, record) => {
         return (
-            <Popconfirm title="确认删除?" onConfirm={() => this.onDelete(record.key)}>
-              <a href="#" className={styles.left}>编辑</a>
-              <a href="#" className={styles.right}>删除</a>
-            </Popconfirm>
+            <div>
+              <a onClick={() => {this.onEdit()}} className={styles.left}>编辑</a>
+              <a onClick={() => {this.onDelete()}} className={styles.right}>删除</a>
+            </div>
         );
       },
-    }];
+  }]
 
-    this.state = {
-      dataSource: [{
-        key: '0',
-        name: '管理员',
-        description: '我是管理员',
-      }],
-      count: 1,
-      visible: false,
-    };
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'account/queryRoleList',
+    });
+  }
+
+  onEdit = () => {
+    this.setState({
+      editVisible: true
+    });
   }
 
   onCellChange = (key, dataIndex) => {
@@ -108,17 +167,14 @@ export default class RoleManager extends React.Component {
     const dataSource = [...this.state.dataSource];
     this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
   }
-  handleCreate = () => {
-    const { count, dataSource } = this.state;
-    const form = this.form;
-    const newData = {
-        key: count,
-        name: '用户1',
-        description: '我是描述信息',
-    };
+  handleCreate = (value) => {
+    this.props.dispatch({
+      type: 'account/createRole',
+      payload: {
+        ...value,
+      }
+    });
     this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
       visible: false
     });
   }
@@ -142,22 +198,41 @@ export default class RoleManager extends React.Component {
     });
   }
 
+  hideEditModal = () => {
+    this.setState({
+      editVisible: false,
+    })
+  }
+
+  handleEdit = (value) => {
+    this.props.dispatch({
+      type: 'account/editRole',
+      payload: {
+        ...value,
+      }
+    });
+    this.setState({
+      editVisible: false,
+    })    
+  }
+
   onSubmit = (e) => {
 
   }
 
-  saveFormRef = (form) => {
-    this.form = form;
-  }
-
-
   render() {
-    const { dataSource, visible } = this.state;
-    const columns = this.columns;
-
+    const { account } = this.props;
+    var dataSource = account.roles;
+    dataSource = [{
+        key: '0',
+        name: '管理员',
+        description: '我是管理员',      
+    }];
     const parentMethods = {
       handleCreate: this.handleCreate,
       handleModalVisible: this.handleModalVisible,
+      hideEditModal: this.hideEditModal,
+      handleEdit: this.handleEdit,
     };
 
     return (
@@ -165,13 +240,17 @@ export default class RoleManager extends React.Component {
         <Card bordered={false}>
           <div>
             <Button className={styles.button} type="primary" onClick={this.showModal}>创建角色</Button>
-            <Table bordered dataSource={dataSource} columns={columns} />
+            <Table bordered dataSource={dataSource} columns={this.columns} />
           </div>          
         </Card>
 
         <CreateRoleForm
           {...parentMethods}
-          visible={visible}
+          visible={this.state.visible}
+        />
+        <EditRoleForm
+          {...parentMethods}
+          visible={this.state.editVisible}        
         />
       </PageHeaderLayout>
     );

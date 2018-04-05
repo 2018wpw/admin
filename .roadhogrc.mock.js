@@ -155,4 +155,8 @@ export default {
   'POST /admin/user/editUserInfo': baseUrl,
   'POST /admin/user/editBankInfo': baseUrl,
   'GET /admin/user/query': baseUrl,
+
+  'GET /admin/role/list': baseUrl,
+  'POST /admin/role/create': baseUrl,
+  'POST /admin/role/edit': baseUrl,
 };
