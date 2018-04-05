@@ -63,3 +63,10 @@ export async function createRole(params) {
     body: params,
   }); 
 }
+
+export async function queryUserList(params) {
+  return request('/admin/user/listUsers', {
+    method: 'GET',
+    body: params,
+  }); 
+}

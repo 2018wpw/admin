@@ -1,8 +1,13 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 
+@connect(({ account, loading }) => ({
+  account,
+  loading: loading.effects['account/queryUserList'],
+}))
 export default class UserInfo extends React.Component {
   constructor(props) {
     super(props);
@@ -31,29 +36,23 @@ export default class UserInfo extends React.Component {
       title: '注册时间',
       dataIndex: 'regTime',
     }];
-
-    this.state = {
-      dataSource: [{
-        key: '0',
-        name: '张三',
-        sex: '男',
-        age: '30',
-        type: '管理员',
-        tel: '18600000000',
-        deviceInfo: "MAC12345",
-        refDevice: "M100",
-        regTime: "2018-01-01"
-      }],
-      count: 1,
-    };
   }
 
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'account/queryUserList',
+    });
+  }  
+
   render() {
-    const { dataSource } = this.state;
+    const { account } = this.props;
+    var dataSource = account.users;
+    const { loading } = this.props;
     const columns = this.columns;
+
     return (
       <PageHeaderLayout>
-        <Card bordered={false}>
+        <Card bordered={false} loading={loading}>
           <div>
             <Table bordered dataSource={dataSource} columns={columns} />
           </div>          

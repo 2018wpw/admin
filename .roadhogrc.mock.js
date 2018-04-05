@@ -159,4 +159,6 @@ export default {
   'GET /admin/role/list': baseUrl,
   'POST /admin/role/create': baseUrl,
   'POST /admin/role/edit': baseUrl,
+
+  'GET /admin/user/listUsers': baseUrl,
 };

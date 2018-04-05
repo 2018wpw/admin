@@ -1,5 +1,6 @@
 import { queryUserInfo, editBankInfo, editUserInfo } from '../services/account';
 import { queryRoleList, createRole, editRole } from '../services/account';
+import { queryUserList } from '../services/account';
 
 export default {
   namespace: 'account',
@@ -79,6 +80,14 @@ export default {
         });        
       }
     },                 
+    *queryUserList({ payload }, { call, put }) {
+      const response = yield call(queryUserList, payload);
+      yield put({
+        type: 'userListCallback',
+        payload: response.data,
+        errCode: response.errCode,
+      });
+    },
   },
 
   reducers: {
@@ -126,5 +135,19 @@ export default {
         }
       }
     }, 
+    userListCallback(state, { payload, errCode }) {
+      if (errCode === 0) {
+        return {
+          ...state,
+          ...payload,
+          errCode: 0,
+        }
+      } else {
+        return {
+          ...state,
+          errCode: errCode,
+        }
+      }
+    },     
   },
 };
