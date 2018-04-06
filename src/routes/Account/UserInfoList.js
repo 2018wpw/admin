@@ -25,17 +25,14 @@ export default class UserInfo extends React.Component {
       dataIndex: 'type',
     }, {
       title: '联系方式',
-      dataIndex: 'tel',
-    }, {
-      title: '设备信息',
-      dataIndex: 'deviceInfo',
-    }, {
-      title: '相关设备  ',
-      dataIndex: 'refDevice',
-    }, {
+      dataIndex: 'phone',
+    },{
       title: '注册时间',
       dataIndex: 'regTime',
-    }];
+    }, {
+      title: '设备名称',
+      dataIndex: 'deviceName',
+    }, ];
   }
 
   componentDidMount() {
@@ -46,7 +43,11 @@ export default class UserInfo extends React.Component {
 
   render() {
     const { account } = this.props;
-    var dataSource = account.users;
+    var dataSource = account.users || [];
+    dataSource.map((item)=>{
+      item['deviceName'] = item.devices.deviceName;
+    });
+
     const { loading } = this.props;
     const columns = this.columns;
 

@@ -127,7 +127,7 @@ export default class RoleManager extends React.Component {
       dataIndex: 'name',
     }, {
       title: '角色描述',
-      dataIndex: 'description',
+      dataIndex: 'descr',
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -222,12 +222,7 @@ export default class RoleManager extends React.Component {
 
   render() {
     const { account } = this.props;
-    var dataSource = account.roles;
-    dataSource = [{
-        key: '0',
-        name: '管理员',
-        description: '我是管理员',      
-    }];
+    var dataSource = account.roles || [];
     const parentMethods = {
       handleCreate: this.handleCreate,
       handleModalVisible: this.handleModalVisible,

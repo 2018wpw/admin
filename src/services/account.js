@@ -70,3 +70,10 @@ export async function queryUserList(params) {
     body: params,
   }); 
 }
+
+export async function queryAccountList(params) {
+  return request('/admin/user/listAccounts', {
+    method: 'GET',
+    body: params,
+  });   
+}

@@ -1,6 +1,7 @@
 import { queryUserInfo, editBankInfo, editUserInfo } from '../services/account';
 import { queryRoleList, createRole, editRole } from '../services/account';
-import { queryUserList } from '../services/account';
+import { queryUserList, queryAccountList } from '../services/account';
+import { formatMockData } from '../utils/utils';
 
 export default {
   namespace: 'account',
@@ -88,6 +89,15 @@ export default {
         errCode: response.errCode,
       });
     },
+    *queryAccountList({ payload }, { call, put }) {
+      const response = yield call(queryAccountList, payload);
+      yield put({
+        type: 'accountListCallback',
+        payload: response.data,
+        errCode: response.errCode,
+      });
+    },
+
   },
 
   reducers: {
@@ -121,7 +131,7 @@ export default {
       }
     },
     roleListCallback(state, { payload, errCode }) {
-      var key = 'role|10';
+      payload = formatMockData(payload);      
       if (errCode === 0) {
         return {
           ...state,
@@ -136,6 +146,22 @@ export default {
       }
     }, 
     userListCallback(state, { payload, errCode }) {
+      payload = formatMockData(payload);      
+      if (errCode === 0) {
+        return {
+          ...state,
+          ...payload,
+          errCode: 0,
+        }
+      } else {
+        return {
+          ...state,
+          errCode: errCode,
+        }
+      }
+    },     
+    accountListCallback(state, { payload, errCode }) {
+      payload = formatMockData(payload);
       if (errCode === 0) {
         return {
           ...state,

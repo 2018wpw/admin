@@ -157,3 +157,10 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-
 export function isUrl(path) {
   return reg.test(path);
 }
+
+export function formatMockData(payload) {
+  payload = JSON.stringify(payload);
+  payload = payload.replace('|10', '');
+  payload = JSON.parse(payload);
+  return payload;
+}
