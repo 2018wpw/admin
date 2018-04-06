@@ -162,5 +162,5 @@ export default {
 
   'GET /admin/user/listUsers': baseUrl,
   'GET /admin/user/listAccounts': baseUrl,
-  
+  'POST /admin/user/createAccount': baseUrl,
 };

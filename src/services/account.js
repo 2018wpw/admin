@@ -77,3 +77,10 @@ export async function queryAccountList(params) {
     body: params,
   });   
 }
+
+export async function createAccount(params) {
+  return request('/admin/user/createAccount', {
+    method: 'POST',
+    body: params,
+  });     
+}

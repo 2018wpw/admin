@@ -1,6 +1,6 @@
 import { queryUserInfo, editBankInfo, editUserInfo } from '../services/account';
 import { queryRoleList, createRole, editRole } from '../services/account';
-import { queryUserList, queryAccountList } from '../services/account';
+import { queryUserList, queryAccountList, createAccount } from '../services/account';
 import { formatMockData } from '../utils/utils';
 
 export default {
@@ -97,7 +97,17 @@ export default {
         errCode: response.errCode,
       });
     },
-
+    *createAccount({ payload }, { call, put }) {
+      const response = yield call(createAccount, payload);
+      if (response.errCode === 0) {
+        const response = yield call(queryAccountList, payload);
+        yield put({
+          type: 'accountListCallback',
+          payload: response.data,
+          errCode: response.errCode,
+        });        
+      }
+    },
   },
 
   reducers: {
