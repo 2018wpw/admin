@@ -161,6 +161,6 @@ export default {
   'POST /admin/role/edit': baseUrl,
 
   'GET /admin/user/listUsers': baseUrl,
-  'GET /admin/user/listAccounts': baseUrl,
+  'POST /admin/user/listAccounts': baseUrl,
   'POST /admin/user/createAccount': baseUrl,
 };

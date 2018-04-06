@@ -174,11 +174,7 @@ const AddAccountForm = Form.create()((props) => {
   );
 });
 
-@connect(({ account, loading }) => ({
-  account,
-  loading: loading.effects['account/queryAccountList'],
-}))
-export default class AccountList extends React.Component {
+class AccountList extends React.Component {
   constructor(props) {
     super(props);
 
@@ -260,7 +256,6 @@ export default class AccountList extends React.Component {
   }
 
   handleAddAccount = (values) => {
-    const form = this.form;
     this.setState({
       addAccountModalVisible: false,
     });
@@ -272,56 +267,29 @@ export default class AccountList extends React.Component {
     });    
   }
 
-  saveFormRef = (form) => {
-    this.form = form;
-  }
-
   onChange = (value) => {
     console.log(value);
   }
 
-  renderSimpleForm() {
-    return (
-      <Form layouts="vertical" layout="inline">
-            <Row  gutter={{ md: 8, lg: 16, xl: 24 }}>
-              <Col md={5} sm={24}>
-                <FormItem label="用户名">
-                  <Input placeholder="请输入用户名"></Input>
-                </FormItem>
-              </Col>
-              <Col  md={7} sm={24}>
-                <FormItem label="地区">
-                  <Cascader options={CascaderOptions} onChange={this.onChange} changeOnSelect placeholder='请选择' />
-                </FormItem>
-              </Col>
-              <Col md={7} sm={24}>
-                <FormItem label="详细地址">
-                  <Input placeholder="请输入详细地址"></Input>                
-                </FormItem>
-              </Col> 
-              <Col md={5} sm={24}>
-                <FormItem label="手机号">
-                  <Input placeholder="请输入手机号"></Input>                
-                </FormItem>
-              </Col>                             
-            </Row>
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem>
-                  <div layout="inline" align="center">
-                    <Button type="primary" className={styles.button}>查询</Button>
-                    <Button type="primary" className={styles.button}  onClick={() => this.handleModalVisible(true)}>添加</Button>
-                  </div>
-                </FormItem>
-              </Col>              
-            </Row>
-      </Form> 
-    );
+  searchAccount = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      this.props.dispatch({
+        type: 'account/queryAccountList',
+        payload: {
+          ...fieldsValue,
+        },      
+      });       
+    });
   }
 
   render() {
+    const { form, dispatch, submitting } = this.props;
     const { addAccountModalVisible, changePwdModalVisible } = this.state;
     const { account } = this.props;
+    const { getFieldDecorator, validateFields } = form;
+
     var dataSource = account.accounts || [];
     dataSource.map((item) => {
       item['accountType'] = item.role.name;
@@ -338,7 +306,48 @@ export default class AccountList extends React.Component {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableListForm}>
-            {this.renderSimpleForm()}
+            <Form layouts="vertical" layout="inline"  onSubmit={this.searchAccount}>
+              <Row  gutter={{ md: 8, lg: 16, xl: 24 }}>
+                <Col md={5} sm={24}>
+                  <FormItem label="用户名">
+                    {getFieldDecorator('name')(
+                      <Input placeholder="请输入用户名"></Input>                    
+                    )}                
+                  </FormItem>
+                </Col>
+                <Col  md={7} sm={24}>
+                  <FormItem label="地区">
+                    {getFieldDecorator('addrCode')(
+                      <Cascader options={CascaderOptions} onChange={this.onChange} changeOnSelect placeholder='请选择' />
+                    )}                   
+                  </FormItem>
+                </Col>
+                <Col md={7} sm={24}>
+                  <FormItem label="详细地址">
+                   {getFieldDecorator('addrDetail')(
+                      <Input placeholder="请输入详细地址"></Input>                    
+                    )}                   
+                  </FormItem>
+                </Col> 
+                <Col md={5} sm={24}>
+                  <FormItem label="手机号">
+                   {getFieldDecorator('phone')(
+                      <Input placeholder="请输入手机号"></Input>                    
+                    )}                  
+                  </FormItem>
+                </Col>                             
+              </Row>
+              <Row>
+                <Col md={24} sm={24}>
+                  <FormItem>
+                    <div layout="inline" align="center">
+                      <Button type="primary" className={styles.button} htmlType="submit">查询</Button>
+                      <Button type="primary" className={styles.button}  onClick={() => this.handleModalVisible(true)}>添加</Button>
+                    </div>
+                  </FormItem>
+                </Col>              
+              </Row>
+            </Form>
           </div>
 
           <div>
@@ -360,3 +369,8 @@ export default class AccountList extends React.Component {
     );
   }
 }
+
+export default connect(({ account, loading }) => ({
+  account,
+  loading: loading.effects['account/queryAccountList'],
+}))(Form.create()(AccountList));

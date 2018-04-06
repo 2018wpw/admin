@@ -73,7 +73,7 @@ export async function queryUserList(params) {
 
 export async function queryAccountList(params) {
   return request('/admin/user/listAccounts', {
-    method: 'GET',
+    method: 'POST',
     body: params,
   });   
 }
