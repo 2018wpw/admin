@@ -175,7 +175,7 @@ export default {
   'GET /admin/ota/listOTAHistory': baseUrl,
 
   //导入设备
-  'GET admin/device/importDevices': baseUrl,
-  'GET admin/device/queryImportHistory': baseUrl,
-
+  'GET /admin/device/importDevices': baseUrl,
+  'GET /admin/device/queryImportHistory': baseUrl,
+  
 };

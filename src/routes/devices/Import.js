@@ -1,51 +1,45 @@
 import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col } from 'antd';
 import styles from './Import.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-export default class ProductList extends React.Component {
+@connect(({ importModel, loading }) => ({
+  importModel,
+  loading: loading.effects['importModel/queryImportHistory'],  
+}))
+export default class ImportDevices extends React.Component {
   constructor(props) {
     super(props);
 
     this.historyColumns = [{
       title: '导入时间',
-      dataIndex: 'importTime',
+      dataIndex: 'time',
     }, {
       title: '导入数量',
       dataIndex: 'importCount',
     }, {
       title: '成功数',
-      dataIndex: 'successCount',
+      dataIndex: 'okCount',
     }, {
       title: '失败数',
       dataIndex: 'failCount',
     }, {
       title: '产品类型',
-      dataIndex: 'type',
+      dataIndex: 'prodName',
     }, {
       title: '产品型号',
-      dataIndex: 'model',
+      dataIndex: 'modelName',
     }, {
       title: '批次',
-      dataIndex: 'times',
+      dataIndex: 'batchName',
     }];
 
 
     this.state = {
       visible: false,
-      historyData: [{
-        key: '0',
-        importTime: '2018-01-01',
-        importCount: '9',
-        successCount: '8',
-        failCount: '1',
-        type: 'M100',
-        model: 'M100',
-        times: '5'
-      }],
-      historyCount: 1,
     };
   }
   onCellChange = (key, dataIndex) => {
@@ -59,24 +53,14 @@ export default class ProductList extends React.Component {
     };
   }
 
-  handleCreate = () => {
-    const { historyCount, historyData } = this.state;
-    const form = this.form;
-    const newData = {
-        key: historyCount,
-        importTime: '2018-01-01',
-        importCount: '9',
-        successCount: '8',
-        failCount: '1',
-        type: '产品类型1',
-        model: 'M100',
-        times: '5'
-    };
-    this.setState({
-      historyData: [...historyData, newData],
-      historyCount: historyCount + 1,
-      visible: false
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'importModel/queryImportHistory',
     });
+  }  
+
+  handleCreate = () => {
+    const form = this.form;
   }
 
   saveFormRef = (form) => {
@@ -125,9 +109,12 @@ export default class ProductList extends React.Component {
   }
 
   render() {
-    const { historyData } = this.state;
-    const columns = this.columns;
-    const historyColumns = this.historyColumns;
+    const { importModel } = this.props;
+    var historyData = importModel.records || [];
+    historyData.map((item, index)=>{
+      item['key'] = index;
+      item['importCount'] = item.okCount + item.failCount;
+    });
 
     return (
       <PageHeaderLayout>
@@ -144,7 +131,7 @@ export default class ProductList extends React.Component {
           <div>
             <p className={styles.p}>导入历史记录</p>
             <hr className={styles.line} />
-            <Table bordered dataSource={historyData} columns={historyColumns} />
+            <Table bordered dataSource={historyData} columns={this.historyColumns} />
           </div>
         </Card>
       </PageHeaderLayout>
