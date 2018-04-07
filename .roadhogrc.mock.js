@@ -144,6 +144,8 @@ const proxy = {
 
 //登录信息
 export default {
+  'POST /common/file/upload': baseUrl2,
+
   // Forward 到另一个服务器
   'POST /admin/user/login': baseUrl,
   'POST /admin/user/logout': baseUrl,
@@ -164,4 +166,16 @@ export default {
   'POST /admin/user/listAccounts': baseUrl,
   'POST /admin/user/createAccount': baseUrl,
   'POST /admin/user/resetAccountPassword': baseUrl,
+
+  //设备
+  //升级
+  'POST /admin/ota/createOTAPackage': baseUrl,
+  'POST /admin/ota/requestOTA': baseUrl,
+  'GET /admin/ota/listOTAPackages': baseUrl,
+  'GET /admin/ota/listOTAHistory': baseUrl,
+
+  //导入设备
+  'GET admin/device/importDevices': baseUrl,
+  'GET admin/device/queryImportHistory': baseUrl,
+
 };

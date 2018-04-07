@@ -44,7 +44,8 @@ export default class UserInfo extends React.Component {
   render() {
     const { account } = this.props;
     var dataSource = account.users || [];
-    dataSource.map((item)=>{
+    dataSource.map((item, index)=>{
+      item['key'] = index;
       item['deviceName'] = item.devices.deviceName;
     });
 
