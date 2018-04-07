@@ -163,4 +163,5 @@ export default {
   'GET /admin/user/listUsers': baseUrl,
   'POST /admin/user/listAccounts': baseUrl,
   'POST /admin/user/createAccount': baseUrl,
+  'POST /admin/user/resetAccountPassword': baseUrl,
 };

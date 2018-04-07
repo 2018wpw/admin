@@ -84,3 +84,10 @@ export async function createAccount(params) {
     body: params,
   });     
 }
+
+export async function resetAccountPwd(params) {
+  return request('/admin/user/resetAccountPassword', {
+    method: 'POST',
+    body: params,
+  });
+}
