@@ -30,7 +30,15 @@ export async function create(params) {
 }
 
 export async function edit(params) {
-  return request('/admin/strainer/edit', {
+  return request('/admin/alarm/edit', {
+    method: 'POST',
+    body: params,
+  });
+}
+
+
+export async function deleteWarning(params) {
+  return request('/admin/alarm/delete', {
     method: 'POST',
     body: params,
   });

@@ -204,5 +204,6 @@ export default {
   'POST /admin/alarm/create': baseUrl,
   'GET /admin/alarm/list': baseUrl,
   'POST /admin/alarm/edit': baseUrl,
+  'POST /admin/alarm/delete': baseUrl,
 
 };

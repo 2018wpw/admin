@@ -1,17 +1,19 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
 const CreateWarningForm = Form.create()((props) => {
-  const { visible, form, handleCreate, handleModalVisible } = props;
+  const { visible, form, handleCreate, handleModalVisible, warningSettingData } = props;
+  const { tvocMaxVal, name, groupID, ch2oMaxVal, pm25MaxVal, humidityMaxVal, humidityMinVal, tempMaxVal,tempMinVal, descr, strainerMinVal } = warningSettingData;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      handleCreate(fieldsValue);
+      handleCreate(fieldsValue, warningSettingData === '');
     });
   };
   return (
@@ -30,8 +32,9 @@ const CreateWarningForm = Form.create()((props) => {
         >
           {form.getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入' }],
+            initialValue: name,
           })(
-            <Input placeholder="请输入" />
+            <Input placeholder="请输入"/>
           )}
         </FormItem>
 
@@ -40,8 +43,9 @@ const CreateWarningForm = Form.create()((props) => {
           wrapperCol={{ span: 15 }}
           label="群组"
         >
-          {form.getFieldDecorator('group', {
+          {form.getFieldDecorator('groupID', {
             rules: [{ required: true, message: '请选择' }],
+            initialValue: groupID,
           })(
             <Select placeholder="请选择">
               <Option value="0">M100</Option>
@@ -53,11 +57,9 @@ const CreateWarningForm = Form.create()((props) => {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="PM2.5的值"
+          label="PM2.5的值≥"
         >
-          {form.getFieldDecorator('pm25', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
+          {form.getFieldDecorator('pm25MaxVal', {initialValue: pm25MaxVal,})(
             <Input placeholder="请输入" />
           )}
         </FormItem>  
@@ -65,22 +67,18 @@ const CreateWarningForm = Form.create()((props) => {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="TVOC的值"
+          label="TVOC的值≥"
         >
-          {form.getFieldDecorator('tvoc', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
+          {form.getFieldDecorator('tvocMaxVal', {initialValue: tvocMaxVal,})(
             <Input placeholder="请输入" />
           )}
         </FormItem>           
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="甲醛"
+          label="甲醛≥"
         >
-          {form.getFieldDecorator('formal', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
+          {form.getFieldDecorator('ch2oMaxVal', {initialValue: ch2oMaxVal,})(
             <Input placeholder="请输入" />
           )}
         </FormItem> 
@@ -89,42 +87,59 @@ const CreateWarningForm = Form.create()((props) => {
           wrapperCol={{ span: 15 }}
           label="滤网剩余天数"
         >
-          {form.getFieldDecorator('date', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
+          {form.getFieldDecorator('strainerMinVal', {initialValue: strainerMinVal})(
             <Input placeholder="天" />
           )}
         </FormItem>     
               <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="温度"
+          label="温度≤"
         >
-          {form.getFieldDecorator('temperature', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
+          <Row>
+            <Col span={11}>
+              {form.getFieldDecorator('tempMaxVal', {initialValue: tempMaxVal})(
+                <Input placeholder="请输入" />
+              )}              
+            </Col>
+            <Col span={2}>
+              <div className={styles.center}>≥</div>
+            </Col>
+            <Col span={11}>
+              {form.getFieldDecorator('tempMinVal', {initialValue: tempMinVal})(
+                <Input placeholder="请输入" />
+              )}              
+            </Col>            
+          </Row>
+
         </FormItem>  
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="湿度"
+          label="湿度≤"
         >
-          {form.getFieldDecorator('humidity', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入" />
-          )}
+          <Row>
+            <Col span={11}>
+              {form.getFieldDecorator('humidityMaxVal', {initialValue: humidityMaxVal})(
+                <Input placeholder="请输入" />
+              )}              
+            </Col>
+            <Col span={2}>
+              <div className={styles.center}>≥</div>
+            </Col>
+            <Col span={11}>
+              {form.getFieldDecorator('humidityMinVal', {initialValue: humidityMinVal})(
+                <Input placeholder="请输入" />
+              )}              
+            </Col>            
+          </Row>
         </FormItem>  
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
           label="描述信息"
         >
-          {form.getFieldDecorator('description', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
+          {form.getFieldDecorator('descr', {initialValue: descr})(
             <TextArea/>
           )}
         </FormItem> 
@@ -133,7 +148,10 @@ const CreateWarningForm = Form.create()((props) => {
   );
 });
 
-
+@connect(({ warning, loading }) => ({
+  warning,
+  loading: loading.effects['warning/list'],
+}))
 export default class WarningSetting extends React.Component {
   constructor(props) {
     super(props);
@@ -142,54 +160,84 @@ export default class WarningSetting extends React.Component {
       dataIndex: 'name',
     }, {
       title: '描述',
-      dataIndex: 'description',
+      dataIndex: 'descr',
     }, {
       title: '操作',
       dataIndex: 'operation',
       render: (text, record) => {
         return (
-            <Popconfirm title="确认删除?" onConfirm={() => this.onDelete(record.key)}>
-              <a href="#" className={styles.editHref}>编辑</a>
-              <a href="#" className={styles.deleteHref}>删除</a>
-            </Popconfirm>
+          <div>
+              <a onClick={()=>this.onEditItem(record)} className={styles.left}>编辑</a>
+              <a onClick={()=>this.onDeleteItem(record)} className={styles.right}>删除</a>            
+          </div>
         );
       },
     }];
 
     this.state = {
-      dataSource: [],
+      warningSettingData: '',
       count: 0,
       visible: false,
     };
   }
+  componentDidMount() {
+    console.log('componentDidMount')
+    this.props.dispatch({
+      type: 'warning/list',
+    });
+  }  
 
-  onCellChange = (key, dataIndex) => {
-    return (value) => {
-      const dataSource = [...this.state.dataSource];
-      const target = dataSource.find(item => item.key === key);
-      if (target) {
-        target[dataIndex] = value;
-        this.setState({ dataSource });
-      }
-    };
-  }
-  onDelete = (key) => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
-  }
-  handleCreate = () => {
-    const { count, dataSource } = this.state;
-    const form = this.form;
-    const newData = {
-        key: count,
-        name: '用户1',
-        description: '我是描述信息',
-    };
+  handleCreate = (values, flag) => {
     this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
       visible: false
     });
+    if (flag) {
+      this.props.dispatch({
+        type: 'warning/create',
+        payload: {
+          ...values,
+        }
+      });      
+    } else {
+      this.props.dispatch({
+        type: 'warning/edit',
+        payload: {
+          ...values,
+        }
+      });      
+    }
+
+  }
+  
+  onDeleteItem = (record) => {
+    this.props.dispatch({
+        type: 'warning/delete',
+        payload: {
+          alarmID: record.id,
+        }
+      });
+  }
+
+  onEditItem = (record) => {
+    return new Promise((resolve, reject) => {
+      this.props.dispatch({
+        type: 'warning/query',
+        payload: {
+          alarmID: record.id,
+          resolve,
+          reject,
+        }
+      });
+    }).then(res => {
+      console.log(res);
+      this.setState({
+        visible: true,
+        warningSettingData: res,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    })
   }
 
   showModal = () => {
@@ -208,6 +256,7 @@ export default class WarningSetting extends React.Component {
   handleModalVisible = (flag) => {
     this.setState({
       visible: !!flag,
+      warningSettingData: '',
     });
   }
 
@@ -221,8 +270,13 @@ export default class WarningSetting extends React.Component {
 
 
   render() {
-    const { dataSource, visible } = this.state;
+    const { visible } = this.state;
     const columns = this.columns;
+    const { warning } = this.props;
+    var dataSource = warning.data || [];
+    dataSource.map((item, index)=>{
+      item['key'] = index;
+    }); 
 
     const parentMethods = {
       handleCreate: this.handleCreate,
@@ -241,6 +295,7 @@ export default class WarningSetting extends React.Component {
         <CreateWarningForm
           {...parentMethods}
           visible={visible}
+          warningSettingData={this.state.warningSettingData}
         />
       </PageHeaderLayout>
     );
