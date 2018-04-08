@@ -145,7 +145,7 @@ export const getRouterData = (app) => {
     },
 
     '/filter/filter-list': {
-      component: dynamicWrapper(app, ['group'], () => import('../routes/Filter/FilterList')),
+      component: dynamicWrapper(app, ['strainer'], () => import('../routes/Filter/FilterList')),
     },
 
 

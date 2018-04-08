@@ -194,4 +194,8 @@ export default {
   'POST /admin/group/addDevices': baseUrl,
   'POST /admin/group/exitRent': baseUrl,
 
+  //滤网管理
+  'GET /admin/strainer/list': baseUrl,
+  'POST /admin/strainer/reset': baseUrl,
+
 };
