@@ -59,7 +59,7 @@ export default class FilterList extends React.Component {
     super(props);
     this.columns = [{
       title: 'SN',
-      dataIndex: 'sn',
+      dataIndex: 'deviceID',
     }, {
       title: 'MAC/IMEI',
       dataIndex: 'mac',

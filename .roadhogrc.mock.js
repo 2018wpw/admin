@@ -198,4 +198,11 @@ export default {
   'GET /admin/strainer/list': baseUrl,
   'POST /admin/strainer/reset': baseUrl,
 
+  //告警管理
+  'GET /admin/alarm/listAlarmRecords': baseUrl,
+  'GET /admin/alarm/query': baseUrl,
+  'POST /admin/alarm/create': baseUrl,
+  'GET /admin/alarm/list': baseUrl,
+  'POST /admin/alarm/edit': baseUrl,
+
 };
