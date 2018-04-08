@@ -1,9 +1,11 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+
 
 const CreateProfitForm = Form.create()((props) => {
   const { visible, form, handleCreate, handleModalVisible } = props;
@@ -95,7 +97,10 @@ const CreateProfitForm = Form.create()((props) => {
   );
 });
 
-
+@connect(({ rent, loading }) => ({
+  rent,
+  loading: loading.effects['rent/listRent'],
+}))
 export default class RentRelate extends React.Component {
   constructor(props) {
     super(props);
@@ -104,7 +109,7 @@ export default class RentRelate extends React.Component {
       dataIndex: 'name',
     }, {
       title: '分润模式',
-      dataIndex: 'rateMode',
+      dataIndex: 'profitName',
     }, {
       title: '各账号分润详情',
       dataIndex: 'detail',
@@ -130,6 +135,13 @@ export default class RentRelate extends React.Component {
       visible: false,
     };
   }
+
+  componentDidMount() {
+    console.log('componentDidMount')
+    this.props.dispatch({
+      type: 'rent/listRent',
+    });
+  }  
 
   onCellChange = (key, dataIndex) => {
     return (value) => {
@@ -191,8 +203,28 @@ export default class RentRelate extends React.Component {
 
 
   render() {
-    const { dataSource, visible } = this.state;
+    const { visible } = this.state;
     const columns = this.columns;
+
+    const { rent } = this.props;
+    var dataSource = rent.data || [];
+    dataSource.map((item, index)=>{
+      item['key'] = index;
+
+      var prices = '';
+      item.prices.map(j => {
+        var p = j.price + "元/" + j.time + "分钟,";
+        prices += p;
+      })
+      item['price'] = prices;
+
+      var accounts = '';
+      item.accounts.map(j => {
+        var p = j.userName  + j.ratio + "%,";
+        accounts += p;
+      })
+      item['detail'] = accounts;
+    });     
 
     const parentMethods = {
       handleCreate: this.handleCreate,

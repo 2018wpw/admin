@@ -206,4 +206,19 @@ export default {
   'POST /admin/alarm/edit': baseUrl,
   'POST /admin/alarm/delete': baseUrl,
 
+  //租赁管理
+  'POST /admin/rent/createProfitMode': baseUrl,
+  'POST /admin/rent/createRent': baseUrl,
+  'POST /admin/rent/withdraw': baseUrl,
+  'POST /admin/rent/editProfitMode': baseUrl,
+  'POST /admin/rent/editRent': baseUrl,
+  'GET /admin/rent/queryProfitMode': baseUrl,
+  'GET /admin/rent/listProfitMode': baseUrl,
+  'GET /admin/rent/listWithdrawRecords': baseUrl,
+  'GET /admin/rent/queryRent': baseUrl,
+  'GET /admin/rent/listRent': baseUrl,
+  'GET /admin/rent/queryRentIncome': baseUrl,
+  'GET /admin/rent/listRentOrders': baseUrl,
+  'GET /admin/rent/checkProfit': baseUrl,
+  'GET /admin/rent/checkRent': baseUrl,
 };

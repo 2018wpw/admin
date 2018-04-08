@@ -1,40 +1,38 @@
-import { queryFakeList } from '../services/api';
+import { listRent , listProfitMode} from '../services/rent';
 
 export default {
   namespace: 'rent',
 
   state: {
-    list: [],
+    
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(queryFakeList, payload);
-      yield put({
-        type: 'queryList',
-        payload: Array.isArray(response) ? response : [],
-      });
-    },
-    *appendFetch({ payload }, { call, put }) {
-      const response = yield call(queryFakeList, payload);
-      yield put({
-        type: 'appendList',
-        payload: Array.isArray(response) ? response : [],
-      });
-    },
+    *listRent({ payload }, { call, put }) {
+      const response = yield call(listRent, payload);
+      if (response.errCode === 0) {
+        yield put({
+          type: 'listRentCB',
+          payload: response,
+        });
+      }
+    },    
+    *listProfitMode({ payload }, { call, put }) {
+      const response = yield call(listProfitMode, payload);
+      if (response.errCode === 0) {
+        yield put({
+          type: 'listRentCB',
+          payload: response,
+        });
+      }
+    },        
   },
 
   reducers: {
-    queryList(state, action) {
+    listRentCB(state, { payload }) {
       return {
         ...state,
-        list: action.payload,
-      };
-    },
-    appendList(state, action) {
-      return {
-        ...state,
-        list: state.list.concat(action.payload),
+        ...payload,
       };
     },
   },
