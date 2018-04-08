@@ -58,11 +58,8 @@ export default class FilterList extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
-      title: 'SN',
-      dataIndex: 'deviceID',
-    }, {
       title: 'MAC/IMEI',
-      dataIndex: 'mac',
+      dataIndex: 'deviceID',
     }, {
       title: '群组',
       dataIndex: 'groupName',
@@ -187,9 +184,6 @@ export default class FilterList extends React.Component {
       <PageHeaderLayout>
         <Card bordered={false}>
             <div>
-              <div style={{marginBottom: 10}}>
-                滤网报警剩余天数 <span style={{ color: 'red' }}> {this.state.left} 天</span>
-              </div>
               <div>
                 <Table rowSelection={rowSelection} bordered dataSource={dataSource} columns={columns} />
               </div>

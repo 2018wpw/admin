@@ -135,8 +135,8 @@ export default class GroupManager extends React.Component {
       title: '设备数量',
       dataIndex: 'deviceCount',
     }, {
-      title: '分配状态',
-      dataIndex: 'asignState',
+      title: '分配账户',
+      dataIndex: 'assignAccounts',
     }, {
       title: '设备型号',
       dataIndex: 'modelName',
@@ -165,8 +165,8 @@ export default class GroupManager extends React.Component {
         }
       }, 
     }, {
-      title: '是否加入租赁',
-      dataIndex: 'enableRent',
+      title: '租赁信息',
+      dataIndex: 'rentInfo',
     }];
 
     this.state = {
@@ -294,8 +294,14 @@ export default class GroupManager extends React.Component {
     var dataSource = group.groups || [];
     dataSource.map((item, index)=>{
       item['key'] = index;
-      item['asignState'] = item.assignInfo.assignAccounts ? '已分配' : '尚未分配';
-      item['enableRent'] = item.assignInfo.assignAccounts ? '是' : '否';
+      if(item.assignInfo.assignAccounts && item.assignInfo.assignAccounts.length !== 0) {
+        item['assignAccounts'] = item.assignInfo.assignAccounts[0].name;
+      } else {
+        item['assignAccounts'] = '尚未分配';
+      }
+      if (item.assignInfo.rentInfo) {
+        item['rentInfo'] = item.assignInfo.rentInfo.name;
+      }
     });
 
     const parentMethods = {

@@ -14,7 +14,7 @@ export default class WarningList extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
-      title: 'sn',
+      title: 'MAC/IMEI',
       dataIndex: 'deviceID',
     }, {
       title: '告警类型',

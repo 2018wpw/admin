@@ -158,12 +158,15 @@ export default class WarningSetting extends React.Component {
     this.columns = [{
       title: '告警名称',
       dataIndex: 'name',
+      width: '20%',
     }, {
       title: '描述',
       dataIndex: 'descr',
+      width: '60%',
     }, {
       title: '操作',
       dataIndex: 'operation',
+      width: '20%',
       render: (text, record) => {
         return (
           <div>
