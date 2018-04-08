@@ -90,6 +90,9 @@ const CreateProfitForm = Form.create()((props) => {
           wrapperCol={{ span: 15 }}
           label="描述信息"
         >
+          {form.getFieldDecorator('descr')(
+            <TextArea/>
+          )}        
           <TextArea/>
         </FormItem>            
       </Form>     
@@ -210,20 +213,22 @@ export default class RentRelate extends React.Component {
     var dataSource = rent.data || [];
     dataSource.map((item, index)=>{
       item['key'] = index;
-
-      var prices = '';
-      item.prices.map(j => {
-        var p = j.price + "元/" + j.time + "分钟,";
-        prices += p;
-      })
-      item['price'] = prices;
-
-      var accounts = '';
-      item.accounts.map(j => {
-        var p = j.userName  + j.ratio + "%,";
-        accounts += p;
-      })
-      item['detail'] = accounts;
+      if(item.prices) {
+        var prices = '';
+        item.prices.map((j) => {
+          var p = j.price + "元/" + j.time + "分钟,";
+          prices += p;
+        })
+        item['price'] = prices;
+      }
+      if(item.accounts) {
+        var accounts = '';
+        item.accounts.map((j) => {
+          var p = j.userName  + j.ratio + "%,";
+          accounts += p;
+        })
+        item['detail'] = accounts;        
+      }
     });     
 
     const parentMethods = {

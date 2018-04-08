@@ -1,6 +1,7 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -62,7 +63,10 @@ const CreateProfitForm = Form.create()((props) => {
   );
 });
 
-
+@connect(({ rent, loading }) => ({
+  rent,
+  loading: loading.effects['rent/listProfitMode'],
+}))
 export default class ProfitMode extends React.Component {
   constructor(props) {
     super(props);
@@ -71,10 +75,10 @@ export default class ProfitMode extends React.Component {
       dataIndex: 'name',
     }, {
       title: '角色比例',
-      dataIndex: 'rate',
+      dataIndex: 'roleRatios',
     }, , {
       title: '分润模式描述',
-      dataIndex: 'description',
+      dataIndex: 'descr',
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -94,6 +98,12 @@ export default class ProfitMode extends React.Component {
       visible: false,
     };
   }
+
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'rent/listProfitMode',
+    });
+  }  
 
   onCellChange = (key, dataIndex) => {
     return (value) => {
@@ -154,9 +164,19 @@ export default class ProfitMode extends React.Component {
 
 
   render() {
-    const { dataSource, visible } = this.state;
+    const { visible } = this.state;
     const columns = this.columns;
-
+    const { rent } = this.props;
+    var dataSource = rent.data || [];
+    dataSource.map((item, index)=>{
+      item['key'] = index;
+      if(item.ratios && item.ratios.length !== 0) {
+        item['roleRatios'] = '';
+        item.ratios.map( (j) => {
+          item['roleRatios'] += j.roleName + j.ratio + '% ';
+        })
+      }
+    }); 
     const parentMethods = {
       handleCreate: this.handleCreate,
       handleModalVisible: this.handleModalVisible,

@@ -2,6 +2,7 @@ import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
 import DescriptionList from 'components/DescriptionList';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -41,40 +42,46 @@ const CreateDrawForm = Form.create()((props) => {
   );
 });
 
-
+@connect(({ rent, loading }) => ({
+  rent,
+  loading: loading.effects['rent/listWithdrawRecords', 'rent/listRentOrders'],
+}))
 export default class RentDetail extends React.Component {
   constructor(props) {
     super(props);
 
     this.orderColumns = [{
       title: '时间',
-      dataIndex: 'date',
+      dataIndex: 'time',
     }, {
       title: '收入情况',
-      dataIndex: 'earning',
+      dataIndex: 'income',
     }, {
-      title: '设备sn',
-      dataIndex: 'sn',
+      title: 'MAC/IMEI',
+      dataIndex: 'deviceID',
     }, {
       title: '分润模式',
-      dataIndex: 'profitMode',
+      dataIndex: 'profitName',
     }, {
       title: '设备来源',
-      dataIndex: 'from',
+      dataIndex: 'owner',
     }, {
       title: '设备状态',
-      dataIndex: 'deviceState',
+      dataIndex: 'rentState',
     }, {
       title: '群组',
-      dataIndex: 'group',
+      dataIndex: 'groupName',
     }];
 
     this.drawColumns = [{
       title: '提款时间',
-      dataIndex: 'date',
+      dataIndex: 'time',
     }, {
       title: '提款金额',
-      dataIndex: 'count',
+      dataIndex: 'amount',
+    }, {
+      title: '提款状态',
+      dataIndex: 'drawState',
     }];
 
     this.state = {
@@ -83,7 +90,14 @@ export default class RentDetail extends React.Component {
       visible: false,
     };
   }
-
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'rent/listWithdrawRecords',
+    });
+    this.props.dispatch({
+      type: 'rent/listRentOrders',
+    })
+  }  
   onCellChange = (key, dataIndex) => {
     return (value) => {
       const dataSource = [...this.state.dataSource];
@@ -140,9 +154,29 @@ export default class RentDetail extends React.Component {
 
 
   render() {
-    const { dataSource, visible } = this.state;
+    const { visible } = this.state;
     const orderColumns = this.orderColumns;
     const drawColumns = this.drawColumns;
+    const { rent } = this.props;
+
+    const { records, orders } = rent;
+    const ordersData = orders || [];
+    ordersData.map( (item, index) => {
+      item['key'] = index;
+      item['rentState'] = item.rentStatus === 0 ? '租赁中' : '租赁完成';
+    });
+
+    const drawRecords = records || [];
+    drawRecords.map( (item, index) => {
+      drawRecords['key'] = index;
+      if(item.status === 0) {
+        item['drawState'] = '进行中';
+      } else if(item.status === 1) {
+        item['drawState'] = '已完成';
+      } else {
+        item['drawState'] = '失败';
+      }
+    });
 
     const parentMethods = {
       handleCreate: this.handleCreate,
@@ -169,7 +203,7 @@ export default class RentDetail extends React.Component {
           <Divider style={{ margin: '10px 0' }} />
 
           <div>
-            <Table bordered dataSource={dataSource} columns={orderColumns} />
+            <Table bordered dataSource={ordersData} columns={orderColumns} />
           </div>
 
           <div style={{ marginTop: 50 }} >
@@ -179,7 +213,7 @@ export default class RentDetail extends React.Component {
           <Divider style={{ margin: '10px 0' }} />
 
           <div>
-            <Table bordered dataSource={dataSource} columns={drawColumns} />
+            <Table bordered dataSource={drawRecords} columns={drawColumns} />
           </div>               
         </Card>
 
