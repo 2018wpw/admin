@@ -21,7 +21,12 @@ import ReactEcharts from 'echarts-for-react';
 
 @connect(({general, loading}) => ({
   general,
-  loading: loading.effects['general/fetch'],
+  loading: loading.effects[
+  'general/getStrainerLinearStatistics',
+  'general/getAccountLinearStatistics',
+  'general/getDeviceWorkLinearStatistics',
+  'general/getDeviceStatistics',
+  'general/getAccountStatistics' ],
 }) )
 export default class General extends Component {
   state = {
@@ -29,20 +34,27 @@ export default class General extends Component {
   };
 
   componentDidMount() {
-    this.props.dispatch({
-      type: 'general/fetch',
-    });
-  }
-
-  componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'general/clear',
+      type: 'general/getStrainerLinearStatistics',
     });
+    dispatch({
+      type: 'general/getAccountLinearStatistics',
+    });
+    dispatch({
+      type: 'general/getDeviceWorkLinearStatistics',
+    });
+    dispatch({
+      type: 'general/getDeviceStatistics',
+    });
+    dispatch({
+      type: 'general/getAccountStatistics',
+    });                
   }
 
   render() {
     const { general, loading } = this.props;
+
     const accountSize = {
         title : {
             text: '账户数量统计',
@@ -94,13 +106,13 @@ export default class General extends Component {
       },
       xAxis: {
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: []
       },
       yAxis: {
           type: 'value'
       },
       series: [{
-          data: [120, 200, 150, 80, 70, 110, 130],
+          data: [],
           type: 'bar',
           barWidth: 15
       }],
@@ -117,13 +129,13 @@ export default class General extends Component {
       },
       xAxis: {
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: ['初效','中效','高效'],
       },
       yAxis: {
           type: 'value'
       },
       series: [{
-          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          data: [],
           type: 'line'
       }],
       grid: {
@@ -131,6 +143,14 @@ export default class General extends Component {
       }
     };
 
+    const { strainerStatis } = general;
+    if(strainerStatis) {
+      console.log('strainerStatis', strainerStatis);
+      warningCount.series.data = new Array(3);
+      strainerStatis.map( (item, index) => {
+          warningCount.series.data[index] = item.count;
+      })
+    }
 
     const deviceCount = {
       title: {

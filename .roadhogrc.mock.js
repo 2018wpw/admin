@@ -178,4 +178,11 @@ export default {
   'GET /admin/device/importDevices': baseUrl,
   'GET /admin/device/queryImportHistory': baseUrl,
   
+  //概况
+  'GET /admin/statis/getStrainerLinearStatistics': baseUrl,
+  'GET /admin/statis/getAccountLinearStatistics': baseUrl,
+  'GET /admin/statis/getDeviceWorkLinearStatistics': baseUrl,
+  'GET /admin/statis/getDeviceStatistics': baseUrl,
+  'GET /admin/statis/getAccountStatistics': baseUrl,
+  
 };
