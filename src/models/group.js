@@ -1,40 +1,95 @@
-import { queryFakeList } from '../services/api';
+import { qureyList, assign ,addDevices, create, removeDevices, exitRent} from '../services/group';
 
 export default {
   namespace: 'group',
 
   state: {
-    list: [],
+    
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(queryFakeList, payload);
+    *queryList({ payload }, { call, put }) {
+      console.log('qurey group List models');
+      const response = yield call(qureyList, payload);
       yield put({
-        type: 'queryList',
-        payload: Array.isArray(response) ? response : [],
+        type: 'queryListCb',
+        payload: response.data,
       });
     },
-    *appendFetch({ payload }, { call, put }) {
-      const response = yield call(queryFakeList, payload);
-      yield put({
-        type: 'appendList',
-        payload: Array.isArray(response) ? response : [],
-      });
+    *create({ payload }, { call, put }) {
+      const response = yield call(create, payload);
+      if(response.errCode === 0) {
+        const response = yield call(qureyList, payload);
+        yield put({
+          type: 'queryList',
+          payload: response.data,
+        });        
+      }
     },
+    *removeDevices({ payload }, { call, put }) {
+      console.log('removeDevices');  
+      var body = {
+        groupID: payload.groupID,
+        devices: payload.devices,
+      };
+      const { resolve, reject } = payload;          
+      const response = yield call(removeDevices, body);
+      if (response.errCode === 0) {
+        resolve();
+        const response = yield call(qureyList, body);
+        yield put({
+          type: 'queryList',
+          payload: response.data,
+        });        
+      } else {
+        reject(response.errCode);
+      } 
+    },
+    *assign({ payload }, { call, put }) {
+      const response = yield call(assign, payload);
+      if(response.errCode === 0) {
+        const response = yield call(qureyList, payload);
+        yield put({
+          type: 'queryList',
+          payload: response.data,
+        });        
+      }      
+    },
+    *addDevices({ payload }, { call, put }) {
+      const response = yield call(addDevices, payload);
+      if(response.errCode === 0) {
+        const response = yield call(qureyList, payload);
+        yield put({
+          type: 'queryList',
+          payload: response.data,
+        });        
+      }      
+    }, 
+    *exitRent({ payload }, { call, put }) {
+      var body = {
+        groupID: payload.groupID,
+        devices: payload.devices,
+      };
+      const { resolve, reject } = payload;       
+      const response = yield call(exitRent, body);
+      if (response.errCode === 0) {
+        resolve();
+        const response = yield call(qureyList, body);
+        yield put({
+          type: 'queryList',
+          payload: response.data,
+        });
+      } else {
+        reject(response.errCode);
+      }      
+    },            
   },
 
   reducers: {
-    queryList(state, action) {
+    queryListCb(state, { payload }) {
       return {
         ...state,
-        list: action.payload,
-      };
-    },
-    appendList(state, action) {
-      return {
-        ...state,
-        list: state.list.concat(action.payload),
+        ...payload,
       };
     },
   },

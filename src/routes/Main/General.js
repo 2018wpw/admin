@@ -98,7 +98,6 @@ export default class General extends Component {
         }
     };
 
-
     const newAccount = {
       title: {
         text: "新增用户线性统计",
@@ -120,7 +119,7 @@ export default class General extends Component {
         x: 30,
         width: 203
       }
-    };
+    }; 
 
     const warningCount = {
       title: {
@@ -143,14 +142,14 @@ export default class General extends Component {
       }
     };
 
-    const { strainerStatis } = general;
-    if(strainerStatis) {
-      console.log('strainerStatis', strainerStatis);
-      warningCount.series.data = new Array(3);
-      strainerStatis.map( (item, index) => {
-          warningCount.series.data[index] = item.count;
-      })
-    }
+    // const { strainerStatis } = general.data[0];
+    // if(strainerStatis) {
+    //   console.log('strainerStatis', strainerStatis);
+    //   warningCount.series.data = new Array(3);
+    //   strainerStatis.map( (item, index) => {
+    //       warningCount.series.data[index] = item.count;
+    //   })
+    // }
 
     const deviceCount = {
       title: {

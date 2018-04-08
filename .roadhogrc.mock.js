@@ -185,4 +185,13 @@ export default {
   'GET /admin/statis/getDeviceStatistics': baseUrl,
   'GET /admin/statis/getAccountStatistics': baseUrl,
   
+
+  //群组
+  'GET /admin/group/list': baseUrl,
+  'POST /admin/group/create': baseUrl,
+  'POST /admin/group/removeDevices': baseUrl,
+  'POST /admin/group/assign': baseUrl,
+  'POST /admin/group/addDevices': baseUrl,
+  'POST /admin/group/exitRent': baseUrl,
+
 };
