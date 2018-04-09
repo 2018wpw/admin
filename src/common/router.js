@@ -135,7 +135,7 @@ export const getRouterData = (app) => {
 
     //rent
     '/rent/profit-mode': {
-      component: dynamicWrapper(app, ['rent'], () => import('../routes/Rent/ProfitMode')),
+      component: dynamicWrapper(app, ['rent', 'account'], () => import('../routes/Rent/ProfitMode')),
     },
     '/rent/rent-relate': {
       component: dynamicWrapper(app, ['rent'], () => import('../routes/Rent/RentRelate')),

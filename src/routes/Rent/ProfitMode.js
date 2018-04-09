@@ -2,12 +2,14 @@ import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
 import { connect } from 'dva';
+import SelectRato from 'components/Widget';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
+
 const CreateProfitForm = Form.create()((props) => {
-  const { visible, form, handleCreate, handleModalVisible } = props;
+  const { visible, form, handleCreate, handleModalVisible, roleList } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -15,6 +17,17 @@ const CreateProfitForm = Form.create()((props) => {
       handleCreate(fieldsValue);
     });
   };
+  const checkSelectedRole = (rule, value, callback) => {
+    console.log('checkSelectedRole', value);
+    if(value.number > 0) {
+      callback();
+      return;
+    }
+    callback('分润比例大于0');
+  };
+
+  const { getFieldDecorator } = form;
+
   return (
     <Modal
       title="创建分润模式"
@@ -29,10 +42,10 @@ const CreateProfitForm = Form.create()((props) => {
           wrapperCol={{ span: 15 }}
           label="名称"
         >
-          {form.getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入' }],
+          {getFieldDecorator('name', {
+            rules: [{ required: true, message: '请输入分润模式名称' }],
           })(
-            <Input placeholder="请输入" />
+            <Input placeholder="请输入分润模式名称" />          
           )}
         </FormItem>
 
@@ -41,20 +54,24 @@ const CreateProfitForm = Form.create()((props) => {
           wrapperCol={{ span: 15 }}
           label="角色比例"
         >
-          {form.getFieldDecorator('rate', {
-            rules: [{ required: true, message: '请选择' }],
+          {getFieldDecorator('roleItem', {
+            initialValue: { number: 0, currency: 'rmb' },
+            rules: [{ required: true}],
           })(
-            <Input placeholder="请输入" />
+            <SelectRato
+              methodName='添加角色'
+              addMethod={()=>{ console.log('add click')}}
+              roleList={roleList || []}
+            />
           )}
         </FormItem>
+
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
           label="分润模式描述"
         >
-          {form.getFieldDecorator('description', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
+          {getFieldDecorator('descr')(
             <TextArea/>
           )}
         </FormItem> 
@@ -63,8 +80,9 @@ const CreateProfitForm = Form.create()((props) => {
   );
 });
 
-@connect(({ rent, loading }) => ({
+@connect(({ rent, loading, account }) => ({
   rent,
+  account,
   loading: loading.effects['rent/listProfitMode'],
 }))
 export default class ProfitMode extends React.Component {
@@ -103,7 +121,7 @@ export default class ProfitMode extends React.Component {
     this.props.dispatch({
       type: 'rent/listProfitMode',
     });
-  }  
+  }
 
   onCellChange = (key, dataIndex) => {
     return (value) => {
@@ -119,26 +137,38 @@ export default class ProfitMode extends React.Component {
     const dataSource = [...this.state.dataSource];
     this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
   }
-  handleCreate = () => {
-    const { count, dataSource } = this.state;
-    const form = this.form;
-    const newData = {
-        key: count,
-        name: '分润1',
-        rate: '10%',
-        description: '我是描述信息',
-    };
+  handleCreate = (values) => {
+    this.props.dispatch({
+      type: 'rent/createProfitMode',
+      payload: {
+        ...values,
+      }
+    });
     this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
-      visible: false
+      visible: false,
     });
   }
 
   showModal = () => {
-    this.setState({
-      visible: true,
+    return new Promise((resolve, reject) => {
+      this.props.dispatch({
+        type: 'account/queryRoleList',
+        payload: {
+          resolve: resolve,
+          reject: reject,
+        },
+      });
+    })
+    .then( res => {
+      this.setState({
+        visible: true,
+        roleList: res.roles,
+      });
+    })
+    .catch( err => {
+      console.log(err);
     });
+
   }
 
   handleCancel = (e) => {
@@ -194,6 +224,7 @@ export default class ProfitMode extends React.Component {
         <CreateProfitForm
           {...parentMethods}
           visible={visible}
+          roleList={this.state.roleList}
         />
       </PageHeaderLayout>
     );

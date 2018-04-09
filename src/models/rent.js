@@ -4,7 +4,8 @@ import {
   listWithdrawRecords, 
   listRentOrders, 
   queryRentIncome, 
-  withdraw
+  withdraw,
+  createProfitMode
 }
 from '../services/rent';
 
@@ -74,6 +75,16 @@ export default {
         resolve(response.errMsg);
       } else {
         reject(response.errMsg);
+      }
+    },
+    *createProfitMode({ payload }, { call, put }) {
+      const response = yield call(createProfitMode, payload);
+      if (response.errCode === 0) {
+        const response = yield call(listProfitMode, payload);
+        yield put({
+          type: 'listRentCB',
+          payload: response,
+        });
       }
     },
   },
