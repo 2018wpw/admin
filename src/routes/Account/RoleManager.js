@@ -118,7 +118,6 @@ export default class RoleManager extends React.Component {
   state = {
       count: 1,
       visible: false,
-      dataSource: [],
       editVisible: false,
   }
 

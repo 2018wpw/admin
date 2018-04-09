@@ -152,7 +152,7 @@ export default class ProfitMode extends React.Component {
   showModal = () => {
     return new Promise((resolve, reject) => {
       this.props.dispatch({
-        type: 'account/queryRoleList',
+        type: 'account/getRoleList',
         payload: {
           resolve: resolve,
           reject: reject,

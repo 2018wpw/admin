@@ -41,18 +41,7 @@ export default {
       });
     },
     *queryRoleList({ payload }, { call, put }) {
-      const { resolve, reject } = payload;
       const response = yield call(queryRoleList, payload);
-      if(response.errCode === 0) {
-        if (resolve) {
-          response.data = formatMockData(response.data);
-          resolve(response.data);
-        }
-      } else {
-        if(reject) {
-          reject(response.errMsg);
-        }
-      }
       yield put({
         type: 'roleListCallback',
         payload: response.data,
@@ -131,6 +120,19 @@ export default {
         reject('error');
       }
     },
+    *getRoleList({ payload }, { call, put }) {
+      const response = yield call(queryRoleList, payload);
+      if(response.errCode === 0) {
+        if (resolve) {
+          response.data = formatMockData(response.data);
+          resolve(response.data);
+        }
+      } else {
+        if(reject) {
+          reject(response.errMsg);
+        }
+      }      
+    }
   },
 
   reducers: {

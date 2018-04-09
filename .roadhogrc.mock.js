@@ -221,4 +221,21 @@ export default {
   'GET /admin/rent/listRentOrders': baseUrl,
   'GET /admin/rent/checkProfit': baseUrl,
   'GET /admin/rent/checkRent': baseUrl,
+
+  //批次管理
+  'POST /admin/batch/create': baseUrl,
+  'POST /admin/batch/delete': baseUrl,
+  'GET /admin/batch/query': baseUrl,
+  'GET /admin/batch/list': baseUrl,
+  'GET /admin/batch/check': baseUrl,
+  'POST /admin/batch/edit': baseUrl,
+
+  //产品型号
+  'GET /admin/model/list': baseUrl,
+  'GET /admin/model/check': baseUrl,
+  'GET /admin/model/query': baseUrl,
+  'POST /admin/model/create': baseUrl,
+  'POST /admin/batch/delete': baseUrl,
+  'POST /admin/batch/edit': baseUrl,
+
 };

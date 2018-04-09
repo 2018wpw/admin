@@ -1,6 +1,7 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import styles from './Product.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -83,24 +84,28 @@ const ProductFormCreate = Form.create()(
     }
 );
 
+@connect(({ prodModel, loading }) => ({
+  prodModel,
+  loading: loading.effects['prodModel/list'],
+}))
 export default class ProductList extends React.Component {
   constructor(props) {
     super(props);
     this.columns = [{
       title: '产品类型',
-      dataIndex: 'type',
+      dataIndex: 'prodName',
     }, {
       title: '产品型号',
-      dataIndex: 'model',
+      dataIndex: 'name',
     }, {
       title: '描述信息',
-      dataIndex: 'description',
+      dataIndex: 'descr',
     }, {
       title: '图片信息',
-      dataIndex: 'image',
+      dataIndex: 'imageID',
     }, {
       title: '链接方式',
-      dataIndex: 'connectivity',
+      dataIndex: 'connWay',
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -127,6 +132,13 @@ export default class ProductList extends React.Component {
       visible: false
     };
   }
+
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'prodModel/list',
+    });
+  }
+
   onCellChange = (key, dataIndex) => {
     return (value) => {
       const dataSource = [...this.state.dataSource];
@@ -181,8 +193,13 @@ export default class ProductList extends React.Component {
   }
 
   render() {
-    const { dataSource } = this.state;
     const columns = this.columns;
+    const { prodModel } = this.props;
+    var dataSource = prodModel.models || [];
+    dataSource.map((item, index)=>{
+      item['key'] = index;
+      item['prodName'] = item.prodInfo.name;
+    });     
     return (
       <PageHeaderLayout>
         <Card bordered={false}>

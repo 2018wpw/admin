@@ -1,6 +1,7 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import styles from './Batch.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -65,6 +66,11 @@ const ProductFormCreate = Form.create()(
     }
 );
 
+
+@connect(({ batchModel, loading }) => ({
+  batchModel,
+  loading: loading.effects['batchModel/list'],
+}))
 export default class ProductList extends React.Component {
   constructor(props) {
     super(props);
@@ -73,13 +79,13 @@ export default class ProductList extends React.Component {
       dataIndex: 'name',
     }, {
       title: '描述信息',
-      dataIndex: 'description',
+      dataIndex: 'descr',
     }, {
       title: '产品类型',
-      dataIndex: 'type',
+      dataIndex: 'prodName',
     }, {
       title: '产品型号',
-      dataIndex: 'model',
+      dataIndex: 'modelName',
     }, {
       title: '设备数量',
       dataIndex: 'count',
@@ -109,6 +115,13 @@ export default class ProductList extends React.Component {
       visible: false
     };
   }
+
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'batchModel/list',
+    });
+  }
+
   onCellChange = (key, dataIndex) => {
     return (value) => {
       const dataSource = [...this.state.dataSource];
@@ -163,8 +176,14 @@ export default class ProductList extends React.Component {
   }
 
   render() {
-    const { dataSource } = this.state;
     const columns = this.columns;
+    const { batchModel } = this.props;
+
+    var dataSource = batchModel.batches || [];
+    dataSource.map((item, index)=>{
+      item['key'] = index;
+    });     
+
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
