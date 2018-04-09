@@ -1,4 +1,4 @@
-import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card, Divider } from 'antd';
+import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card, Divider, message } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
 import DescriptionList from 'components/DescriptionList';
@@ -9,12 +9,12 @@ const { TextArea } = Input;
 const { Description } = DescriptionList;
 
 const CreateDrawForm = Form.create()((props) => {
-  const { visible, form, handleCreate, handleModalVisible } = props;
+  const { visible, form, handleDraw, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      handleCreate(fieldsValue);
+      handleDraw(fieldsValue);
     });
   };
   return (
@@ -31,12 +31,24 @@ const CreateDrawForm = Form.create()((props) => {
           wrapperCol={{ span: 15 }}
           label="提款金额"
         >
-          {form.getFieldDecorator('drawCount', {
-            rules: [{ required: true, message: '请输入' }],
+          {form.getFieldDecorator('amount', {
+            rules: [{ required: true, message: '请输入提款额度' }],
           })(
             <Input placeholder="请输入"  addonAfter="元" />
           )}
         </FormItem>
+        <FormItem
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 15 }}
+            label="提款密码"
+          >
+            {form.getFieldDecorator('password', {
+              rules: [{ required: true, message: '请输入密码' }],
+            })(
+              <Input placeholder="请输入密码" />
+            )}
+            <div className={styles.tipText}>提款密码与登录密码一致</div>
+        </FormItem>        
       </Form>     
     </Modal>
   );
@@ -44,7 +56,7 @@ const CreateDrawForm = Form.create()((props) => {
 
 @connect(({ rent, loading }) => ({
   rent,
-  loading: loading.effects['rent/listWithdrawRecords', 'rent/listRentOrders'],
+  loading: loading.effects['rent/listWithdrawRecords', 'rent/listRentOrders', 'rent/queryRentIncome'],
 }))
 export default class RentDetail extends React.Component {
   constructor(props) {
@@ -96,7 +108,10 @@ export default class RentDetail extends React.Component {
     });
     this.props.dispatch({
       type: 'rent/listRentOrders',
-    })
+    });
+    this.props.dispatch({
+      type: 'rent/queryRentIncome',
+    });
   }  
   onCellChange = (key, dataIndex) => {
     return (value) => {
@@ -109,20 +124,24 @@ export default class RentDetail extends React.Component {
     };
   }
 
-  handleCreate = () => {
-    const { count, dataSource } = this.state;
-    const form = this.form;
-    const newData = {
-        key: count,
-        name: '分润1',
-        rate: '10%',
-        description: '我是描述信息',
-    };
-    this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
-      visible: false
-    });
+  handleDraw = (values) => {
+    return new Promise((resolve, reject) => {
+      this.props.dispatch({
+        type: 'rent/withdraw',
+        payload: {
+          ...values,
+          resolve: resolve,
+          reject: reject,
+        }
+      });      
+    })
+    .then((res) => {
+      this.setState({
+        visible: false
+      });
+      message.success(res);
+    })
+    .catch((err) => console.log(err));
   }
 
   showModal = () => {
@@ -159,7 +178,7 @@ export default class RentDetail extends React.Component {
     const drawColumns = this.drawColumns;
     const { rent } = this.props;
 
-    const { records, orders } = rent;
+    const { records, orders, rentIncome } = rent;
     const ordersData = orders || [];
     ordersData.map( (item, index) => {
       item['key'] = index;
@@ -178,8 +197,14 @@ export default class RentDetail extends React.Component {
       }
     });
 
+    var totalIncome = rentIncome ? rentIncome.totalIncome : '';
+    var YearIncome =  rentIncome ? rentIncome.YearIncome : '';
+    var todayIncome =  rentIncome ? rentIncome.todayIncome : '';
+    var balance =  rentIncome ? rentIncome.balance : '';
+    var monthIncome =  rentIncome ? rentIncome.monthIncome : '';
+
     const parentMethods = {
-      handleCreate: this.handleCreate,
+      handleDraw: this.handleDraw,
       handleModalVisible: this.handleModalVisible,
     };
 
@@ -187,10 +212,10 @@ export default class RentDetail extends React.Component {
       <PageHeaderLayout>
         <Card bordered={false}>
           <DescriptionList className={styles.headerList} size="small" col="4">
-            <Description term="今日收益">1000元</Description>
-            <Description term="本月收益">2000元</Description>
-            <Description term="本年收益">50000元</Description>
-            <Description term="金额">2000元</Description>
+            <Description term="今日收益">{todayIncome}元</Description>
+            <Description term="本月收益">{monthIncome}元</Description>
+            <Description term="本年收益">{YearIncome}元</Description>
+            <Description term="金额">{balance}元</Description>
           </DescriptionList>
 
           <div className={styles.centerButton} style={{ marginBottom: 30, marginTop: 30}} >

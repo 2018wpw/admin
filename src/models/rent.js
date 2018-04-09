@@ -1,4 +1,12 @@
-import { listRent , listProfitMode, listWithdrawRecords, listRentOrders} from '../services/rent';
+import { 
+  listRent,
+  listProfitMode,
+  listWithdrawRecords, 
+  listRentOrders, 
+  queryRentIncome, 
+  withdraw
+}
+from '../services/rent';
 
 export default {
   namespace: 'rent',
@@ -44,6 +52,30 @@ export default {
         });
       }
     },
+    *queryRentIncome({ payload }, { call, put }) {
+      const response = yield call(queryRentIncome, payload);
+      if (response.errCode === 0) {
+        yield put({
+          type: 'listRentCB',
+          payload: {
+            rentIncome: response.data,
+          }
+        });
+      }
+    },
+    *withdraw({ payload }, { call, put }) {
+      var body = {
+        amount: payload.amount,
+        password: payload.password,
+      };
+      const { resolve, reject } = payload;
+      const response = yield call(queryRentIncome, payload);
+      if (response.errCode === 0) {
+        resolve(response.errMsg);
+      } else {
+        reject(response.errMsg);
+      }
+    },
   },
 
   reducers: {
@@ -52,6 +84,6 @@ export default {
         ...state,
         ...payload,
       };
-    },
+    },  
   },
 };

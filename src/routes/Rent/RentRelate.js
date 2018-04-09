@@ -92,8 +92,7 @@ const CreateProfitForm = Form.create()((props) => {
         >
           {form.getFieldDecorator('descr')(
             <TextArea/>
-          )}        
-          <TextArea/>
+          )}
         </FormItem>            
       </Form>     
     </Modal>

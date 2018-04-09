@@ -77,16 +77,16 @@ export default class PersonalProfile extends React.Component {
           <div className={styles.tableListForm}>
 			<Form layouts="vertical" layout="inline" onSubmit={this.editUserInfo}>
 	            <Row  gutter={{ md: 8, lg: 16, xl: 24 }}>
-	              <Col md={5} sm={24}>
-	                <FormItem label="角色">
-	                  <div>{role.name}</div>
-	                </FormItem>
-	              </Col>
 	              <Col  md={5} sm={24}>
 	                <FormItem label="用户名">
 	                  <div>{userInfo.name}</div>           
 	                </FormItem>
 	              </Col>
+	              <Col md={5} sm={24}>
+	                <FormItem label="角色">
+	                  <div>{role.name}</div>
+	                </FormItem>
+	              </Col>	              
 	              <Col md={5} sm={24}>
 	                <FormItem label="联系方式">
 	                  <Input defaultValue={userInfo.phone}></Input>                
@@ -135,7 +135,7 @@ export default class PersonalProfile extends React.Component {
           	银行账号 <span className={styles.subTitle}>该信息是在租赁业务中参与分润时的账户填写，若不填写，则无法提款。</span>
           </div>
       	  
-          <Divider style={{ marginBottom: 32 }} />
+          <Divider style={{ margin: '15px 0' }} />
 
           <div className={styles.tableListForm}>
 			<Form layouts="vertical" layout="inline" onSubmit={this.editBankInfo}>

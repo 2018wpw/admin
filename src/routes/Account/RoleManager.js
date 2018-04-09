@@ -125,12 +125,14 @@ export default class RoleManager extends React.Component {
   columns = [{
       title: '角色名称',
       dataIndex: 'name',
+      width: '20%',
     }, {
       title: '角色描述',
       dataIndex: 'descr',
     }, {
       title: '操作',
       dataIndex: 'operation',
+      width: '20%',
       render: (text, record) => {
         return (
             <div>

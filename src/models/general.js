@@ -20,7 +20,7 @@ export default {
       if (response.errCode === 0) {
         yield put({
           type: 'getStrainerLinearStatisticsCb',
-          payload: response.data,
+          payload: response,
         });
       }
     },
@@ -30,7 +30,7 @@ export default {
       if (response.errCode === 0) {
         yield put({
           type: 'queryListHistory',
-          payload: response.data,
+          payload: response,
         });
       }
     },
@@ -39,7 +39,7 @@ export default {
       if (response.errCode === 0) {
         yield put({
           type: 'queryListHistory',
-          payload: response.data,
+          payload: response,
         });
       }
     },
@@ -48,7 +48,7 @@ export default {
       if (response.errCode === 0) {
         yield put({
           type: 'queryListHistory',
-          payload: response.data,
+          payload: response,
         });
       }
     },
@@ -57,7 +57,7 @@ export default {
       if (response.errCode === 0) {
         yield put({
           type: 'queryListHistory',
-          payload: response.data,
+          payload: response,
         });
       }
     },     
