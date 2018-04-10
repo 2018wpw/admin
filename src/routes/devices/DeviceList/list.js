@@ -143,9 +143,9 @@ export default class DeviceList extends PureComponent {
     }];
 
     const columns = [{
-      title: 'imei/mac',
-      dataIndex: 'imeimac',
-      key: 'imeimac',
+      title: 'IMEI/MAC',
+      dataIndex: 'deivceID',
+      key: 'deivceID',
     }, {
       title: '设备类型',
       dataIndex: 'devicecategory',
@@ -184,7 +184,7 @@ export default class DeviceList extends PureComponent {
       key: 'switchstatus',
     }, {
       title: '群组',
-      dataIndex: 'group',
+      dataIndex: 'groupName',
       key: 'group',
     }, {
       title: 'PM.25',
@@ -235,7 +235,7 @@ export default class DeviceList extends PureComponent {
           <div className={styles.tableListForm}>
             {this.renderSimpleForm()}
           </div>
-          <Table dataSource={dataSource_fake} columns={columns}  scroll={{ x: 1300 }}/>
+          <Table bordered dataSource={dataSource_fake} columns={columns}  scroll={{ x: 1300 }}/>
       </Fragment>
     );
   }

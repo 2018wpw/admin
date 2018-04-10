@@ -10,7 +10,11 @@ export default {
   namespace: 'general',
 
   state: {
-    list: [],
+    strainerStatis: [],
+    accountLinearStatis: [],
+    deviceWorkStatis: [],
+    deviceStatis: [],
+    accountStatis: [],
   },
 
   effects: {
@@ -19,8 +23,10 @@ export default {
       console.log('getStrainerLinearStatistics', response);
       if (response.errCode === 0) {
         yield put({
-          type: 'getStrainerLinearStatisticsCb',
-          payload: response,
+          type: 'queryList',
+          payload: {
+            strainerStatis: response.data[0].strainerStatis,
+          },
         });
       }
     },
@@ -29,8 +35,10 @@ export default {
       console.log('getAccountLinearStatistics', response);      
       if (response.errCode === 0) {
         yield put({
-          type: 'queryListHistory',
-          payload: response,
+          type: 'queryList',
+          payload: {
+            accountLinearStatis: response.data[0].accountStatis,
+          },
         });
       }
     },
@@ -38,8 +46,10 @@ export default {
       const response = yield call(getDeviceWorkLinearStatistics, payload);
       if (response.errCode === 0) {
         yield put({
-          type: 'queryListHistory',
-          payload: response,
+          type: 'queryList',
+          payload: {
+            deviceWorkStatis: response.data,
+          },
         });
       }
     },
@@ -47,8 +57,10 @@ export default {
       const response = yield call(getDeviceStatistics, payload);
       if (response.errCode === 0) {
         yield put({
-          type: 'queryListHistory',
-          payload: response,
+          type: 'queryList',
+          payload: {
+            deviceStatis: response.data,
+          },
         });
       }
     },
@@ -56,15 +68,17 @@ export default {
       const response = yield call(getAccountStatistics, payload);
       if (response.errCode === 0) {
         yield put({
-          type: 'queryListHistory',
-          payload: response,
+          type: 'queryList',
+          payload: {
+            accountStatis: response.data,
+          },
         });
       }
     },     
   },
 
   reducers: {
-    getStrainerLinearStatisticsCb(state, { payload }) {
+    queryList(state, { payload }) {
       return {
         ...state,
         ...payload,

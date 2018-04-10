@@ -54,11 +54,26 @@ export default class General extends Component {
 
   render() {
     const { general, loading } = this.props;
+    const { strainerStatis, accountLinearStatis, deviceWorkStatis, deviceStatis, accountStatis } = general;
 
+    console.log(strainerStatis);
+    console.log(accountLinearStatis);
+    console.log(deviceWorkStatis);
+    console.log(deviceStatis);
+    console.log(accountStatis);
+
+    var data = [];
+    var d = [];
+    if(accountStatis) {
+      accountStatis.map( item => {
+        d['vaule'] = item.count;
+        d['name'] = item.roleName;
+        data.push(d);
+      })    
+    }
     const accountSize = {
         title : {
             text: '账户数量统计',
-            subtext: '1000',
             x:'center'
         },
         tooltip : {
@@ -72,17 +87,11 @@ export default class General extends Component {
         },
         series : [
             {
-                name: '访问来源',
+                name: '账号数量',
                 type: 'pie',
                 radius : '55%',
                 center: ['50%', '60%'],
-                data:[
-                    {value:335, name:'直接访问'},
-                    {value:310, name:'邮件营销'},
-                    {value:234, name:'联盟广告'},
-                    {value:135, name:'视频广告'},
-                    {value:1548, name:'搜索引擎'}
-                ],
+                data: [...data],
                 itemStyle: {
                     emphasis: {
                         shadowBlur: 10,
@@ -98,6 +107,14 @@ export default class General extends Component {
         }
     };
 
+    var xdata = [];
+    var ydata = [];
+    if(accountLinearStatis) {
+      accountLinearStatis.map( item => {
+        xdata.push(item.roleName);
+        ydata.push(item.count);
+      })    
+    }
     const newAccount = {
       title: {
         text: "新增用户线性统计",
@@ -105,13 +122,13 @@ export default class General extends Component {
       },
       xAxis: {
           type: 'category',
-          data: []
+          data: [...xdata]
       },
       yAxis: {
           type: 'value'
       },
       series: [{
-          data: [],
+          data: [...ydata],
           type: 'bar',
           barWidth: 15
       }],
@@ -121,6 +138,13 @@ export default class General extends Component {
       }
     }; 
 
+
+    var strainerData = [];
+    if(strainerStatis) {
+      strainerStatis.map( (item, index) => {
+          strainerData.push(item.count);
+      })
+    }
     const warningCount = {
       title: {
         text: "滤网报警数量",
@@ -134,7 +158,7 @@ export default class General extends Component {
           type: 'value'
       },
       series: [{
-          data: [],
+          data: [...strainerData],
           type: 'line'
       }],
       grid: {
@@ -142,15 +166,16 @@ export default class General extends Component {
       }
     };
 
-    // const { strainerStatis } = general.data[0];
-    // if(strainerStatis) {
-    //   console.log('strainerStatis', strainerStatis);
-    //   warningCount.series.data = new Array(3);
-    //   strainerStatis.map( (item, index) => {
-    //       warningCount.series.data[index] = item.count;
-    //   })
-    // }
-
+    
+    var deviceCountData = [];
+    if(deviceStatis) {
+      deviceStatis.map( item => {
+        var d = [];        
+        d['vaule'] = item.count;
+        d['name'] = item.modelName;
+        deviceCountData.push(d);
+      })    
+    }    
     const deviceCount = {
       title: {
         text: "设备数量",
@@ -167,7 +192,7 @@ export default class General extends Component {
         },
         series: [
             {
-                name:'访问来源',
+                name:'设备数量',
                 type:'pie',
                 radius: ['50%', '70%'],
                 avoidLabelOverlap: false,
@@ -189,17 +214,19 @@ export default class General extends Component {
                         show: false
                     }
                 },
-                data:[
-                    {value:335, name:'直接访问'},
-                    {value:310, name:'邮件营销'},
-                    {value:234, name:'联盟广告'},
-                    {value:135, name:'视频广告'},
-                    {value:1548, name:'搜索引擎'}
-                ]
+                data:[...deviceCountData]
             }
         ]
     };
 
+    var onlineData = [];
+    var onlineTime =[];
+    if(deviceWorkStatis) {
+      deviceWorkStatis.map( (item, index) => {
+        onlineTime.push(item.time);
+        onlineData.push(item.count);
+      })
+    }
     const onlineStatistics = {
       title: {
         text: "开关机统计",
@@ -207,13 +234,13 @@ export default class General extends Component {
       },      
       xAxis: {
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: [...onlineTime]
       },
       yAxis: {
           type: 'value'
       },
       series: [{
-          data: [120, 200, 150, 80, 70, 110, 130],
+          data: [...onlineData],
           type: 'bar',
           barWidth: 15
       }],

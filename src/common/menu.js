@@ -3,9 +3,11 @@ import { isUrl } from '../utils/utils';
 const menuData = [{
   name: '概况',
   path: 'general',
+  authority: 'token',  
 }, {
   name: '设备管理',
   path: 'devices',
+  authority: 'token',
   children: [{
     name: '设备列表',
     path: 'list',
@@ -32,6 +34,7 @@ const menuData = [{
 }, {
   name: '账户管理',
   path: 'account',
+  authority: 'token',
   children: [{
     name: '账号列表',
     path: 'account-list',
@@ -50,6 +53,7 @@ const menuData = [{
 }, {
   name: '租赁管理',
   path: 'rent',
+  authority: 'token',
   children: [{
     name: '分润模式',
     path: 'profit-mode',
@@ -73,18 +77,20 @@ const menuData = [{
 }, {
   name: '滤网管理',
   path: 'filter',
+  authority: 'token',
   children: [{
     name: '滤网列表',
     path: 'filter-list',
   }],
 }, {
   name: '群组管理',
+  authority: 'token',
   path: 'group',
 }, {
   name: '账户',
   icon: 'user',
   path: 'user',
-  authority: 'guest',
+  authority: 'token',
   children: [{
     name: '登录',
     path: 'login',
