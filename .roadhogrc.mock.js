@@ -235,7 +235,8 @@ export default {
   'GET /admin/model/check': baseUrl,
   'GET /admin/model/query': baseUrl,
   'POST /admin/model/create': baseUrl,
-  'POST /admin/batch/delete': baseUrl,
-  'POST /admin/batch/edit': baseUrl,
-
+  'POST /admin/model/delete': baseUrl,
+  'POST /admin/model/edit': baseUrl,
+  //设备类型，产品类型
+  'GET /admin/prod/list': baseUrl,
 };

@@ -42,3 +42,10 @@ export async function create(params) {
     body: params,
   });
 }
+
+export async function getDeviceTypeList(params) {
+  return request('/admin/prod/list', {
+    method: 'GET',
+    body: params,
+  });
+}

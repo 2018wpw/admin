@@ -99,7 +99,7 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['list'], () => import('../routes/devices/DeviceList/detail')),
     },
     '/devices/product': {
-      component: dynamicWrapper(app, ['prodModel'], () => import('../routes/devices/Product')),
+      component: dynamicWrapper(app, ['prodModel'], () => import('../routes/devices/ProductModel')),
     },
     '/devices/batch': {
       component: dynamicWrapper(app, ['batchModel'], () => import('../routes/devices/Batch')),
