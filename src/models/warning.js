@@ -59,14 +59,22 @@ export default {
       }      
     },
     *delete({ payload }, { call, put }) {
-      const response = yield call(deleteWarning, payload);
+      var body = {
+        groupID: payload.groupID,
+        devices: payload.devices,
+      };
+      const { resolve, reject } = payload;       
+      const response = yield call(deleteWarning, body);
       if(response.errCode === 0) {
+        resolve();
         const response = yield call(list, payload);
         yield put({
           type: 'listCb',
           payload: response,
         });        
-      }      
+      } else {
+        reject(response.errMsg);
+      } 
     },
 
   },

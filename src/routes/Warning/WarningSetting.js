@@ -5,6 +5,7 @@ import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const confirm = Modal.confirm;
 
 const CreateWarningForm = Form.create()((props) => {
   const { visible, form, handleCreate, handleModalVisible, warningSettingData } = props;
@@ -16,12 +17,18 @@ const CreateWarningForm = Form.create()((props) => {
       handleCreate(fieldsValue, warningSettingData === '');
     });
   };
+  
+  const onCancel = () => {
+    form.resetFields();
+    handleModalVisible();
+  };
+
   return (
     <Modal
       title="创建告警"
       visible={visible}
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={onCancel}
     >
 
       <Form className={styles.formItemGap}>
@@ -212,12 +219,25 @@ export default class WarningSetting extends React.Component {
   }
   
   onDeleteItem = (record) => {
-    this.props.dispatch({
-        type: 'warning/delete',
-        payload: {
-          alarmID: record.id,
-        }
-      });
+    const { dispatch } = this.props;
+    confirm({
+      title: '删除告警设置',
+      content: '确定从列表中删除此告警设置？',
+      onOk() {
+        return new Promise((resolve, reject) => {
+          dispatch({
+            type: 'warning/delete',
+            payload: {
+              alarmID: record.id,
+              resolve: resolve,
+              reject: reject,
+            }
+          });
+        })
+        .catch((err) => console.log(err));        
+      },
+      onCancel() {},
+    });    
   }
 
   onEditItem = (record) => {
