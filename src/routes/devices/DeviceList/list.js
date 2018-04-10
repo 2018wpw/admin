@@ -228,7 +228,7 @@ export default class DeviceList extends PureComponent {
       render: (text, record) => {
         return (
             <div>
-              <a href="#/devices/list/detail?id=1">详情</a>
+              <a href='#/devices/list/detail?deivceID='${...record.deivceID}>详情</a>
             </div>
         );
       },

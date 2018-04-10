@@ -239,4 +239,12 @@ export default {
   'POST /admin/model/edit': baseUrl,
   //设备类型，产品类型
   'GET /admin/prod/list': baseUrl,
+
+  //设备详情
+  'GET /admin/device/listRentUsers': baseUrl,
+  'GET /admin/device/listBoundUsers': baseUrl,
+  'GET /admin/device/getDeviceHistoryData': baseUrl,
+  'GET /admin/device/list': baseUrl,
+  'GET /admin/device/queryControlResult': baseUrl,
+  'POST /admin/device/control': baseUrl,
 };

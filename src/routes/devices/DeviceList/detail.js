@@ -3,72 +3,12 @@ import styles from './list.less';
 import React, { PureComponent, Fragment } from 'react';
 import DescriptionList from 'components/DescriptionList';
 import ReactEcharts from 'echarts-for-react';
+import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const { Description } = DescriptionList;
 const { CheckableTag } = Tag;
-
-
-const ProductFormCreate = Form.create()(
-  (props) => {
-    const {visible, onCancel, onCreate, form} = props;
-    const { getFieldDecorator } = form;
-
-    const formItemLayout = {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 16 },
-    };
-
-    return (
-          <Modal
-            title="创建批次"
-            visible={visible}
-            onOk={onCreate}
-            onCancel={onCancel}
-            okText="创建"
-            cancelText="取消"
-          >
-          <Form layout="vertical" layout="inline">
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem label="产品类型" >
-                  <Select placeholder="请选择" style={{ width: 300 }}>
-                    <Option value="0">M100</Option>
-                    <Option value="1">M200</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem label="产品型号">
-                  <Input placeholder="请输入" style={{ width: 300 }}></Input>
-                </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem label="描述信息">
-                  <TextArea placeholder="请输入" style={{ width: 300 }}></TextArea>
-                </FormItem>
-              </Col>
-            </Row>
-            <Row >
-              <Col md={24} sm={24}>
-                <FormItem label="是否带PM2.5">
-                  <Select placeholder="请选择" style={{ width: 275 }}>
-                    <Option value="0">是</Option>
-                    <Option value="1">否</Option>
-                  </Select> 
-                </FormItem>  
-              </Col>
-            </Row>            
-          </Form>
-          </Modal>
-      );
-    }
-);
 
 class RemoteTag extends React.Component {
   state = { checked: false };
@@ -80,6 +20,11 @@ class RemoteTag extends React.Component {
   }
 }
 
+let deviceID = '';
+
+@connect(({ deviceDetailModel, loading }) => ({
+  deviceDetailModel,
+}))
 export default class DeviceDetail extends React.Component {
   constructor(props) {
     super(props);
@@ -115,16 +60,16 @@ export default class DeviceDetail extends React.Component {
 
     this.bindUserListColumns = [{
       title: '用户名称',
-      dataIndex: 'name',      
+      dataIndex: 'userName',      
     }, {
       title: '性别',
       dataIndex: 'sex',
     }, {
       title: '联系方式',
-      dataIndex: 'tel',
+      dataIndex: 'phone',
     }, {
       title: '地址',
-      dataIndex: 'address'
+      dataIndex: 'addrDetail'
     }, {
       title: '权限',
       dataIndex: 'permission'
@@ -133,29 +78,48 @@ export default class DeviceDetail extends React.Component {
       dataIndex: 'control'
     }];
 
-    this.usingUserListColumns = [{
+    this.rentUserListColumns = [{
       title: '用户名称',
-      dataIndex: 'name',      
+      dataIndex: 'userName',      
     }, {
       title: '性别',
       dataIndex: 'sex',
     }, {
       title: '联系方式',
-      dataIndex: 'tel',
+      dataIndex: 'phone',
     }, {
       title: '地址',
-      dataIndex: 'address'
+      dataIndex: 'addrDetail'
     }, {
       title: '使用时长',
-      dataIndex: 'permission'
+      dataIndex: 'usingTime'
     }, {
       title: '费用',
-      dataIndex: 'cost'
+      dataIndex: 'fee'
     }, {
       title: '时间',
       dataIndex: 'time'
-    }];    
+    }];   
+    var query = this.props.location.search;
+    var arr = query.split('=');//?id=1    
+    deviceID = arr[1];
+    console.log('device detail page props', query, arr);     
   }
+
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'deviceDetailModel/listRentUsers',
+      payload: {
+        deviceID: deviceID,
+      }
+    });
+    this.props.dispatch({
+      type: 'deviceDetailModel/listBoundUsers',
+      payload: {
+        deviceID: deviceID,
+      }      
+    })
+  }  
 
   handleCreate = () => {
     const { count, dataSource } = this.state;
@@ -198,7 +162,7 @@ export default class DeviceDetail extends React.Component {
   }
 
 
-  renderBasicForm() {
+  renderBasicForm(deviceDetailModel) {
     return(
       <div>
         <div>设备基础信息</div>
@@ -230,7 +194,7 @@ export default class DeviceDetail extends React.Component {
     )
   }
 
-  renderRemoteForm() {
+  renderRemoteForm(deviceDetailModel) {
     return(
       <div className={styles.divGap}>
         <div>远程控制</div>
@@ -290,7 +254,7 @@ export default class DeviceDetail extends React.Component {
     )
   }
 
-  renderHostiry() {
+  renderHostiry(deviceDetailModel) {
     const warningCount = {
       title: {
         subtext: "滤网报警数量",
@@ -342,7 +306,7 @@ export default class DeviceDetail extends React.Component {
     )
   }
 
-  renderMatch() {
+  renderMatch(deviceDetailModel) {
     return(
       <div className={styles.divGap}>
         <div>已配对</div>
@@ -352,41 +316,42 @@ export default class DeviceDetail extends React.Component {
     )
   }
 
-  renderBindUserList() {
+  renderBindUserList(deviceDetailModel) {
+    var dataSource = deviceDetailModel.bindUsers;    
     return(
       <div className={styles.divGap}>
         <div>绑定用户列表</div>
         <Divider className={styles.divider}></Divider>
-        <Table bordered dataSource={this.state.matchData} columns={this.bindUserListColumns} pagination={this.state.pagination} />        
+        <Table bordered dataSource={dataSource} columns={this.bindUserListColumns} pagination={this.state.pagination} />        
       </div>
     )
   }
 
-  renderUsingUserList() {
+  renderRentUserList(deviceDetailModel) {
+    var dataSource = deviceDetailModel.rentUsers;
     return(
       <div className={styles.divGap}>
         <div>使用用户列表</div>
         <Divider className={styles.divider}></Divider>
-        <Table bordered dataSource={this.state.matchData} columns={this.usingUserListColumns} pagination={this.state.pagination} />        
+        <Table bordered dataSource={dataSource} columns={this.rentUserListColumns} pagination={this.state.pagination} />        
       </div>
     )
   }
 
   render() {
-    const { dataSource, historyData } = this.state;
+    const { historyData } = this.state;
     const columns = this.columns;
     const historyColumns = this.historyColumns;
-    const query = this.props.location.search;
-    const arr = query.split('&');//?id=1
+    const { deviceDetailModel } = this.props;
     return (
       <Fragment>
         <div>
-            {this.renderBasicForm()}
-            {this.renderRemoteForm()}
-            {this.renderHostiry()}
-            {this.renderMatch()}
-            {this.renderBindUserList()}
-            {this.renderUsingUserList()}
+            {this.renderBasicForm(deviceDetailModel)}
+            {this.renderRemoteForm(deviceDetailModel)}
+            {this.renderHostiry(deviceDetailModel)}
+            {this.renderMatch(deviceDetailModel)}
+            {this.renderBindUserList(deviceDetailModel)}
+            {this.renderRentUserList(deviceDetailModel)}
         </div>
       </Fragment>
     );
