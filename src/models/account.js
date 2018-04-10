@@ -1,5 +1,5 @@
 import { queryUserInfo, editBankInfo, editUserInfo } from '../services/account';
-import { queryRoleList, createRole, editRole } from '../services/account';
+import { queryRoleList, createRole, editRole, deleteRole } from '../services/account';
 import { queryUserList, queryAccountList, createAccount, resetAccountPwd } from '../services/account';
 import { formatMockData } from '../utils/utils';
 
@@ -71,14 +71,23 @@ export default {
       }
     },
     *deleteRole({ payload }, { call, put }) {
-      const response = yield call(deleteRole, payload);
+      console.log('deleteRole');  
+      var body = {
+        groupID: payload.groupID,
+        devices: payload.devices,
+      };
+      const { resolve, reject } = payload;         
+      const response = yield call(deleteRole, body);
       if (response.errCode === 0) {
+        resolve();
         const response = yield call(queryRoleList, payload);
         yield put({
           type: 'roleListCallback',
           payload: response.data,
           errCode: response.errCode,
         });        
+      } else {
+        reject(response.errMsg);
       }
     },                 
     *queryUserList({ payload }, { call, put }) {

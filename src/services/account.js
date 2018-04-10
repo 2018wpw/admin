@@ -64,6 +64,13 @@ export async function createRole(params) {
   }); 
 }
 
+export async function deleteRole(params) {
+  return request('/admin/role/delete', {
+    method: 'POST',
+    body: params,
+  }); 
+}
+
 export async function queryUserList(params) {
   return request('/admin/user/listUsers', {
     method: 'GET',

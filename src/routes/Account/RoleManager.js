@@ -5,6 +5,7 @@ import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const confirm = Modal.confirm;
 
 const CreateRoleForm = Form.create()((props) => {
   const { visible, form, handleCreate, handleModalVisible } = props;
@@ -62,7 +63,7 @@ const CreateRoleForm = Form.create()((props) => {
 });
 
 const EditRoleForm = Form.create()((props) => {
-  const { visible, form, handleEdit, hideEditModal } = props;
+  const { visible, form, handleEdit, hideEditModal, editData } = props;
   const { getFieldProps, getFieldDecorator } = form;
 
   const okHandle = () => {
@@ -83,7 +84,7 @@ const EditRoleForm = Form.create()((props) => {
         label="角色名称"
       >
       {getFieldDecorator('name')(
-          <div>名称</div> 
+          <div>{editData.name}</div> 
       )}
       </FormItem>
 
@@ -103,7 +104,7 @@ const EditRoleForm = Form.create()((props) => {
         label="角色描述"
       >
       {getFieldDecorator('descr')(
-        <TextArea placeholder='描述'/>     
+        <TextArea placeholder={editData.descr}/>     
       )}        
       </FormItem>      
     </Modal>
@@ -119,6 +120,7 @@ export default class RoleManager extends React.Component {
       count: 1,
       visible: false,
       editVisible: false,
+      editData: '',
   }
 
   columns = [{
@@ -135,8 +137,8 @@ export default class RoleManager extends React.Component {
       render: (text, record) => {
         return (
             <div>
-              <a onClick={() => {this.onEdit()}} className={styles.left}>编辑</a>
-              <a onClick={() => {this.onDelete()}} className={styles.right}>删除</a>
+              <a onClick={() => {this.onEditItem(record)}} className={styles.left}>编辑</a>
+              <a onClick={() => {this.onDeleteItem(record)}} className={styles.right}>删除</a>
             </div>
         );
       },
@@ -148,9 +150,10 @@ export default class RoleManager extends React.Component {
     });
   }
 
-  onEdit = () => {
+  onEditItem = (record) => {
     this.setState({
-      editVisible: true
+      editVisible: true,
+      editData: record,
     });
   }
 
@@ -164,9 +167,27 @@ export default class RoleManager extends React.Component {
       }
     };
   }
-  onDelete = (key) => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
+
+  onDeleteItem = (record) => {
+    const { dispatch } = this.props;
+    confirm({
+      title: '删除角色',
+      content: '确定从角色列表中删除此角色？',
+      onOk() {
+        return new Promise((resolve, reject) => {
+          dispatch({
+            type: 'account/deleteRole',
+            payload: {
+              roleID: record.id,
+              resolve: resolve,
+              reject: reject,
+            }
+          });
+        })
+        .catch((err) => console.log(err));        
+      },
+      onCancel() {},
+    });
   }
   handleCreate = (value) => {
     this.props.dispatch({
@@ -246,7 +267,8 @@ export default class RoleManager extends React.Component {
         />
         <EditRoleForm
           {...parentMethods}
-          visible={this.state.editVisible}        
+          visible={this.state.editVisible}  
+          editData={this.state.editData}      
         />
       </PageHeaderLayout>
     );
