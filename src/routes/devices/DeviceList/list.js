@@ -9,6 +9,10 @@ import commonStyles from '../../Common.less';
 
 const FormItem = Form.Item;
 
+@connect(({ prodModel, loading }) => ({
+  prodModel,
+  loading: loading.effects['prodModel/list'],
+}))
 export default class DeviceList extends PureComponent {
   state = {
     modalVisible: false,
@@ -224,7 +228,7 @@ export default class DeviceList extends PureComponent {
       render: (text, record) => {
         return (
             <div>
-              <a href="#/devices/list/detail?id=1">升级</a>
+              <a href="#/devices/list/detail?id=1">详情</a>
             </div>
         );
       },

@@ -1,4 +1,4 @@
-import { create , edit, deleteApi, list} from '../services/batch';
+import { create , edit, deleteApi, list, query} from '../services/batch';
 
 export default {
   namespace: 'batchModel',
@@ -10,12 +10,28 @@ export default {
   effects: {
     *create({ payload }, { call, put }) {
       const response = yield call(create, payload);
+      if(response.errCode === 0) {
+        const response = yield call(list, payload);        
+        yield put({
+          type: 'queryList',
+          payload: response.data,
+          errCode: response.errCode,
+        });         
+      }       
     },
     *edit({ payload }, { call, put }) {
       const response = yield call(edit, payload);
     },
     *deleteApi({ payload }, { call, put }) {
       const response = yield call(deleteApi, payload);
+      if(response.errCode === 0) {
+        const response = yield call(list, payload);        
+        yield put({
+          type: 'queryList',
+          payload: response.data,
+          errCode: response.errCode,
+        });         
+      }       
     }, 
     *list({ payload }, { call, put }) {
       const response = yield call(list, payload);
@@ -28,14 +44,16 @@ export default {
       }      
     },
     *query({ payload }, { call, put }) {
-      const response = yield call(query, payload);
-      if(response.errCode === 0) {
-        yield put({
-          type: 'queryList',
-          payload: response.data,
-          errCode: response.errCode,
-        });         
+      var body = {
+        batchID: payload.alarmID,
       }
+      const response = yield call(query, body);
+      const { resolve, reject } = payload;
+      if (response.errCode === 0) {
+        resolve(response.data);
+      } else {
+        reject(reponse.errCode);
+      }      
     },
     *check({ payload }, { call, put }) {
       const response = yield call(check, payload);

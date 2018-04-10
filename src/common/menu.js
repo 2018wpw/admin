@@ -86,21 +86,6 @@ const menuData = [{
   name: '群组管理',
   authority: 'token',
   path: 'group',
-}, {
-  name: '账户',
-  icon: 'user',
-  path: 'user',
-  authority: 'token',
-  children: [{
-    name: '登录',
-    path: 'login',
-  }, {
-    name: '注册',
-    path: 'register',
-  }, {
-    name: '注册结果',
-    path: 'register-result',
-  }],
 }];
 
 function formatter(data, parentPath = '/', parentAuthority) {

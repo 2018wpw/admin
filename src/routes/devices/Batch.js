@@ -1,65 +1,110 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
-import styles from './Batch.less';
+import styles from '../Common.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { connect } from 'dva';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-const ProductFormCreate = Form.create()(
+const BatchFormCreate = Form.create()(
   (props) => {
     const {visible, onCancel, onCreate, form} = props;
     const { getFieldDecorator } = form;
-
-    const formItemLayout = {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 16 },
-    };
+    const okHandle = () => {
+      form.validateFields((err, fieldsValue) => {
+        if (err) return;
+        form.resetFields();
+        onCreate(fieldsValue);
+      });
+    };    
 
     return (
           <Modal
             title="创建批次"
             visible={visible}
-            onOk={onCreate}
+            onOk={okHandle}
             onCancel={onCancel}
             okText="创建"
             cancelText="取消"
           >
-          <Form layout="vertical" layout="inline">
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem label="产品类型" >
-                  <Select placeholder="请选择" style={{ width: 300 }}>
-                    <Option value="0">M100</Option>
-                    <Option value="1">M200</Option>
-                  </Select>
-                </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem label="产品型号">
-                  <Input placeholder="请输入" style={{ width: 300 }}></Input>
-                </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={24} sm={24}>
-                <FormItem label="描述信息">
-                  <TextArea placeholder="请输入" style={{ width: 300 }}></TextArea>
-                </FormItem>
-              </Col>
-            </Row>
-            <Row >
-              <Col md={24} sm={24}>
-                <FormItem label="是否带PM2.5">
-                  <Select placeholder="请选择" style={{ width: 275 }}>
-                    <Option value="0">是</Option>
-                    <Option value="1">否</Option>
-                  </Select> 
-                </FormItem>  
-              </Col>
-            </Row>            
+          <Form className={styles.formItemGap}>
+            <FormItem label="批次名称" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
+              {form.getFieldDecorator('batchName', {
+                rules: [{ required: true, message: '请输入批次名称' }],
+              })(
+                <Input placeholder="请输入批次名称"></Input>
+              )}                
+            </FormItem>
+            
+            <FormItem label="产品类型" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
+              {form.getFieldDecorator('prodName', {
+                rules: [{ required: true, message: '请选择产品类型' }],
+              })(
+                <Select placeholder="请选择产品类型">
+                  <Option value="0">是</Option>
+                  <Option value="1">否</Option>
+                </Select>               
+              )}
+            </FormItem>              
+            <FormItem label="产品型号" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
+              {form.getFieldDecorator('modelName', {
+                rules: [{ required: true, message: '请选择产品型号' }],
+              })(
+                <Select placeholder="请选择产品型号">
+                  <Option value="0">是</Option>
+                  <Option value="1">否</Option>
+                </Select>               
+              )}
+            </FormItem>                  
+            <FormItem label="产品描述" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
+              {form.getFieldDecorator('descr')(
+                <TextArea placeholder="请输入产品描述"></TextArea>              
+              )}
+            </FormItem>
+           
+          </Form>
+          </Modal>
+      );
+    }
+);
+
+
+const BatchFormEdit = Form.create()(
+  (props) => {
+    const {visible, onCancel, onCreate, form, editingData } = props;
+    const { getFieldDecorator } = form;
+    const okHandle = () => {
+      form.validateFields((err, fieldsValue) => {
+        if (err) return;
+        form.resetFields();
+        onCreate(fieldsValue);
+      });
+    };    
+
+    return (
+          <Modal
+            title="编辑批次"
+            visible={visible}
+            onOk={okHandle}
+            onCancel={onCancel}
+          >
+          <Form className={styles.formItemGap}>
+            <FormItem label="批次名称" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
+              <div>{editingData.name}</div>            
+            </FormItem>
+            
+            <FormItem label="产品类型" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
+              <div>{editingData.prodName}</div>
+            </FormItem>              
+            <FormItem label="产品型号" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
+              <div>{editingData.modelName}</div>
+            </FormItem>                  
+            <FormItem label="产品描述" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
+              {form.getFieldDecorator('descr')(
+                <TextArea placeholder={editingData.descr}></TextArea>              
+              )}
+            </FormItem>
+           
           </Form>
           </Modal>
       );
@@ -94,25 +139,18 @@ export default class ProductList extends React.Component {
       dataIndex: 'operation',
       render: (text, record) => {
         return (
-            <Popconfirm title="确认删除?" onConfirm={() => this.onDelete(record.key)}>
-              <a href="#" className={styles.left}>编辑</a>
-              <a href="#" className={styles.right}>删除</a>
-            </Popconfirm>
+          <div>
+              <a onClick={()=>this.onEditItem(record)} className={styles.left}>编辑</a>
+              <a onClick={()=>this.onDeleteItem(record)} className={styles.right}>删除</a>            
+          </div>
         );
       },
     }];
 
     this.state = {
-      dataSource: [{
-        key: '0',
-        name: '批次名称 0',
-        model: 'M100',
-        description: '我是描述信息',
-        count: '100',
-        type: '产品类型1'
-      }],
-      count: 1,
-      visible: false
+      visible: false,
+      editingData: '',
+      editVisible: false,
     };
   }
 
@@ -122,37 +160,60 @@ export default class ProductList extends React.Component {
     });
   }
 
-  onCellChange = (key, dataIndex) => {
-    return (value) => {
-      const dataSource = [...this.state.dataSource];
-      const target = dataSource.find(item => item.key === key);
-      if (target) {
-        target[dataIndex] = value;
-        this.setState({ dataSource });
+  onEditItem = (record) => {
+    return new Promise((resolve, reject) => {
+      this.props.dispatch({
+        type: 'batchModel/query',
+        payload: {
+          batchID: record.id,
+          resolve,
+          reject,
+        }
+      });
+    }).then(res => {
+      console.log(res);
+      this.setState({
+        editVisible: true,
+        editingData: res,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }  
+
+  onDeleteItem = (record) => {
+    this.props.dispatch({
+        type: 'batchModel/deleteApi',
+        payload: {
+          batchID: record.id,
+        }
+      });
+  }
+
+  handleCreate = (values) => {
+    this.props.dispatch({
+      type: 'batchModel/create',
+      payload: {
+        ...values,
       }
-    };
-  }
-  onDelete = (key) => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
-  }
-  handleCreate = () => {
-    const { count, dataSource } = this.state;
-    const form = this.form;
-    const newData = {
-        key: count,
-        name: '批次名称 0',
-        model: 'M100',
-        description: '我是描述信息',
-        count: '100',
-        type: '产品类型1'
-    };
+    });
     this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
       visible: false
     });
   }
+
+  handleEdit = (values) => {
+    this.props.dispatch({
+      type: 'batchModel/edit',
+      payload: {
+        ...values,
+      }
+    });
+    this.setState({
+      editVisible: false
+    });
+  }  
 
   showModal = () => {
     this.setState({
@@ -164,6 +225,7 @@ export default class ProductList extends React.Component {
       console.log(e);
       this.setState({
         visible: false,
+        editVisible: false,
       });
   }
 
@@ -188,20 +250,26 @@ export default class ProductList extends React.Component {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button className={styles.button} type="primary" onClick={this.showModal}>创建批次</Button>
+            <Button className={styles.createButton} type="primary" onClick={this.showModal}>创建批次</Button>
             <Table bordered dataSource={dataSource} columns={columns} />
           </div>
         </Card>
 
 
-        <ProductFormCreate
+        <BatchFormCreate
           ref={this.saveFormRef}
           visible={this.state.visible}
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
-        >
-          
-        </ProductFormCreate>
+        />
+        <BatchFormEdit
+          ref={this.saveFormRef}
+          visible={this.state.editVisible}
+          onCancel={this.handleCancel}
+          onCreate={this.handleEdit}
+          editingData={this.state.editingData}
+        />
+
       </PageHeaderLayout>
     );
   }

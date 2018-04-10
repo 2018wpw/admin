@@ -209,7 +209,6 @@ export default class WarningSetting extends React.Component {
         }
       });      
     }
-
   }
   
   onDeleteItem = (record) => {
