@@ -24,21 +24,28 @@ export default {
     },      
     *createOTAPackage({ payload }, { call, put }) {
       const response = yield call(createOTAPackage, payload);
-      yield put({
-        type: 'queryList',
-        payload: response.data,
-      });
+      if(response.errCode === 0) {
+        const response = yield call(quryOTAPackages, payload);
+        yield put({
+          type: 'queryList',
+          payload: response.data,
+        });        
+      }
     },
     *uploadPackage({ payload }, { call, put }) {
       var response = yield call(uploadPackage, payload);    
 
     },
     *requestOTA({ payload }, { call, put }) {
+      console.log('requestOTA', payload);
       const response = yield call(requestOTA, payload);
-      yield put({
-        type: 'appendList',
-        payload: response.data,
-      });
+      if(response.errCode === 0) {
+        const response = yield call(quryOTAHistory, payload);
+        yield put({
+          type: 'queryListHistory',
+          payload: response.data,
+        });        
+      }
     },
   },
 

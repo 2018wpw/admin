@@ -8,7 +8,7 @@ export async function createOTAPackage(params) {
   });
 }
 
-export async function requestOTA() {
+export async function requestOTA(params) {
   return request('/admin/ota/requestOTA', {
     method: 'POST',
     body: params,    

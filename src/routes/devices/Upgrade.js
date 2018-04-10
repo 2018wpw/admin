@@ -114,6 +114,47 @@ const CreateUpgradePackageForm = Form.create()(
     );
 });
 
+const StartUpgradeForm = Form.create()(
+  (props) => {
+    const { visible, onCancel, handleUpgrade, form, deviceID } = props;
+    const onOk = () => {
+      form.validateFields((err, fieldsValue) => {
+        if (err) return;
+        form.resetFields();
+        handleUpgrade(fieldsValue, deviceID);
+      });
+    };
+
+    return (
+      <Modal
+        title="升级"
+        visible={visible}
+        onOk={onOk}
+        onCancel={() => onCancel()}
+        okText="升级"
+        cancelText="取消"      
+      >
+        <Form className={styles.formItemGap}>
+          <FormItem
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 15 }}
+            label="批次"
+          >
+            {form.getFieldDecorator('batchID', {
+              rules: [{ required: true, message: '请输选择批次' }],
+            })(
+              <Select placeholder="请选择">
+                <Select.Option value="0">M100</Select.Option>
+                <Select.Option value="1">M200</Select.Option>
+              </Select>
+            )}
+          </FormItem>      
+        </Form>      
+       
+      </Modal>
+    );
+});
+
 
 @connect(({ upgrade, loading }) => ({
   upgrade,
@@ -125,7 +166,9 @@ export default class UpgradeList extends React.Component {
     this.state = {
       visible: false,
       uploading: false,
-      selectedFile: '',      
+      selectedFile: '',
+      upgradeVisible: false,
+      deviceID: '',
     };
 
     this.columns = [{
@@ -151,10 +194,10 @@ export default class UpgradeList extends React.Component {
         dataIndex: 'operation',
         render: (text, record) => {
           return (
-              <Popconfirm title="确认删除?" onConfirm={() => this.onDelete(record.key)}>
-                <a href="#" className={styles.left}>升级</a>
-                <a href="#" className={styles.right}>删除</a>
-              </Popconfirm>
+          <div>
+              <a onClick={()=>this.onUpgrade(record)} className={styles.left}>升级</a>
+              <a onClick={()=>this.onDeleteItem(record)} className={styles.right}>删除</a>            
+          </div>
           );
         },
     }];
@@ -193,12 +236,40 @@ export default class UpgradeList extends React.Component {
     });
   }
 
-  onDelete = (key) => {
+  handleUpgrade = (values, deviceID) => {
+    this.props.dispatch({
+      type: 'upgrade/requestOTA',
+      payload: {
+        deviceID: deviceID,
+        ...values,
+      },
+    });
+    this.setState({
+      upgradeVisible: false
+    });
+  }  
 
+  onUpgrade = (record) => {
+    this.setState({
+      upgradeVisible: true,
+      deviceID: record.id,
+    });    
   }
 
-  handleCreatePackage = () => {
-    
+  onDeleteItem = (record) => {
+    alert('缺少接口');
+  }
+
+  handleCreatePackage = (values) => {
+    this.props.dispatch({
+      type: 'upgrade/createOTAPackage',
+      palyload: {
+        ...values,
+      }
+    });
+    this.setState({
+      visible: false,
+    });    
   }
 
   showCreateUpgradeModal = () => {
@@ -211,6 +282,7 @@ export default class UpgradeList extends React.Component {
       console.log(e);
       this.setState({
         visible: false,
+        upgradeVisible: false,
       });
   }
 
@@ -279,6 +351,15 @@ export default class UpgradeList extends React.Component {
           handleUpload={this.handleUpload}
           selectedFile={this.state.selectedFile}
         />
+
+        <StartUpgradeForm
+          ref={this.saveFormRef}
+          visible={this.state.upgradeVisible}
+          onCancel={this.handleCancel}
+          handleUpgrade={this.handleUpgrade}
+          deviceID={this.state.deviceID}
+        />
+
       </PageHeaderLayout>
     );
   }
