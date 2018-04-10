@@ -1,4 +1,4 @@
-import { listRentUsers, listBoundUsers } from '../services/deviceDetailApi';
+import { listRentUsers, listBoundUsers, list } from '../services/deviceDetailApi';
 
 export default {
   namespace: 'deviceDetailModel',
@@ -6,6 +6,7 @@ export default {
   state: {
     rentUsers: [],
     bindUsers: [],
+    basicInfo: undefined,
   },
 
   effects: {
@@ -30,7 +31,18 @@ export default {
           },
         });
       }
-    }, 
+    },
+    *getBasicInfo({ payload }, { call, put }) {
+      const response = yield call(list, payload);
+      if (response.errCode === 0) {
+        yield put({
+          type: 'queryList',
+          payload: {
+            basicInfo: response.data,
+          },
+        });
+      }
+    }
   },
 
   reducers: {
