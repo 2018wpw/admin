@@ -16,12 +16,16 @@ const CascaderOptions = [{
  ];
 
 const AddAccountForm = Form.create()((props) => {
-  const { addAccountModalVisible, form, handleAddAccount, handleModalVisible } = props;
+  const { addAccountModalVisible, form, handleAddAccount, handleAddModalVisible, userData, handleEditAccount } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      handleAddAccount(fieldsValue);
+      if(userData !== '') {
+      	handleAddAccount(fieldsValue);
+      } else {
+		handleEditAccount(fieldsValue, userData.id);
+      }
     });
   };
 
@@ -29,12 +33,14 @@ const AddAccountForm = Form.create()((props) => {
     console.log('onChange', value);
   };
 
+  var title = userData === '' ? '添加账号' : '编辑账号';
+
   return (
     <Modal
-      title="添加账号"
+      title={title}
       visible={addAccountModalVisible}
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={() => handleAddModalVisible()}
     >
       <Form className={commonStyles.formItemGap}>
         <FormItem
@@ -43,9 +49,10 @@ const AddAccountForm = Form.create()((props) => {
           label="用户名"
         >
           {form.getFieldDecorator('name', {
+          	initialValue: userData.name,          	          	          	
             rules: [{ required: true, message: '请输入用户名' }],
           })(
-            <Input placeholder="请输入用户名" />
+            <Input placeholder='请输入用户名' />
           )}
         </FormItem>
 
@@ -67,6 +74,7 @@ const AddAccountForm = Form.create()((props) => {
           label="详细地址"
         >
           {form.getFieldDecorator('addrDeail', {
+          	initialValue: userData.addrDeail,          	          	
             rules: [{ required: true, message: '请输入详细地址' }],
           })(
             <Input placeholder="请输入详细地址" />
@@ -79,9 +87,10 @@ const AddAccountForm = Form.create()((props) => {
           label="类型"
         >
           {form.getFieldDecorator('roleID', {
-            rules: [{ required: true, message: '请输选择类型' }],
+          	initialValue: userData.roleID,
+            rules: [{ required: true, message: '请输选择角色' }],
           })(
-            <Select placeholder="请选择">
+            <Select placeholder="请选择角色">
               <Select.Option value="0">管理员</Select.Option>
               <Select.Option value="1">普通用户</Select.Option>
             </Select>
@@ -94,6 +103,7 @@ const AddAccountForm = Form.create()((props) => {
           label="联系电话"
         >
           {form.getFieldDecorator('phone', {
+          	initialValue: userData.phone,          	
             rules: [{ required: true, message: '请输入联系电话' }],
           })(
             <Input placeholder="请输入联系电话"/>
@@ -106,9 +116,10 @@ const AddAccountForm = Form.create()((props) => {
           label="联系人"
         >
           {form.getFieldDecorator('contact', {
+          	initialValue: userData.contact,
             rules: [{ required: true, message: '请输入联系人' }],
           })(
-            <Input placeholder="请输入联系人" />
+            <Input placeholder={"请输入联系人"} />
           )}
         </FormItem>         
       </Form>   
@@ -148,7 +159,7 @@ class AccountList extends React.Component {
         return (
             <div>
               <a name="edit" className={styles.edit} onClick={() => {this.onResetPwd(record)}}>重置密码</a>
-              <a name="change" className={styles.change} onClick={() => {this.onChange()}}>编辑</a>
+              <a name="change" className={styles.change} onClick={() => {this.onEditItem(record)}}>编辑</a>
             </div>
         );
       },
@@ -156,6 +167,7 @@ class AccountList extends React.Component {
 
     this.state = {
       addAccountModalVisible: false,
+      userData: '',
     };
   }
 
@@ -165,14 +177,18 @@ class AccountList extends React.Component {
     });
   }
 
-  handleModalVisible = (flag) => {
+  handleAddModalVisible = (flag) => {
     this.setState({
       addAccountModalVisible: !!flag,
+      userData: '',
     });
   }
 
-  onEdit = () => {
-    //TODO
+  onEditItem = (record) => {
+    this.setState({
+      addAccountModalVisible: true,
+      userData: record,
+    });
   }
 
   onResetPwd = (record) => {
@@ -205,9 +221,24 @@ class AccountList extends React.Component {
     });
   }
 
+  handleEditAccount = (values, userID) => {
+    this.setState({
+      addAccountModalVisible: false,
+      userData: '',
+    });
+    this.props.dispatch({
+      type: 'account/editAccount',
+      payload: {
+		userID: userID,
+        ...values,
+      }
+    });    
+  }  
+
   handleAddAccount = (values) => {
     this.setState({
       addAccountModalVisible: false,
+      userData: '',
     });
     this.props.dispatch({
       type: 'account/createAccount',
@@ -248,7 +279,8 @@ class AccountList extends React.Component {
 
     const parentMethods = {
       handleAddAccount: this.handleAddAccount,
-      handleModalVisible: this.handleModalVisible,
+      handleAddModalVisible: this.handleAddModalVisible,
+      handleEditAccount: this.handleEditAccount,
     };
 
     return (
@@ -291,7 +323,7 @@ class AccountList extends React.Component {
                   <FormItem>
                     <div layout="inline" align="center">
                       <Button type="primary" className={styles.button} htmlType="submit">查询</Button>
-                      <Button type="primary" className={styles.button}  onClick={() => this.handleModalVisible(true)}>添加</Button>
+                      <Button type="primary" className={styles.button}  onClick={() => this.handleAddModalVisible(true)}>添加</Button>
                     </div>
                   </FormItem>
                 </Col>              
@@ -307,6 +339,7 @@ class AccountList extends React.Component {
         <AddAccountForm
           {...parentMethods}
           addAccountModalVisible={addAccountModalVisible}
+          userData={this.state.userData}
         />
 
       </PageHeaderLayout>

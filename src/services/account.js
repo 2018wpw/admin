@@ -92,6 +92,13 @@ export async function createAccount(params) {
   });     
 }
 
+export async function editAccount(params) {
+  return request('/admin/user/editAccount', {
+    method: 'POST',
+    body: params,
+  });     
+}
+
 export async function resetAccountPwd(params) {
   return request('/admin/user/resetAccountPassword', {
     method: 'POST',
