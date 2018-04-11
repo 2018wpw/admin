@@ -141,6 +141,7 @@ export default {
       }
     },
     *getRoleList({ payload }, { call, put }) {
+      const { resolve, reject } = payload;      
       const response = yield call(queryRoleList, payload);
       if(response.errCode === 0) {
         if (resolve) {

@@ -3,6 +3,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
 import { connect } from 'dva';
 import SelectRato from 'components/Widget';
+import ProfitSubForm from './ProfitSubForm';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -12,18 +13,16 @@ const CreateProfitForm = Form.create()((props) => {
   const { visible, form, handleCreate, handleModalVisible, roleList } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
+      console.log('modal submit', fieldsValue);
       if (err) return;
       form.resetFields();
       handleCreate(fieldsValue);
     });
   };
-  const checkSelectedRole = (rule, value, callback) => {
-    console.log('checkSelectedRole', value);
-    if(value.number > 0) {
-      callback();
-      return;
-    }
-    callback('分润比例大于0');
+
+  const cancelHandle = () => {
+    form.resetFields();
+    handleModalVisible();
   };
 
   const { getFieldDecorator } = form;
@@ -33,49 +32,12 @@ const CreateProfitForm = Form.create()((props) => {
       title="创建分润模式"
       visible={visible}
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={cancelHandle}
     >
-
-      <Form className={styles.formItemGap}>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="名称"
-        >
-          {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入分润模式名称' }],
-          })(
-            <Input placeholder="请输入分润模式名称" />          
-          )}
-        </FormItem>
-
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="角色比例"
-        >
-          {getFieldDecorator('roleItem', {
-            initialValue: { number: 0, currency: 'rmb' },
-            rules: [{ required: true}],
-          })(
-            <SelectRato
-              methodName='添加角色'
-              addMethod={()=>{ console.log('add click')}}
-              roleList={roleList || []}
-            />
-          )}
-        </FormItem>
-
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="分润模式描述"
-        >
-          {getFieldDecorator('descr')(
-            <TextArea/>
-          )}
-        </FormItem> 
-      </Form>     
+      <ProfitSubForm
+        form={form}
+        roleList={roleList}
+      />
     </Modal>
   );
 });

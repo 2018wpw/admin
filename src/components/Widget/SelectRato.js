@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Row, Input, Select } from 'antd';
+import { Col, Row, Input, Select, Button, Icon} from 'antd';
 
 const Option = Select.Option;
 
@@ -48,27 +48,41 @@ export default class SelectRato extends React.Component {
     }
   }
 
-  render() {
-  	const { addClick, methodName, removeMethod, roleList } = this.props;
-  	const state = this.state;
-	const optionValue = roleList || [];
+  click = (index, k) => {
 
+    const { add, remove } = this.props;
+    if(index === 0) {
+      return ()=>add();
+    } else {
+      return ()=>remove(k);
+    }
+  }
+
+  render() {
+  	const { roleList, index, k } = this.props;
+  	const state = this.state;
+	  const optionValue = roleList || [];
+    var type = index === 0 ? "plus-circle-o" : "minus-circle-o";
   	return(
 		<span>
 	        <Select
-	          style={{ width: '65%' }}
+	          style={{ width: '55%' }}
 	          onChange={this.handleRoleChange}
+            placeholder='请选择角色'
+            value={state.role}
 	        >
-		        {optionValue.map((item, i) => (
-					<Option value={item.name}>{item.name}</Option>
+		      {optionValue.map((item, i) => (
+					   <Option value={item.id}>{item.name}</Option>
 			    ))}
 	        </Select>          
 	        <Input
 	          type="text"
 	          value={state.number}
 	          onChange={this.handleNumberChange}
-	          style={{ width: '32%', marginLeft: '3%' }}
-	        />   			
+            style={{ width: '29%', marginLeft: '3%', marginRight: '3%', }}
+            addonAfter='%'
+	        />
+          <Icon type={type} onClick={this.click(index, k)} />           			
 		</span>       
   	);
   }

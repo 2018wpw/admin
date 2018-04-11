@@ -157,17 +157,6 @@ export default class RoleManager extends React.Component {
     });
   }
 
-  onCellChange = (key, dataIndex) => {
-    return (value) => {
-      const dataSource = [...this.state.dataSource];
-      const target = dataSource.find(item => item.key === key);
-      if (target) {
-        target[dataIndex] = value;
-        this.setState({ dataSource });
-      }
-    };
-  }
-
   onDeleteItem = (record) => {
     const { dispatch } = this.props;
     confirm({
@@ -189,6 +178,7 @@ export default class RoleManager extends React.Component {
       onCancel() {},
     });
   }
+  
   handleCreate = (value) => {
     this.props.dispatch({
       type: 'account/createRole',
