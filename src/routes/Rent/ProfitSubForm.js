@@ -7,17 +7,12 @@ const { TextArea } = Input;
 const Option = Select.Option;
 
 let uuid = 2;
-class DemoForm extends React.Component {
+class ProfitSubForm extends React.Component {
   constructor(props) {
     super(props);
     uuid = 2;
   }
-  
-  componentWillUnmount() {
-    form.resetFields();
-    uuid = 2;
-    console.log('componentWillUnmount');
-  }
+
 
   remove = (k) => {
     const { form } = this.props;
@@ -140,5 +135,5 @@ class DemoForm extends React.Component {
   }
 };
 
-const Demo = Form.create()(DemoForm);
-export default Demo;
+const SubForm = Form.create()(ProfitSubForm);
+export default SubForm;
