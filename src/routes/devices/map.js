@@ -2,6 +2,7 @@ import { Map, Marker, NavigationControl, InfoWindow } from 'react-bmap'
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { Card, Divider, Icon, Form, List, Checkbox } from 'antd';
 import styles from './Map.less';
+import InfiniteScroll from 'react-infinite-scroller';
 
 
 const CreateFloatList = Form.create()((props) => {
@@ -17,18 +18,26 @@ const CreateFloatList = Form.create()((props) => {
 			</div>
 
 			<div className={ expanded ? styles.show : styles.hiden}>
-				<Divider style={{ margin: '0' }} />
-			    <List
-			      dataSource={dataSource}
-			      renderItem={
-			      	item => (
-			      		<List.Item>
-							<Checkbox style={{marginRight: 10}}/>
-			      			{item}
-			      		</List.Item>
-			      	)
-			      }
-			    />
+				<Divider style={{ margin: 1 }} />
+
+		        <InfiniteScroll
+		          initialLoad={false}
+		          pageStart={0}
+		          useWindow={false}
+		        >			
+				    <List
+				      dataSource={dataSource}
+				      renderItem={
+				      	item => (
+				      		<List.Item>
+								<Checkbox style={{marginRight: 10}}/>
+				      			{item}
+				      		</List.Item>
+				      	)
+				      }
+				    />
+        		</InfiniteScroll>
+
 			</div>
 			
 		</div>
