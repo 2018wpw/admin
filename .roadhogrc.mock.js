@@ -178,6 +178,7 @@ export default {
   //导入设备
   'GET /admin/device/importDevices': baseUrl,
   'GET /admin/device/queryImportHistory': baseUrl,
+  'POST /admin/device/importDevices':baseUrl,
   
   //概况
   'GET /admin/statis/getStrainerLinearStatistics': baseUrl,

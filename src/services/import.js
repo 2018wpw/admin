@@ -7,3 +7,10 @@ export async function queryImportHistory(params) {
     body: params,
   });
 }
+
+export async function importDevice(params) {
+  return request('/admin/device/importDevices', {
+	method: 'POST',
+	body: params,
+  });
+}

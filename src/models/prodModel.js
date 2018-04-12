@@ -4,7 +4,8 @@ export default {
   namespace: 'prodModel',
 
   state: {
-    
+    deviceTypeList: [],
+    batchList: [],
   },
 
   effects: {
@@ -68,7 +69,15 @@ export default {
       const response = yield call(check, payload);
     },
     *getDeviceTypeList ({ payload }, { call, put }) {
-      const response = yield call(check, payload);
+      const response = yield call(getDeviceTypeList, payload);
+      if(response.errCode === 0) {
+        yield put({
+          type: 'queryList',
+          payload: {
+            deviceTypeList: response.data.prods,
+          }
+        });
+      }
     },
   },
 
