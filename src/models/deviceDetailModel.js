@@ -7,6 +7,7 @@ export default {
     rentUsers: [],
     bindUsers: [],
     basicInfo: undefined,
+    deviceList: [],
   },
 
   effects: {
@@ -42,7 +43,34 @@ export default {
           },
         });
       }
-    }
+    },
+    *getDeviceList({ payload }, { call, put }) {
+      const response = yield call(list, payload);
+      if (response.errCode === 0) {
+        var devices = response.data.devices;
+        var batchInfo = response.data.batchInfo;
+        var deviceData = response.data.deviceData;
+        var models = response.data.models;
+        var deviceList = [];
+        devices.map((item, index) => {
+          deviceList.push({
+            key: item.matchDeviceInfo.deviceID,
+            deviceID: item.matchDeviceInfo.deviceID,
+            devicecategory: models[index].prodInfo.name,
+            devicetype: models[index].name,
+            location:item.addrDetail,
+            batch:item.batchInfo.name,
+            groupName:item.groupName,
+          });
+        })
+        yield put({
+          type: 'queryList',
+          payload: {
+            deviceList: [...deviceList]
+          },
+        });
+      }
+    },
   },
 
   reducers: {
