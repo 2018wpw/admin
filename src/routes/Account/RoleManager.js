@@ -2,6 +2,7 @@ import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './RoleManager.less';
 import { connect } from 'dva';
+import PermissionTree from './PermissionTree';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -16,12 +17,19 @@ const CreateRoleForm = Form.create()((props) => {
       handleCreate(fieldsValue);
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    handleModalVisible();
+  };
+
   return (
     <Modal
       title="创建角色"
       visible={visible}
+      okText='创建'
+      cancelText='取消'
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={cancelHandle}
     >
       <FormItem
         labelCol={{ span: 5 }}
@@ -40,11 +48,10 @@ const CreateRoleForm = Form.create()((props) => {
         wrapperCol={{ span: 15 }}
         label="权限"
       >
-        {form.getFieldDecorator('permissions', {
-          rules: [{ required: true, message: '请输入权限' }],
-        })(
-          <Input placeholder="请输入权限" />
-        )}
+        {form.getFieldDecorator('permissions')(
+          <PermissionTree/>        
+        )}      
+          
       </FormItem>            
 
       <FormItem
@@ -52,9 +59,7 @@ const CreateRoleForm = Form.create()((props) => {
         wrapperCol={{ span: 15 }}
         label="角色描述"
       >
-        {form.getFieldDecorator('descr', {
-          rules: [{ required: true, message: '请输入角色描述' }],
-        })(
+        {form.getFieldDecorator('descr')(
           <TextArea/>
         )}
       </FormItem>      
@@ -228,10 +233,6 @@ export default class RoleManager extends React.Component {
     })    
   }
 
-  onSubmit = (e) => {
-
-  }
-
   render() {
     const { account } = this.props;
     var dataSource = account.roles || [];
@@ -241,6 +242,9 @@ export default class RoleManager extends React.Component {
       hideEditModal: this.hideEditModal,
       handleEdit: this.handleEdit,
     };
+    dataSource.map(item=>{
+      item['key'] = item.id;
+    })
 
     return (
       <PageHeaderLayout>

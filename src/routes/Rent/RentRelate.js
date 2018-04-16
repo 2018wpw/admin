@@ -29,6 +29,8 @@ const CreateProfitForm = Form.create()((props) => {
   return (
     <Modal
       title="创建租赁关系"
+      okText='创建'
+      cancelText='取消'      
       visible={visible}
       onOk={okHandle}
       onCancel={cancelHandle}

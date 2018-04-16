@@ -2,7 +2,6 @@ import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
 import { connect } from 'dva';
-import SelectRato from 'components/Widget';
 import ProfitSubForm from './ProfitSubForm';
 
 const FormItem = Form.Item;

@@ -83,7 +83,6 @@ class ProfitSubForm extends React.Component {
     } = this.props;
     form.getFieldDecorator('keys', { initialValue: [1] });
     const keys = form.getFieldValue('keys');
-    console.log('keys', keys);
 
     const formItems = keys.map((k, index) => {
       return (
