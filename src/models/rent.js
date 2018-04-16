@@ -8,6 +8,9 @@ import {
   createProfitMode,
   deleteProfitMode,
   editProfitMode,
+  createRent,
+  deleteRent,
+  editRent,
 }
 from '../services/rent';
 
@@ -37,6 +40,19 @@ export default {
         });
       }
     },
+    *getProfitList({ payload }, { call, put }) {
+      const { resolve, reject } = payload;
+      const response = yield call(listProfitMode, payload);
+      if(response.errCode === 0) {
+        if (resolve) {
+          resolve(response);
+        }
+      } else {
+        if(reject) {
+          reject(response.errMsg);
+        }
+      } 
+    },    
     *listWithdrawRecords({ payload }, { call, put }) {
       const response = yield call(listWithdrawRecords, payload);
       if (response.errCode === 0) {
@@ -79,6 +95,16 @@ export default {
         reject(response.errMsg);
       }
     },
+    *createRent({ payload }, { call, put }) {
+      const response = yield call(createRent, payload);
+      if (response.errCode === 0) {
+        const response = yield call(listRent, payload);
+        yield put({
+          type: 'listRentCB',
+          payload: response,
+        });
+      }
+    },    
     *createProfitMode({ payload }, { call, put }) {
       const response = yield call(createProfitMode, payload);
       if (response.errCode === 0) {
@@ -115,7 +141,34 @@ export default {
       } else {
         reject(response.errCode);
       }
-    },    
+    },
+    *editRent({ payload }, { call, put }) {
+      const response = yield call(editRent, payload);
+      if (response.errCode === 0) {
+        const response = yield call(listRent, payload);
+        yield put({
+          type: 'listRentCB',
+          payload: response,
+        });
+      }
+    },     
+    *deleteRent({ payload }, { call, put }) {
+      var body = {
+        id: payload.profitID,
+      };
+      const { resolve, reject } = payload;          
+      const response = yield call(deleteRent, body);
+      if (response.errCode === 0) {
+        resolve();
+        const response = yield call(listRent, payload);
+        yield put({
+          type: 'listRentCB',
+          payload: response.data,
+        });        
+      } else {
+        reject(response.errCode);
+      }
+    },      
   },
 
   reducers: {

@@ -212,6 +212,7 @@ export default {
   'POST /admin/rent/createProfitMode': baseUrl,
   'POST /admin/rent/deleteProfitMode': baseUrl,
   'POST /admin/rent/createRent': baseUrl,
+  'POST /admin/rent/deleteRent': baseUrl,  
   'POST /admin/rent/withdraw': baseUrl,
   'POST /admin/rent/editProfitMode': baseUrl,
   'POST /admin/rent/editRent': baseUrl,

@@ -43,6 +43,13 @@ export async function editRent(params) {
   });
 }
 
+export async function deleteRent(params) {
+  return request('/admin/rent/deleteRent', {
+    method: 'POST',
+    body: params,
+  });
+}
+
 export async function queryProfitMode(params) {
   return request('/admin/rent/queryProfitMode', {
     method: 'GET',

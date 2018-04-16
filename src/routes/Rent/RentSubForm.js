@@ -1,13 +1,13 @@
 import { Form, Input, Icon, Button, Select } from 'antd';
 import styles from '../Common.less';
-import SelectRato from './SelectRato';
+import SelectRent from './SelectRent';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
 
 let uuid = 2;
-class ProfitSubForm extends React.Component {
+class RentSubForm extends React.Component {
   constructor(props) {
     super(props);
     uuid = 2;
@@ -77,7 +77,7 @@ class ProfitSubForm extends React.Component {
       },
     };
     const { 
-      roleList,
+      profitList,
       form,
       formData,
     } = this.props;
@@ -89,22 +89,21 @@ class ProfitSubForm extends React.Component {
       return (
         <FormItem
           {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}        
-          label={index === 0 ? '分成比例' : ''}
+          label={index === 0 ? '价格' : ''}
           key={k}
         >
           {form.getFieldDecorator(`names[${k}]`, {
-            initialValue: { number: 1, role: ''},
+            initialValue: { number: 1, price: 1},            
             validateTrigger: ['onChange', 'onBlur'],
           })(
-            <SelectRato
+            <SelectRent
               {...parentMethods}
               index={index}
-              roleList={roleList}
               formData={formData}
               k={k}
             >
               
-            </SelectRato>
+            </SelectRent>
           )}
         </FormItem>
       );
@@ -114,20 +113,26 @@ class ProfitSubForm extends React.Component {
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="名称"
+          label="分润模式"
         >
-          {form.getFieldDecorator('name', {
+          {form.getFieldDecorator('profitID', {
             initialValue: formData === null ? null: formData.name,
-            rules: [{ required: true, message: '请输入分润模式名称' }],
+            rules: [{ required: true, message: '请选择分润模式' }],
           })(
-            <Input placeholder="请输入分润模式名称" />          
+            <Select
+              placeholder='请选择分润模式'
+            >
+              {profitList.map((item, i) => (
+                 <Option value={item.id}>{item.name}</Option>
+              ))}
+            </Select>        
           )}
         </FormItem>
         {formItems}
         <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
-          label="分润模式描述"
+          label="描述信息"
         >
           {form.getFieldDecorator('descr', {
             initialValue: formData === null ? null: formData.descr,
@@ -140,5 +145,5 @@ class ProfitSubForm extends React.Component {
   }
 };
 
-const SubForm = Form.create()(ProfitSubForm);
+const SubForm = Form.create()(RentSubForm);
 export default SubForm;

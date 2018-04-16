@@ -2,99 +2,42 @@ import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
 import { connect } from 'dva';
+import RentSubForm from './RentSubForm'
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const confirm = Modal.confirm;
 
 
 const CreateProfitForm = Form.create()((props) => {
-  const { visible, form, handleCreate, handleModalVisible } = props;
+  const { visible, form, handleCreate, handleModalVisible, handleEdit, profitList, formData } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      handleCreate(fieldsValue);
+      if(formData === null) {
+        handleCreate(fieldsValue);
+      } else {
+        handleEdit(fieldsValue);
+      }
     });
+  };
+  const cancelHandle = () => {
+    form.resetFields();
+    handleModalVisible();
   };
   return (
     <Modal
       title="创建租赁关系"
       visible={visible}
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={cancelHandle}
     >
-
-      <Form className={styles.formItemGap}>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="分润模式"
-        >
-          {form.getFieldDecorator('profitMode', {
-            rules: [{ required: true, message: '请选择' }],
-          })(
-            <Select placeholder="请选择">
-              <Option value="0">M100</Option>
-              <Option value="1">M200</Option>
-            </Select>
-          )}
-        </FormItem>
-
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="米微"
-        >
-          {form.getFieldDecorator('miwei', {
-            rules: [{ required: true, message: '请输入' }],
-          })(
-            <Input placeholder="请输入"  addonAfter="%" />
-          )}
-        </FormItem>
-
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="客户"
-        >
-          {form.getFieldDecorator('custom', {
-            rules: [{ required: true, message: '请选择' }],
-          })(
-            <Input placeholder="请输入"  addonAfter="%" />
-          )}
-        </FormItem>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="代理"
-        >
-          {form.getFieldDecorator('proxy', {
-            rules: [{ required: true, message: '请选择' }],
-          })(
-            <Input placeholder="请输入"  addonAfter="%" />
-          )}
-        </FormItem>     
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="价格"
-        >
-          {form.getFieldDecorator('price', {
-            rules: [{ required: true, message: '请选择' }],
-          })(
-            <Input placeholder="请输入"   addonAfter="元"/>
-          )}
-        </FormItem>
-        <FormItem
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 15 }}
-          label="描述信息"
-        >
-          {form.getFieldDecorator('descr')(
-            <TextArea/>
-          )}
-        </FormItem>            
-      </Form>     
+      <RentSubForm
+        profitList={profitList}
+        form={form}
+        formData={formData}
+      />  
     </Modal>
   );
 });
@@ -123,10 +66,10 @@ export default class RentRelate extends React.Component {
       dataIndex: 'operation',
       render: (text, record) => {
         return (
-            <Popconfirm title="确认删除?" onConfirm={() => this.onDelete(record.key)}>
-              <a href="#" className={styles.editHref}>编辑</a>
-              <a href="#" className={styles.deleteHref}>删除</a>
-            </Popconfirm>
+            <div>
+              <a onClick={()=>{this.onEdit(record)}} className={styles.left}>编辑</a>
+              <a onClick={()=>{this.onDelete(record)}} className={styles.right}>删除</a>
+            </div>  
         );
       },
     }];
@@ -145,42 +88,80 @@ export default class RentRelate extends React.Component {
     });
   }  
 
-  onCellChange = (key, dataIndex) => {
-    return (value) => {
-      const dataSource = [...this.state.dataSource];
-      const target = dataSource.find(item => item.key === key);
-      if (target) {
-        target[dataIndex] = value;
-        this.setState({ dataSource });
+  onDelete = (record) => {
+    console.log('onDelete', record);
+    const { dispatch } = this.props;
+    confirm({
+      title: '删除租赁关系',
+      content: '确定从租赁列表中删除此配置？',
+      onOk() {
+        return new Promise((resolve, reject) => {
+          dispatch({
+            type: 'rent/deleteRent',
+            payload: {
+              profitID: record.id,
+              resolve: resolve,
+              reject: reject,
+            }
+          });
+        })
+        .catch((err) => alert("接口未实现"));        
+      },
+      onCancel() {},
+    });
+  } 
+
+  onEdit = (record) => {
+    console.log('onEdit', record);
+    this.showModal(record);
+  }
+
+  handleCreate = (values) => {
+    this.props.dispatch({
+      type: 'rent/createRent',
+      payload: {
+        ...values,
       }
-    };
-  }
-  onDelete = (key) => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
-  }
-  handleCreate = () => {
-    const { count, dataSource } = this.state;
-    const form = this.form;
-    const newData = {
-        key: count,
-        name: '分润1',
-        rateMode: '1',
-        detail: 'miwei 5%, daili 10%',
-        price: '1元/小时'
-    };
+    });
     this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
-      visible: false
+      visible: false,
+      formData: null,
+    });
+  }
+  handleEdit = (values) => {
+    this.props.dispatch({
+      type: 'rent/editRent',
+      payload: {
+        ...values,
+      }
+    });
+    this.setState({
+      visible: false,
+      formData: null,
+    });
+  }
+  showModal = (formData) => {
+    return new Promise((resolve, reject) => {
+      this.props.dispatch({
+        type: 'rent/getProfitList',
+        payload: {
+          resolve: resolve,
+          reject: reject,
+        },
+      });
+    })
+    .then( res => {
+      this.setState({
+        visible: true,
+        formData: formData,
+        profitList: res.data || [],
+      });
+    })
+    .catch( err => {
+      console.log(err);
     });
   }
 
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  }
 
   handleCancel = (e) => {
       console.log(e);
@@ -189,20 +170,11 @@ export default class RentRelate extends React.Component {
       });
   }
 
-  handleModalVisible = (flag) => {
+  handleModalVisible = () => {
     this.setState({
-      visible: !!flag,
+      visible: false,
     });
   }
-
-  onSubmit = (e) => {
-
-  }
-
-  saveFormRef = (form) => {
-    this.form = form;
-  }
-
 
   render() {
     const { visible } = this.state;
@@ -233,13 +205,14 @@ export default class RentRelate extends React.Component {
     const parentMethods = {
       handleCreate: this.handleCreate,
       handleModalVisible: this.handleModalVisible,
+      handleEdit:this.handleEdit,
     };
 
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建租赁关系</Button>
+            <Button type="primary" onClick={()=>this.showModal(null)} className={styles.createButton}>创建租赁关系</Button>
             <Table bordered dataSource={dataSource} columns={columns} />
           </div>          
         </Card>
@@ -247,6 +220,8 @@ export default class RentRelate extends React.Component {
         <CreateProfitForm
           {...parentMethods}
           visible={visible}
+          profitList={this.state.profitList}
+          formData={this.state.formData}
         />
       </PageHeaderLayout>
     );

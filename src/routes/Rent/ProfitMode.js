@@ -161,7 +161,6 @@ export default class ProfitMode extends React.Component {
     .catch( err => {
       console.log(err);
     });
-
   }
 
   handleCancel = (e) => {
