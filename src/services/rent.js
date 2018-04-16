@@ -8,6 +8,13 @@ export async function createProfitMode(params) {
   });
 }
 
+export async function deleteProfitMode(params) {
+  return request('/admin/rent/deleteProfitMode', {
+    method: 'POST',
+    body: params,
+  });
+}
+
 export async function createRent(params) {
   return request('/admin/rent/createRent', {
     method: 'POST',

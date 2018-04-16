@@ -78,7 +78,8 @@ class ProfitSubForm extends React.Component {
     };
     const { 
       roleList,
-      form
+      form,
+      formData,
     } = this.props;
     form.getFieldDecorator('keys', { initialValue: [1] });
     const keys = form.getFieldValue('keys');
@@ -99,6 +100,7 @@ class ProfitSubForm extends React.Component {
               {...parentMethods}
               index={index}
               roleList={roleList}
+              formData={formData}
               k={k}
             >
               
@@ -115,6 +117,7 @@ class ProfitSubForm extends React.Component {
           label="名称"
         >
           {form.getFieldDecorator('name', {
+            initialValue: formData === null ? '请输入分润模式名称': formData.name,
             rules: [{ required: true, message: '请输入分润模式名称' }],
           })(
             <Input placeholder="请输入分润模式名称" />          
@@ -126,7 +129,9 @@ class ProfitSubForm extends React.Component {
           wrapperCol={{ span: 15 }}
           label="分润模式描述"
         >
-          {form.getFieldDecorator('descr')(
+          {form.getFieldDecorator('descr', {
+            initialValue: formData === null ? '请输入分润模式描述': formData.descr,
+          })(
             <TextArea/>
           )}
         </FormItem> 

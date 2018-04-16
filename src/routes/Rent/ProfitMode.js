@@ -7,10 +7,11 @@ import ProfitSubForm from './ProfitSubForm';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const confirm = Modal.confirm;
 
 
-const CreateProfitForm = Form.create()((props) => {
-  const { visible, form, handleCreate, handleModalVisible, roleList } = props;
+const ProfitForm = Form.create()((props) => {
+  const { visible, form, handleCreate, handleModalVisible, roleList, formData } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       console.log('modal submit', fieldsValue);
@@ -36,6 +37,7 @@ const CreateProfitForm = Form.create()((props) => {
     >
       <ProfitSubForm
         form={form}
+        formData={formData}
         roleList={roleList}
       />
     </Modal>
@@ -64,18 +66,18 @@ export default class ProfitMode extends React.Component {
       dataIndex: 'operation',
       render: (text, record) => {
         return (
-            <Popconfirm title="确认删除?" onConfirm={() => this.onDelete(record.key)}>
-              <a href="#" className={styles.editHref}>编辑</a>
-              <a href="#" className={styles.deleteHref}>删除</a>
-            </Popconfirm>
+            <div>
+              <a onClick={()=>{this.onEdit(record)}} className={styles.left}>编辑</a>
+              <a onClick={()=>{this.onDelete(record)}} className={styles.right}>删除</a>
+            </div>    
         );
       },
     }];
 
     this.state = {
-      dataSource: [],
       count: 0,
       visible: false,
+      formData: true,
     };
   }
 
@@ -85,20 +87,47 @@ export default class ProfitMode extends React.Component {
     });
   }
 
-  onCellChange = (key, dataIndex) => {
-    return (value) => {
-      const dataSource = [...this.state.dataSource];
-      const target = dataSource.find(item => item.key === key);
-      if (target) {
-        target[dataIndex] = value;
-        this.setState({ dataSource });
+  onEdit = (record) => {
+    console.log('onEdit', record);
+    this.showModal(record);
+  }
+
+  onDelete = (record) => {
+    console.log('onDelete', record);
+    const { dispatch } = this.props;
+    confirm({
+      title: '删除分润模式',
+      content: '确定从分润列表中删除此配置？',
+      onOk() {
+        return new Promise((resolve, reject) => {
+          dispatch({
+            type: 'rent/deleteProfitMode',
+            payload: {
+              profitID: record.id,
+              resolve: resolve,
+              reject: reject,
+            }
+          });
+        })
+        .catch((err) => alert("接口未实现"));        
+      },
+      onCancel() {},
+    });
+  }  
+
+  handleEdit = (values) => {
+    this.props.dispatch({
+      type: 'rent/editProfitMode',
+      payload: {
+        ...values,
       }
-    };
+    });
+    this.setState({
+      visible: false,
+      formData: null,
+    });
   }
-  onDelete = (key) => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
-  }
+
   handleCreate = (values) => {
     this.props.dispatch({
       type: 'rent/createProfitMode',
@@ -108,10 +137,11 @@ export default class ProfitMode extends React.Component {
     });
     this.setState({
       visible: false,
+      formData: null,
     });
   }
 
-  showModal = () => {
+  showModal = (formData) => {
     return new Promise((resolve, reject) => {
       this.props.dispatch({
         type: 'account/getRoleList',
@@ -124,6 +154,7 @@ export default class ProfitMode extends React.Component {
     .then( res => {
       this.setState({
         visible: true,
+        formData: formData,
         roleList: res.roles,
       });
     })
@@ -140,20 +171,11 @@ export default class ProfitMode extends React.Component {
       });
   }
 
-  handleModalVisible = (flag) => {
+  handleModalVisible = () => {
     this.setState({
-      visible: !!flag,
+      visible: false,
     });
   }
-
-  onSubmit = (e) => {
-
-  }
-
-  saveFormRef = (form) => {
-    this.form = form;
-  }
-
 
   render() {
     const { visible } = this.state;
@@ -178,15 +200,16 @@ export default class ProfitMode extends React.Component {
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
-            <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建分润模式</Button>
+            <Button type="primary" onClick={()=> this.showModal(null)} className={styles.createButton}>创建分润模式</Button>
             <Table bordered dataSource={dataSource} columns={columns} />
           </div>          
         </Card>
 
-        <CreateProfitForm
+        <ProfitForm
           {...parentMethods}
           visible={visible}
           roleList={this.state.roleList}
+          formData={this.state.formData}
         />
       </PageHeaderLayout>
     );

@@ -5,7 +5,9 @@ import {
   listRentOrders, 
   queryRentIncome, 
   withdraw,
-  createProfitMode
+  createProfitMode,
+  deleteProfitMode,
+  editProfitMode,
 }
 from '../services/rent';
 
@@ -87,6 +89,33 @@ export default {
         });
       }
     },
+    *editProfitMode({ payload }, { call, put }) {
+      const response = yield call(editProfitMode, payload);
+      if (response.errCode === 0) {
+        const response = yield call(listProfitMode, payload);
+        yield put({
+          type: 'listRentCB',
+          payload: response,
+        });
+      }
+    },    
+    *deleteProfitMode({ payload }, { call, put }) {
+      var body = {
+        profitID: payload.profitID,
+      };
+      const { resolve, reject } = payload;          
+      const response = yield call(deleteProfitMode, body);
+      if (response.errCode === 0) {
+        resolve();
+        const response = yield call(listProfitMode, payload);
+        yield put({
+          type: 'listRentCB',
+          payload: response.data,
+        });        
+      } else {
+        reject(response.errCode);
+      }
+    },    
   },
 
   reducers: {

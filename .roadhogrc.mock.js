@@ -210,6 +210,7 @@ export default {
 
   //租赁管理
   'POST /admin/rent/createProfitMode': baseUrl,
+  'POST /admin/rent/deleteProfitMode': baseUrl,
   'POST /admin/rent/createRent': baseUrl,
   'POST /admin/rent/withdraw': baseUrl,
   'POST /admin/rent/editProfitMode': baseUrl,

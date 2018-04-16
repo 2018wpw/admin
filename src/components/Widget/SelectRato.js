@@ -59,12 +59,12 @@ export default class SelectRato extends React.Component {
   }
 
   render() {
-  	const { roleList, index, k } = this.props;
+  	const { roleList, index, k, formData } = this.props;
   	const state = this.state;
 	  const optionValue = roleList || [];
     var type = index === 0 ? "plus-circle-o" : "minus-circle-o";
   	return(
-		<span>
+		  <span>
 	        <Select
 	          style={{ width: '55%' }}
 	          onChange={this.handleRoleChange}
@@ -74,16 +74,27 @@ export default class SelectRato extends React.Component {
 		      {optionValue.map((item, i) => (
 					   <Option value={item.id}>{item.name}</Option>
 			    ))}
-	        </Select>          
-	        <Input
-	          type="text"
-	          value={state.number}
-	          onChange={this.handleNumberChange}
-            style={{ width: '29%', marginLeft: '3%', marginRight: '3%', }}
-            addonAfter='%'
-	        />
-          <Icon type={type} onClick={this.click(index, k)} />           			
-		</span>       
+	        </Select> 
+          {
+            formData === null ? 
+    	        <span><Input
+    	          type="text"
+    	          value={state.number}
+    	          onChange={this.handleNumberChange}
+                style={{ width: '29%', marginLeft: '3%', marginRight: '3%', }}
+                addonAfter='%'
+    	        />
+              <Icon type={type} onClick={this.click(index, k)} /></span>
+              : <Input
+                type="text"
+                value={state.number}
+                onChange={this.handleNumberChange}
+                style={{ width: '42%', marginLeft: '3%'}}
+                addonAfter='%'
+              />
+          }         
+
+		  </span>       
   	);
   }
 }
