@@ -1,4 +1,4 @@
-import { quryOTAPackages, quryOTAHistory, createOTAPackage, requestOTA, uploadPackage } from '../services/upgrade';
+import { quryOTAPackages, quryOTAHistory, createOTAPackage, requestOTA, uploadPackage, deleteOTAPackage } from '../services/upgrade';
 
 export default {
   namespace: 'upgrade',
@@ -31,6 +31,25 @@ export default {
           payload: response.data,
         });        
       }
+    },
+    *deleteOTAPackage({ payload }, { call, put }) {
+      var body = {
+        packageID: payload.packageID,
+        devices: payload.devices,
+      };
+      const { resolve, reject } = payload;         
+      const response = yield call(deleteOTAPackage, body);
+      if (response.errCode === 0) {
+        resolve();
+        const response = yield call(quryOTAPackages, payload);
+        yield put({
+          type: 'roleListCallback',
+          payload: response.data,
+          errCode: response.errCode,
+        });        
+      } else {
+        reject(response.errMsg);
+      }      
     },
     *uploadPackage({ payload }, { call, put }) {
       var response = yield call(uploadPackage, payload);    

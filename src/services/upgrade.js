@@ -8,6 +8,13 @@ export async function createOTAPackage(params) {
   });
 }
 
+export async function deleteOTAPackage(params) {
+  return request('/admin/ota/deleteOTAPackage', {
+    method: 'POST',
+    body: params,
+  });
+}
+
 export async function requestOTA(params) {
   return request('/admin/ota/requestOTA', {
     method: 'POST',

@@ -171,6 +171,7 @@ export default {
   //设备
   //升级
   'POST /admin/ota/createOTAPackage': baseUrl,
+  'POST /admin/ota/deleteOTAPackage': baseUrl,  
   'POST /admin/ota/requestOTA': baseUrl,
   'GET /admin/ota/listOTAPackages': baseUrl,
   'GET /admin/ota/listOTAHistory': baseUrl,

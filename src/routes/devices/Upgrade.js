@@ -6,6 +6,7 @@ import { uploadFileUrl } from '../../services/common';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const confirm = Modal.confirm;
 
 const CreateUpgradePackageForm = Form.create()(
   (props) => {
@@ -257,7 +258,25 @@ export default class UpgradeList extends React.Component {
   }
 
   onDeleteItem = (record) => {
-    alert('缺少接口');
+    const { dispatch } = this.props;
+    confirm({
+      title: '删除升级包',
+      content: '确定从列表中删除此升级包？',
+      onOk() {
+        return new Promise((resolve, reject) => {
+          dispatch({
+            type: 'upgrade/deleteOTAPackage',
+            payload: {
+              packageID: record.id,
+              resolve: resolve,
+              reject: reject,
+            }
+          });
+        })
+        .catch((err) => console.log(err));        
+      },
+      onCancel() {},
+    });
   }
 
   handleCreatePackage = (values) => {
