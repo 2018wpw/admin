@@ -99,13 +99,13 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['deviceDetailModel'], () => import('../routes/devices/DeviceList/detail')),
     },
     '/devices/product': {
-      component: dynamicWrapper(app, ['prodModel'], () => import('../routes/devices/ProductModel')),
+      component: dynamicWrapper(app, ['prodModel'], () => import('../routes/devices/Product')),
     },
     '/devices/batch': {
       component: dynamicWrapper(app, ['batchModel'], () => import('../routes/devices/Batch')),
     },
     '/devices/upgrade': {
-      component: dynamicWrapper(app, ['upgrade'], () => import('../routes/devices/Upgrade')),
+      component: dynamicWrapper(app, ['upgrade', 'batchModel', 'prodModel'], () => import('../routes/devices/Upgrade')),
     },
     '/devices/import': {
       component: dynamicWrapper(app, ['importModel', 'prodModel', 'batchModel'], () => import('../routes/devices/Import')),

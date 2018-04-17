@@ -59,10 +59,13 @@ const CreateUpgradePackageForm = Form.create()(
             {form.getFieldDecorator('modelID', {
               rules: [{ required: true, message: '请输选择类型' }],
             })(
-              <Select placeholder="请选择">
-                <Select.Option value="0">M100</Select.Option>
-                <Select.Option value="1">M200</Select.Option>
-              </Select>
+              <Select placeholder="请输选择类型">
+              {
+                deviceTypeData.map((item, index) => (
+                  <Select.Option value={item.id}>{item.name}</Select.Option>                  
+                ))
+              }  
+              </Select>          
             )}
           </FormItem> 
 
@@ -125,13 +128,16 @@ const StartUpgradeForm = Form.create()(
         handleUpgrade(fieldsValue, deviceID);
       });
     };
-
+    const cancelHandle = () => {
+      form.resetFields();
+      handleModalVisible();
+    };
     return (
       <Modal
         title="升级"
         visible={visible}
         onOk={onOk}
-        onCancel={() => onCancel()}
+        onCancel={onCancel}
         okText="升级"
         cancelText="取消"      
       >
@@ -144,9 +150,12 @@ const StartUpgradeForm = Form.create()(
             {form.getFieldDecorator('batchID', {
               rules: [{ required: true, message: '请输选择批次' }],
             })(
-              <Select placeholder="请选择">
-                <Select.Option value="0">M100</Select.Option>
-                <Select.Option value="1">M200</Select.Option>
+              <Select placeholder="请输选择批次">
+              {
+                batchData.map((item, index) => (
+                  <Select.Option value={item.id}>{item.name}</Select.Option>                  
+                ))
+              }
               </Select>
             )}
           </FormItem>      
@@ -156,14 +165,17 @@ const StartUpgradeForm = Form.create()(
     );
 });
 
+let deviceTypeData;
+let batchData;
 
-@connect(({ upgrade, loading }) => ({
+@connect(({ upgrade, loading, prodModel, batchModel }) => ({
   upgrade,
+  prodModel,
+  batchModel,
 }))
 export default class UpgradeList extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       visible: false,
       uploading: false,
@@ -175,21 +187,27 @@ export default class UpgradeList extends React.Component {
     this.columns = [{
         title: '升级包',
         dataIndex: 'id',
+        key: 'id',        
       }, {
         title: '描述信息',
         dataIndex: 'descr',
+        key: 'descr', 
       }, {
         title: '版本号',
         dataIndex: 'verFW',
+        key: 'verFW', 
       }, {
         title: '产品类型',
         dataIndex: 'prodName',
+        key: 'prodName', 
       },  {
         title: '产品型号',
         dataIndex: 'modelName',
+        key: 'modelName', 
       }, {
         title: '上传时间',
         dataIndex: 'uploadTime',
+        key: 'uploadTime', 
       }, {
         title: '操作',
         dataIndex: 'operation',
@@ -235,6 +253,12 @@ export default class UpgradeList extends React.Component {
     this.props.dispatch({
       type: 'upgrade/quryOTAHistory',
     });
+    this.props.dispatch({
+      type: 'batchModel/list',
+    });
+    this.props.dispatch({
+      type: 'prodModel/getDeviceTypeList',
+    });          
   }
 
   handleUpgrade = (values, deviceID) => {
@@ -331,7 +355,7 @@ export default class UpgradeList extends React.Component {
 
   render() {
     const columns = this.columns;
-    const { upgrade } = this.props;
+    const { upgrade, prodModel, batchModel } = this.props;
     var dataSource = upgrade.packages || [];
     dataSource.map((item, index)=>{
       item['key'] = index;
@@ -349,14 +373,22 @@ export default class UpgradeList extends React.Component {
       item['uncomplete'] = item.result.inprogressCount;
     });
 
+    const { deviceTypeList } = prodModel;
+    deviceTypeData = deviceTypeList || [];
+    batchData = batchModel.batches || [];
+    console.log('deviceTypeData', deviceTypeData);
+    console.log('batchData', batchData);
+
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
             <Button className={styles.createButton} type="primary" onClick={this.showCreateUpgradeModal}>创建升级包</Button>
             <Table bordered dataSource={dataSource} columns={columns} />
-            <p>升级记录</p>
-            <Divider/>
+            <div style={{ marginTop: 50 }} >
+              升级记录
+            </div>          
+            <Divider style={{ margin: '10px 0' }} />            
             <Table bordered dataSource={historyData} columns={historyColumns} />
           </div>
         </Card>

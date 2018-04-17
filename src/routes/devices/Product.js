@@ -16,14 +16,18 @@ const ProductFormCreate = Form.create()(
         form.resetFields();
         onCreate(fieldsValue);
       });
-    };    
+    };
+    const cancelHandle = () => {
+      form.resetFields();
+      onCancel();
+    };
 
     return (
           <Modal
             title="创建产品类型"
             visible={visible}
             onOk={okHandle}
-            onCancel={onCancel}
+            onCancel={cancelHandle}
             okText="创建"
             cancelText="取消"
           >
