@@ -164,3 +164,5 @@ export function formatMockData(payload) {
   payload = JSON.parse(payload);
   return payload;
 }
+
+export const base_url = "http://60.205.205.82:9998/api/v1"

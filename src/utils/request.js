@@ -3,6 +3,43 @@ import { notification } from 'antd';
 import { routerRedux } from 'dva/router';
 import store from '../index';
 import { getToken } from './authority';
+import { base_url } from './utils';
+
+function addItemsToForm(form, names, obj) {
+  if (obj === undefined || obj === "" || obj === null) return addItemToForm(form, names, "");
+
+  if (
+    typeof obj == "string" 
+    || typeof obj == "number" 
+    || obj === true 
+    || obj === false
+  ) return addItemToForm(form, names, obj);
+
+  if (obj instanceof Date) return addItemToForm(form, names, obj.toJSON());
+
+  // array or otherwise array-like
+  if (obj instanceof Array) {
+    return obj.forEach((v,i) => {
+      names.push(`[${i}]`);
+      addItemsToForm(form, names, v);
+      names.pop();
+    });
+  }
+
+  if (typeof obj === "object") {
+    return Object.keys(obj).forEach((k)=>{
+      names.push(k);
+      addItemsToForm(form, names, obj[k]);
+      names.pop();
+    });
+  }
+}
+
+function addItemToForm(form, names, value) {
+  var name = encodeURIComponent(names.join('.').replace(/\.\[/g, '['));
+  value = encodeURIComponent(value.toString());
+  form.push(`${name}=${value}`);
+}
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -21,6 +58,7 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
 };
+
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -46,29 +84,41 @@ function checkStatus(response) {
  */
 export default function request(url, options) {
   const defaultOptions = {
-    credentials: 'include',
+    mode: 'cors',
+    redirect: 'follow',
+    referrer: 'no-referrer'
   };
   const newOptions = { ...defaultOptions, ...options };
-  if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
+  if (newOptions.method === 'POST') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded;charsets=utf-8',
         ...newOptions.headers,
-        'token': getToken(),
       };
-      newOptions.body = JSON.stringify(newOptions.body);
+      var form = [];
+      addItemsToForm(form, typeof newOptions.body == 'object' ? [] : [newOptions.name || 'model'], newOptions.body);
+      newOptions.body = form.join('&');
     } else {
       // newOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
-        'token': getToken(),
         ...newOptions.headers,
       };
     }
   }
 
-  return fetch(url, newOptions)
+    var token = 'Bearer ' + getToken();
+    if (token !== null) {
+      newOptions.headers = {
+        Accept: 'application/json',
+        Authorization: token,
+        ...newOptions.headers,
+      }
+    }  
+
+  return fetch(base_url + url, newOptions)
     .then(checkStatus)
     .then((response) => {
       if (newOptions.method === 'DELETE' || response.status === 204) {

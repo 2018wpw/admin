@@ -1,6 +1,8 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
-
+// export async function query(params) {
+//   return request(`/api/users?${qs.stringify(params)}`);
+// }
 export async function qureyList(params) {
   return request('/admin/group/list', {
     method: 'GET',
