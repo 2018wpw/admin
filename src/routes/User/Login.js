@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Checkbox, Alert, Icon } from 'antd';
+import { Checkbox, Alert, Icon, message } from 'antd';
 import Login from 'components/Login';
 import styles from './Login.less';
 
@@ -16,10 +16,6 @@ export default class LoginPage extends Component {
     type: 'account',
     autoLogin: false,
     withUserInfo: true,
-  }
-
-  onTabChange = (type) => {
-    this.setState({ type });
   }
 
   handleSubmit = (err, values) => {
@@ -43,19 +39,19 @@ export default class LoginPage extends Component {
   }
 
   renderMessage = (content) => {
-    return (
-      <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
-    );
+    message.error(content);
   }
 
   render() {
-    const { submitting } = this.props;
+    const { submitting, login } = this.props;
     const { type, withUserInfo } = this.state;
+    if (login.status === 0x201 && submitting === false) {
+      this.renderMessage('手机号或密码错误');
+    }
     return (
       <div className={styles.main}>
         <Login
           defaultActiveKey={type}
-          onTabChange={this.onTabChange}
           onSubmit={this.handleSubmit}
         >
           <Tab key="account">

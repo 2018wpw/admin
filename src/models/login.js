@@ -53,10 +53,9 @@ export default {
       if (status === 0) {
         setAuthority(payload);
       }
+      state.status = status;
       return {
         ...state,
-        status: status,
-        type: payload.type,
       };
     },
     clearLoginStatus(state, { payload }) {

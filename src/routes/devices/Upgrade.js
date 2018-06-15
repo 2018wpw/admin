@@ -367,7 +367,9 @@ export default class UpgradeList extends React.Component {
       item['key'] = index;
       var count = item.result.failCount + item.result.inprogressCount + item.result.okCount;
       item['deviceCount'] = count;
-      item['batchName'] = item.target.batchInfo.batchName;
+      if (item.target.batchInfo) {
+        item['batchName'] = item.target.batchInfo.batchName;        
+      }
       item['success'] = item.result.okCount;
       item['fail'] = item.result.failCount;
       item['uncomplete'] = item.result.inprogressCount;

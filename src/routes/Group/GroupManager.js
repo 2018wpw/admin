@@ -294,13 +294,15 @@ export default class GroupManager extends React.Component {
     var dataSource = group.groups || [];
     dataSource.map((item, index)=>{
       item['key'] = index;
-      if(item.assignInfo.assignAccounts && item.assignInfo.assignAccounts.length !== 0) {
-        item['assignAccounts'] = item.assignInfo.assignAccounts[0].name;
-      } else {
-        item['assignAccounts'] = '尚未分配';
-      }
-      if (item.assignInfo.rentInfo) {
-        item['rentInfo'] = item.assignInfo.rentInfo.name;
+      if (item.assignInfo) {
+        if(item.assignInfo.accountInfo) {
+          item['accountInfo'] = item.assignInfo.accountInfo.name;
+        } else {
+          item['accountInfo'] = '尚未分配';
+        }
+        if (item.assignInfo.rentInfo) {
+          item['rentInfo'] = item.assignInfo.rentInfo.name;
+        }
       }
     });
 
