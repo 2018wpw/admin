@@ -166,3 +166,12 @@ export function formatMockData(payload) {
 }
 
 export const base_url = "http://60.205.205.82:9998/api/v1"
+
+export const sex = new Array('男', '女')
+export const connectivity = new Array('wifi', '2g')
+export const prd_type = new Array('空气净化器', '空气检测仪')
+
+export function getTime(seconds) {
+  return moment(seconds).format('YYYY-MM-DD HH:mm:ss');
+}
+

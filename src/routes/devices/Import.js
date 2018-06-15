@@ -3,6 +3,7 @@ import styles from './Import.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { connect } from 'dva';
 import Popup , { P } from 'react-popup-master';
+import { getTime } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -159,6 +160,7 @@ export default class ImportDevices extends React.Component {
     historyData.map((item, index)=>{
       item['key'] = index;
       item['importCount'] = item.okCount + item.failCount;
+      item['time'] = getTime(item.time);
     });
 
     const { deviceTypeList } = prodModel;

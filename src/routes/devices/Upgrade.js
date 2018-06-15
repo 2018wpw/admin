@@ -3,6 +3,7 @@ import styles from '../Common.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { connect } from 'dva';
 import { uploadFileUrl } from '../../services/common';
+import { getTime } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -373,6 +374,8 @@ export default class UpgradeList extends React.Component {
       item['success'] = item.result.okCount;
       item['fail'] = item.result.failCount;
       item['uncomplete'] = item.result.inprogressCount;
+      item['startTime'] = getTime(item.startTime);
+      item['endTime'] = getTime(item.endTime);
     });
 
     const { deviceTypeList } = prodModel;
