@@ -14,7 +14,7 @@ export default {
       id: ''
     },
     userCompleted: false,
-    bankCompleted: false,    
+    bankCompleted: false,
   },
 
   effects: {
@@ -106,6 +106,33 @@ export default {
         errCode: response.errCode,
       });
     },
+
+    *searchAccount({ payload }, { call, put }) {
+      const { resolve, reject } = payload;
+      var body = {
+        name: payload.name,
+        addrDetail: payload.addrDetail,
+        phone: payload.phone,
+        addrCode: payload.addrCode,
+      };
+      const response = yield call(queryAccountList, body);
+      if(response.errCode === 0) {
+        if (resolve) {
+          response.data = formatMockData(response.data);
+          resolve(response.data);
+        }
+        yield put({
+          type: 'accountListCallback',
+          payload: response.data,
+          errCode: response.errCode,
+        });
+      } else {
+        if(reject) {
+          reject(response.errMsg);
+        }
+      } 
+    },
+
     *createAccount({ payload }, { call, put }) {
       const response = yield call(createAccount, payload);
       if (response.errCode === 0) {
@@ -145,7 +172,6 @@ export default {
       const response = yield call(queryRoleList, payload);
       if(response.errCode === 0) {
         if (resolve) {
-          response.data = formatMockData(response.data);
           resolve(response.data);
         }
       } else {

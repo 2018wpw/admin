@@ -1,6 +1,7 @@
 import { routerRedux } from 'dva/router';
 import { login, logout } from '../services/login';
-import { setAuthority, clearAuthority } from '../utils/authority';
+import { getChinaAddr } from '../services/common';
+import { setAuthority, clearAuthority, saveChinaAddr } from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
 
 export default {
@@ -23,7 +24,12 @@ export default {
       if (response.errCode === 0) {
         reloadAuthorized();
         yield put(routerRedux.push('/'));
-      }      
+      }
+      //获取地区信息
+      var resp = yield call(getChinaAddr, payload);
+      if (resp.errCode === 0) {
+        saveChinaAddr(resp.data[0].districts);
+      }
     },
     *logout(_, { call, put, select }) {
       const reponse = yield call(logout);
