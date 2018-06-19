@@ -136,7 +136,8 @@ export default {
     *createAccount({ payload }, { call, put }) {
       const response = yield call(createAccount, payload);
       if (response.errCode === 0) {
-        const response = yield call(queryAccountList, payload);
+        var body = {};
+        const response = yield call(queryAccountList, body);
         yield put({
           type: 'accountListCallback',
           payload: response.data,
@@ -164,7 +165,7 @@ export default {
       if (response.errCode === 0) {
         resolve(response.data.userPwd);     
       } else {
-        reject('error');
+        reject(response);
       }
     },
     *getRoleList({ payload }, { call, put }) {

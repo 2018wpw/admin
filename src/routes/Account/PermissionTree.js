@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Tree, Row, Col } from 'antd';
 
- const TreeNode = Tree.TreeNode;
+  const TreeNode = Tree.TreeNode;
 
- const accountNode = [{
+export const accountNode = [{
     title: '账号操作权限',
     key: 'account',
     children: [
@@ -15,7 +15,7 @@ import { Tree, Row, Col } from 'antd';
       { title: '查看用户信息', key: 'account-browse-user' },
     ],
   }];
-  const deviceNode = [{
+ export  const deviceNode = [{
     title: '设备操作权限',
     key: 'device',
     children: [
@@ -26,7 +26,7 @@ import { Tree, Row, Col } from 'antd';
       { title: '解绑设备', key: 'device-unbind' },
     ],
   }];
-  const batchNode = [{
+export  const batchNode = [{
     title: '批次权限',
     key: 'batch',
     children: [
@@ -36,7 +36,7 @@ import { Tree, Row, Col } from 'antd';
       { title: '查询批次', key: 'batch-get' },
     ],
   }];
-  const prodNode = [{
+export  const prodNode = [{
     title: '批产品权限',
     key: 'prod',
     children: [
@@ -46,7 +46,7 @@ import { Tree, Row, Col } from 'antd';
       { title: '查询产品类型', key: 'prod-get' },
     ],
   }];
-  const upgradeNode = [{
+export  const upgradeNode = [{
     title: '升级权限',
     key: 'upgrade',
     children: [
@@ -56,7 +56,7 @@ import { Tree, Row, Col } from 'antd';
       { title: '查询升级记录', key: 'upgrade-get' },
     ],
   }]; 
-  const profitNode = [{
+export  const profitNode = [{
     title: '分润模式',
     key: 'profit',
     children: [
@@ -65,7 +65,7 @@ import { Tree, Row, Col } from 'antd';
       { title: '删除分润模式', key: 'profit-delete' },
     ],
   }];
-  const rentNode = [{
+export  const rentNode = [{
     title: '租赁权限',
     key: 'rent',
     children: [
@@ -76,7 +76,7 @@ import { Tree, Row, Col } from 'antd';
       { title: '分润查询', key: 'rent-get-profit' },
     ],
   }];    
-  const groupNode = [{
+export  const groupNode = [{
     title: '群组权限',
     key: 'group',
     children: [
@@ -85,8 +85,8 @@ import { Tree, Row, Col } from 'antd';
       { title: '查询群组设备', key: 'group-get' },
     ],
   }];
-  const strainerNode = [{
-    title: '群组权限',
+export  const strainerNode = [{
+    title: '滤网权限',
     key: 'strainer',
     children: [
       { title: '滤网报警设置', key: 'strainer-create' },
@@ -98,10 +98,11 @@ import { Tree, Row, Col } from 'antd';
 
 export default class PermissionTree extends React.Component {
   state = {
-    expandedKeys: ['account', 'group'],
+    expandedKeys: ['account', 'group', 'device', 'batch', 'profit', 'rent', 'prod', 'upgrade', 'strainer'],
     autoExpandParent: true,
-    checkedKeys: ['group'],
+    checkedKeys: [],
     selectedKeys: [],
+    dataNode: '',
   }
   onExpand = (expandedKeys) => {
     console.log('onExpand', arguments);
@@ -133,6 +134,7 @@ export default class PermissionTree extends React.Component {
     });
   }
   render() {
+    const { dataNode } = this.props;
     return (
       <Tree
         checkable
@@ -144,7 +146,7 @@ export default class PermissionTree extends React.Component {
         onSelect={this.onSelect}
         selectedKeys={this.state.selectedKeys}
       >
-      	{this.renderTreeNodes(accountNode)}
+      	{this.renderTreeNodes(dataNode)}
       </Tree>
     );
   }

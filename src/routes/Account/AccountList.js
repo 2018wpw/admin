@@ -1,4 +1,4 @@
-import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Cascader } from 'antd';
+import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Cascader, message } from 'antd';
 import styles from './List.less';
 import commonStyles from '../Common.less'
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -221,7 +221,12 @@ class AccountList extends React.Component {
             okText: '关闭',
           });            
         })
-        .catch((err) => console.log(err));        
+        .catch((err) => {
+          console.log(err);
+          if(err.errCode === 521) {
+			message.error("用户不存在");
+          }
+        })
       },
       onCancel() {},
     });
@@ -235,9 +240,14 @@ class AccountList extends React.Component {
     this.props.dispatch({
       type: 'account/editAccount',
       payload: {
-		userID: userID,
-        ...values,
-      }
+      	userID: userID,
+	    name: values.name,
+	    addrDetail: values.addrDetail,
+	    phone: values.phone,
+	    addrCode: values.addrCode[values.addrCode.length - 1],
+	    contact: values.contact,
+	    roleID: values.roleID,
+      },
     });    
   }  
 

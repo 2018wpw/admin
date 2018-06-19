@@ -3,6 +3,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './RoleManager.less';
 import { connect } from 'dva';
 import PermissionTree from './PermissionTree';
+import {accountNode, deviceNode, batchNode, groupNode, rentNode, profitNode, upgradeNode, strainerNode, prodNode} from './PermissionTree';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -24,6 +25,7 @@ const CreateRoleForm = Form.create()((props) => {
 
   return (
     <Modal
+      width='600'
       title="创建角色"
       visible={visible}
       okText='创建'
@@ -44,14 +46,79 @@ const CreateRoleForm = Form.create()((props) => {
       </FormItem>
 
       <FormItem
+        label="权限"
         labelCol={{ span: 5 }}
         wrapperCol={{ span: 15 }}
-        label="权限"
       >
-        {form.getFieldDecorator('permissions')(
-          <PermissionTree/>        
-        )}      
-          
+        <Row>
+          <Col span={6}>
+            {form.getFieldDecorator('account')(
+              <PermissionTree
+                dataNode={accountNode}
+              />        
+            )}
+          </Col>
+          <Col span={6}>
+            {form.getFieldDecorator('device')(
+              <PermissionTree
+                dataNode={deviceNode}
+              />
+              )}
+          </Col>
+          <Col span={6}>
+            {form.getFieldDecorator('batch')(
+              <PermissionTree
+                dataNode={batchNode}
+              />
+            )}
+          </Col>
+          <Col span={6}>
+            {form.getFieldDecorator('rent')(
+              <PermissionTree
+                dataNode={rentNode}
+              /> 
+            )}
+          </Col>          
+        </Row>    
+        <Row>
+          <Col span={6}>
+            {form.getFieldDecorator('profit')(
+              <PermissionTree
+                dataNode={profitNode}
+              />             
+            )}
+          </Col>
+          <Col span={6}>
+            {form.getFieldDecorator('group')(
+              <PermissionTree
+                dataNode={groupNode}
+              />             
+            )}
+          </Col>
+          <Col span={6}>
+            {form.getFieldDecorator('upgrade')(
+              <PermissionTree
+                dataNode={upgradeNode}
+              />             
+            )}
+          </Col>
+          <Col span={6}>
+            {form.getFieldDecorator('prod')(
+              <PermissionTree
+                dataNode={prodNode}
+              />             
+            )}
+          </Col>          
+        </Row> 
+        <Row>
+          <Col span={6}>
+            {form.getFieldDecorator('strainer')(
+              <PermissionTree
+                dataNode={strainerNode}
+              /> 
+            )}
+          </Col>        
+        </Row>                    
       </FormItem>            
 
       <FormItem

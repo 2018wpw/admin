@@ -1,6 +1,7 @@
 import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { connect } from 'dva';
+import { getTime } from '../../utils/utils';
 
 const FormItem = Form.Item;
 
@@ -47,6 +48,7 @@ export default class UserInfo extends React.Component {
     dataSource.map((item, index)=>{
       item['key'] = index;
       item['deviceName'] = item.devices.deviceName;
+      item['regTime'] = getTime(item.regTime);
     });
 
     const { loading } = this.props;
