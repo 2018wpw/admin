@@ -25,7 +25,7 @@ function isNull(value) {
 const checkPermissions = (authority, currentAuthority, target, Exception) => {
   // 没有判定权限.默认查看所有
   // Retirement authority, return target;
-  console.log('checkPermissions: ', authority, currentAuthority);
+  // console.log('checkPermissions: ', authority, currentAuthority);
   if (!authority) {
     return target;
   }

@@ -32,6 +32,7 @@
     "echarts": "^4.0.4",
     "echarts-for-react": "^2.0.8",
     "enquire-js": "^0.1.1",
+    "json-bigint": "^0.3.0",
     "lodash": "^4.17.4",
     "lodash-decorators": "^4.4.1",
     "moment": "^2.19.1",

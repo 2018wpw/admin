@@ -139,15 +139,18 @@ class AccountList extends React.Component {
     this.dataColumns = [{
       title: '用户名',
       dataIndex: 'name',
+      width: '15%',
     }, {
       title: '地区',
       dataIndex: 'addrDetail',
     }, {
       title: '类型',
       dataIndex: 'accountType',
+      width: '8%',
     }, {
       title: '创建时间',
       dataIndex: 'createTime',
+      width: '18%',
     }, {
       title: '上级账号',
       dataIndex: 'parent',
@@ -160,6 +163,7 @@ class AccountList extends React.Component {
     }, {
       title: '操作',
       dataIndex: 'operation',
+      width: '15%',
       render: (text, record) => {
     	return (
             <div>
@@ -319,6 +323,7 @@ class AccountList extends React.Component {
     const dataSource = account.accounts || [];
     dataSource.map((item, index) => {
       item['key'] = index;
+      item['id'] = item.id.toString();
       // if (item.district && item['accountType'] === null) {
       //   const path = item.district.lev1;
       //   item['addrDetail'] = path + (item.addrDetail ? item.addrDetail : '');      	

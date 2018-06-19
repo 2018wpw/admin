@@ -100,6 +100,7 @@ export default {
     },
     *queryAccountList({ payload }, { call, put }) {
       const response = yield call(queryAccountList, payload);
+      console.log(response);
       yield put({
         type: 'accountListCallback',
         payload: response.data,
@@ -118,7 +119,6 @@ export default {
       const response = yield call(queryAccountList, body);
       if(response.errCode === 0) {
         if (resolve) {
-          response.data = formatMockData(response.data);
           resolve(response.data);
         }
         yield put({
@@ -214,7 +214,6 @@ export default {
       }
     },
     roleListCallback(state, { payload, errCode }) {
-      payload = formatMockData(payload);      
       if (errCode === 0) {
         return {
           ...state,
@@ -229,7 +228,6 @@ export default {
       }
     }, 
     userListCallback(state, { payload, errCode }) {
-      payload = formatMockData(payload);      
       if (errCode === 0) {
         return {
           ...state,
@@ -244,7 +242,6 @@ export default {
       }
     },     
     accountListCallback(state, { payload, errCode }) {
-      payload = formatMockData(payload);
       if (errCode === 0) {
         return {
           ...state,

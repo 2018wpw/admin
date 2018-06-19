@@ -4,6 +4,7 @@ import { routerRedux } from 'dva/router';
 import store from '../index';
 import { getToken } from './authority';
 import { base_url } from './utils';
+import { parse } from 'json-bigint';
 
 function addItemsToForm(form, names, obj) {
   if (obj === undefined || obj === "" || obj === null) return addItemToForm(form, names, "");
@@ -124,7 +125,10 @@ export default function request(url, options) {
       if (newOptions.method === 'DELETE' || response.status === 204) {
         return response.text();
       }
-      return response.json();
+      return response.text().then( text => {
+        var json = parse(text);
+        return json;
+      });
     })
     .catch((e) => {
       const { dispatch } = store;

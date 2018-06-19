@@ -2,7 +2,8 @@ import { stringify } from 'qs';
 import request from '../utils/request';
 
 export async function query(params) {
-  return request('/admin/model/query', {
+  var para = stringify(params);
+  return request('/admin/model/query?' + para, {
     method: 'GET',
     body: params,
   });
