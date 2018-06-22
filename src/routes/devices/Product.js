@@ -16,7 +16,7 @@ const ProductFormCreate = Form.create()(
       form.validateFields((err, fieldsValue) => {
         if (err) return;
         form.resetFields();
-        onCreate(fieldsValue);
+        onCreate(fieldsValue, editData.id);
       });
     };
     const cancelHandle = () => {
@@ -72,7 +72,7 @@ const ProductFormCreate = Form.create()(
             </FormItem>
             <FormItem label="是否带PM2.5" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
               {form.getFieldDecorator('withDetector', {initialValue: '0'}, )(
-                <Select placeholder="请选择产品型号">
+                <Select placeholder="请选择是否带PM2.5">
                   <Option value="0">否</Option>
                   <Option value="1">是</Option>
                 </Select>               
@@ -98,7 +98,7 @@ const ProductFormEdit = Form.create()(
       form.validateFields((err, fieldsValue) => {
         if (err) return;
         form.resetFields();
-        onCreate(fieldsValue);
+        onCreate(fieldsValue, editData.id);
       });
     };    
     console.log('edit form ', editData);
@@ -175,7 +175,7 @@ export default class ProductList extends React.Component {
       dataIndex: 'imageID',
     }, {
       title: '链接方式',
-      dataIndex: 'connWay',
+      dataIndex: 'connectivityWay',
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -205,32 +205,18 @@ export default class ProductList extends React.Component {
   }
 
   onEditItem = (record) => {
-    return new Promise((resolve, reject) => {
-      this.props.dispatch({
-        type: 'prodModel/query',
-        payload: {
-          modelID: record.id,
-          resolve,
-          reject,
-        }
-      });
-    }).then(res => {
-      console.log(res);
       this.setState({
         editVisible: true,
-        editData: res,
+        editData: record,
       });
-    })
-    .catch((err) => {
-      console.log(err);
-    })
   }  
 
-  handleEdit = (values) => {
+  handleEdit = (values, modelID) => {
     this.props.dispatch({
       type: 'prodModel/edit',
       payload: {
         ...values,
+        modelID: modelID,
       }
     });
     this.setState({
@@ -259,11 +245,12 @@ export default class ProductList extends React.Component {
     });
   }
 
-  handleEdit = (values) => {
+  handleEdit = (values, modelID) => {
     this.props.dispatch({
       type: 'prodModel/edit',
       payload: {
         ...values,
+        modelID: modelID,
       }
     });
     this.setState({
@@ -298,9 +285,9 @@ export default class ProductList extends React.Component {
     const { prodModel } = this.props;
     var dataSource = prodModel.models || [];
     dataSource.map((item, index)=>{
-      item['key'] = index;
+      item['key'] = item.id.toString();
       item['prodName'] = item.prodInfo.name;
-      item['connWay'] = connectivity[item.connWay];
+      item['connectivityWay'] = connectivity[item.connWay];
       item['id'] = item.id.toString();
     });     
     return (

@@ -83,7 +83,7 @@ const BatchFormEdit = Form.create()(
       form.validateFields((err, fieldsValue) => {
         if (err) return;
         form.resetFields();
-        onCreate(fieldsValue);
+        onCreate(fieldsValue, editingData.id);
       });
     };
 
@@ -103,7 +103,6 @@ const BatchFormEdit = Form.create()(
             <FormItem label="批次名称" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
               <div>{editingData.name}</div>            
             </FormItem>
-            
             <FormItem label="产品类型" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
               <div>{editingData.prodName}</div>
             </FormItem>              
@@ -114,8 +113,7 @@ const BatchFormEdit = Form.create()(
               {form.getFieldDecorator('descr')(
                 <TextArea placeholder={editingData.descr}></TextArea>              
               )}
-            </FormItem>
-           
+            </FormItem>          
           </Form>
           </Modal>
       );
@@ -176,25 +174,10 @@ export default class ProductList extends React.Component {
   }
 
   onEditItem = (record) => {
-    return new Promise((resolve, reject) => {
-      this.props.dispatch({
-        type: 'batchModel/query',
-        payload: {
-          batchID: record.id,
-          resolve,
-          reject,
-        }
-      });
-    }).then(res => {
-      console.log(res);
-      this.setState({
+    this.setState({
         editVisible: true,
-        editingData: res,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+        editingData: record,
+    });
   }  
 
   onDeleteItem = (record) => {
@@ -218,11 +201,12 @@ export default class ProductList extends React.Component {
     });
   }
 
-  handleEdit = (values) => {
+  handleEdit = (values, bacthID) => {
     this.props.dispatch({
       type: 'batchModel/edit',
       payload: {
         ...values,
+        batchID: bacthID,
       }
     });
     this.setState({

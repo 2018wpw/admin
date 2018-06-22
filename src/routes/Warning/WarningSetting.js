@@ -97,8 +97,19 @@ const CreateWarningForm = Form.create()((props) => {
           {form.getFieldDecorator('strainerMinVal', {initialValue: strainerMinVal})(
             <Input placeholder="天" />
           )}
-        </FormItem>     
-              <FormItem
+        </FormItem>
+          
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="co2≥"
+        >
+          {form.getFieldDecorator('co2MaxVal')(
+            <Input placeholder="请输入" />
+          )}
+        </FormItem>           
+        
+        <FormItem
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 15 }}
           label="温度≤"
