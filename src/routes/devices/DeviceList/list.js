@@ -3,11 +3,14 @@ import { connect } from 'dva';
 import moment from 'moment';
 import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Badge, Divider,Table } from 'antd';
 import StandardTable from 'components/StandardTable';
+import deviceListGroup from '../../../assets/deviceListGroup.png';
+import deviceListDelete from '../../../assets/deviceListDelete.png';
 
 import styles from './list.less';
 import commonStyles from '../../Common.less';
 
 const FormItem = Form.Item;
+let selectedRowsParam = null;
 
 @connect(({ deviceDetailModel, loading }) => ({
   deviceDetailModel,
@@ -131,6 +134,10 @@ export default class DeviceList extends PureComponent {
 
   render() {
     const columns = [{
+      title: '设备名称',
+      dataIndex: 'deviceName',
+      key: 'deviceName',
+    },{
       title: 'IMEI/MAC',
       dataIndex: 'deviceID',
       key: 'deviceID',
@@ -142,6 +149,10 @@ export default class DeviceList extends PureComponent {
       title: '设备型号',
       dataIndex: 'devicetype',
       key: 'devicetype',
+    },{
+      title: '链接方式',
+      dataIndex: 'connectivity',
+      key: 'connectivity',     
     }, {
       title: '地理分布',
       dataIndex: 'location',
@@ -154,6 +165,58 @@ export default class DeviceList extends PureComponent {
       title: '群组',
       dataIndex: 'groupName',
       key: 'groupName',
+    }, {
+      title: '滤网是否提醒',
+      dataIndex: 'meshalarm',
+      key: 'meshalarm',
+    }, {
+      title: '滤网剩余时间',
+      dataIndex: 'meshremaintime',
+      key: 'meshremaintime',
+    }, {
+      title: '在线状态',
+      dataIndex: 'onlinestatus',
+      key: 'onlinestatus',
+    }, {
+      title: '新风状态',
+      dataIndex: 'ventilationstatus',
+      key: 'ventilationstatus',
+    }, {
+      title: '开关状态',
+      dataIndex: 'switchstatus',
+      key: 'switchstatus',
+    }, {
+      title: '是否定时',
+      dataIndex: 'timer',
+      key: 'timer',
+    }, {
+      title: 'PM2.5',
+      dataIndex: 'pm25',
+      key: 'pm25',
+    }, {
+      title: '二氧化碳',
+      dataIndex: 'CO2',
+      key: 'CO2',
+    }, {
+      title: '温湿度',
+      dataIndex: 'humiture',
+      key: 'humiture',
+    }, {
+      title: '甲醛值',
+      dataIndex: 'hcho',
+      key: 'hcho',
+    }, {
+      title: 'TVOC',
+      dataIndex: 'tvoc',
+      key: 'tvoc',
+    }, {
+      title: '上传时间',
+      dataIndex: 'uploadtime',
+      key: 'uploadtime',
+    }, {
+      title: '更新时间',
+      dataIndex: 'updatetime',
+      key: 'updatetime',
     }, {
       title: '操作',
       dataIndex: 'operation',
@@ -171,12 +234,36 @@ export default class DeviceList extends PureComponent {
     const { deviceList } = deviceDetailModel;
     console.log('getDeviceList', deviceList);
 
+    if (deviceList) {
+      deviceList.map((item, index) => {
+        item['key'] = item.deviceID;
+        item['deviceID'] = item.deviceID;
+      });
+    }
+
+    const rowSelection = {
+      onChange: (selectedRowKeys, selectedRows) => {
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        selectedRowsParam = selectedRows;
+      },
+      getCheckboxProps: record => ({
+        disabled: record.name === 'Disabled User', // Column configuration not to be checked
+        name: record.name,
+      }),
+    };
+
+    console.log(deviceListGroup);
+
     return (
       <Fragment>
           <div className={styles.tableListForm}>
             {this.renderSimpleForm()}
           </div>
-          <Table bordered dataSource={deviceList} columns={columns}/>
+          <Table rowSelection={rowSelection} bordered dataSource={deviceList} columns={columns} scroll={{x:2500}}/>
+              <div style={{verticalCenter: 'middle'}}>
+                <span><img style={{ width: 15, height: 15}} src={deviceListGroup} alt="group"/> <a href="">分配群组</a></span>
+                <span style={{marginRight: 20, marginLeft: 50}} ><img style={{ width: 15, height: 15 }} src={deviceListDelete} alt="delete"/> <a onClick={this.middleSet}>删除群组</a></span>
+              </div>
       </Fragment>
     );
   }

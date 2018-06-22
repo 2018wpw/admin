@@ -2,9 +2,11 @@ import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, 
 import styles from './Product.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { connect } from 'dva';
+import { prd_type, connectivity } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const Option = Select.Option;
 
 const ProductFormCreate = Form.create()(
   (props) => {
@@ -34,12 +36,12 @@ const ProductFormCreate = Form.create()(
           <Form className={styles.formItemGap}>
             
             <FormItem label="产品类型" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
-              {form.getFieldDecorator('prodID', {
+              {form.getFieldDecorator('prodID', {initialValue: '0'}, {
                 rules: [{ required: true, message: '请选择产品类型' }],
               })(
                 <Select placeholder="请选择产品类型">
-                  <Option value="0">是</Option>
-                  <Option value="1">否</Option>
+                  <Option value="0">{prd_type[0]}</Option>
+                  <Option value="1">{prd_type[1]}</Option>
                 </Select>               
               )}
             </FormItem>              
@@ -63,16 +65,16 @@ const ProductFormCreate = Form.create()(
             <FormItem label="链接方式" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
               {form.getFieldDecorator('connWay', {initialValue: '0'},)(
                 <Select placeholder="请选择链接方式">
-                  <Option value="0">WIFI</Option>
-                  <Option value="1">2G</Option>
-                </Select>               
+                  <Option value="0">{connectivity[0]}</Option>
+                  <Option value="1">{connectivity[1]}</Option>
+                </Select>
               )}
             </FormItem>
             <FormItem label="是否带PM2.5" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
               {form.getFieldDecorator('withDetector', {initialValue: '0'}, )(
                 <Select placeholder="请选择产品型号">
-                  <Option value="0">是</Option>
-                  <Option value="1">否</Option>
+                  <Option value="0">否</Option>
+                  <Option value="1">是</Option>
                 </Select>               
               )}
             </FormItem>    
@@ -132,12 +134,12 @@ const ProductFormEdit = Form.create()(
 
             <FormItem label="链接方式" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
               <div>
-                {editData.connWay === 0 ? 'WIFI' : '2G'}
+                {connectivity[editData.connWay]}
               </div>
             </FormItem>
             <FormItem label="是否带PM2.5" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
               <div>
-                {editData.connWay === 1 ? '是' : '否'}
+                {editData.withDetector === 1 ? '是' : '否'}
               </div>            
             </FormItem>    
             <FormItem label="描述信息" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
@@ -298,6 +300,8 @@ export default class ProductList extends React.Component {
     dataSource.map((item, index)=>{
       item['key'] = index;
       item['prodName'] = item.prodInfo.name;
+      item['connWay'] = connectivity[item.connWay];
+      item['id'] = item.id.toString();
     });     
     return (
       <PageHeaderLayout>

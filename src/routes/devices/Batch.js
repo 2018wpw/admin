@@ -2,9 +2,13 @@ import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, 
 import styles from '../Common.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { connect } from 'dva';
+import { prd_type } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const Option = Select.Option;
+
+let _gProdData = [];
 
 const BatchFormCreate = Form.create()(
   (props) => {
@@ -29,7 +33,7 @@ const BatchFormCreate = Form.create()(
           >
           <Form className={styles.formItemGap}>
             <FormItem label="批次名称" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
-              {form.getFieldDecorator('batchName', {
+              {form.getFieldDecorator('name', {
                 rules: [{ required: true, message: '请输入批次名称' }],
               })(
                 <Input placeholder="请输入批次名称"></Input>
@@ -37,22 +41,25 @@ const BatchFormCreate = Form.create()(
             </FormItem>
             
             <FormItem label="产品类型" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
-              {form.getFieldDecorator('prodName', {
+              {form.getFieldDecorator('prodName', {initialValue: '0'}, {
                 rules: [{ required: true, message: '请选择产品类型' }],
               })(
                 <Select placeholder="请选择产品类型">
-                  <Option value="0">是</Option>
-                  <Option value="1">否</Option>
-                </Select>               
+                  <Option value="0">{prd_type[0]}</Option>
+                  <Option value="1">{prd_type[1]}</Option>
+                </Select>
               )}
             </FormItem>              
             <FormItem label="产品型号" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
-              {form.getFieldDecorator('modelName', {
+              {form.getFieldDecorator('modelID', {
                 rules: [{ required: true, message: '请选择产品型号' }],
               })(
                 <Select placeholder="请选择产品型号">
-                  <Option value="0">是</Option>
-                  <Option value="1">否</Option>
+                  {
+                    _gProdData.map((item, i) => (
+                      <Option key={i} value={item.id}>{item.name}</Option>
+                    ))
+                  }
                 </Select>               
               )}
             </FormItem>                  
@@ -68,7 +75,6 @@ const BatchFormCreate = Form.create()(
     }
 );
 
-
 const BatchFormEdit = Form.create()(
   (props) => {
     const {visible, onCancel, onCreate, form, editingData } = props;
@@ -79,14 +85,19 @@ const BatchFormEdit = Form.create()(
         form.resetFields();
         onCreate(fieldsValue);
       });
-    };    
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      onCancel();
+    };
 
     return (
           <Modal
             title="编辑批次"
             visible={visible}
             onOk={okHandle}
-            onCancel={onCancel}
+            onCancel={cancelHandle}
           >
           <Form className={styles.formItemGap}>
             <FormItem label="批次名称" labelCol={{ span: 5 }} wrapperCol={{ span: 15 }}>
@@ -112,8 +123,9 @@ const BatchFormEdit = Form.create()(
 );
 
 
-@connect(({ batchModel, loading }) => ({
+@connect(({ batchModel, prodModel, loading }) => ({
   batchModel,
+  prodModel,
   loading: loading.effects['batchModel/list'],
 }))
 export default class ProductList extends React.Component {
@@ -157,6 +169,9 @@ export default class ProductList extends React.Component {
   componentDidMount() {
     this.props.dispatch({
       type: 'batchModel/list',
+    });
+    this.props.dispatch({
+      type: 'prodModel/list',
     });
   }
 
@@ -229,22 +244,27 @@ export default class ProductList extends React.Component {
       });
   }
 
-  onSubmit = (e) => {
-
-  }
-
   saveFormRef = (form) => {
     this.form = form;
   }
 
   render() {
     const columns = this.columns;
-    const { batchModel } = this.props;
+    const { batchModel, prodModel } = this.props;
 
     var dataSource = batchModel.batches || [];
     dataSource.map((item, index)=>{
-      item['key'] = index;
-    });     
+      item['key'] = item.id.toString();
+      item['id'] = item.id.toString();
+    });
+
+    var prodData = prodModel.models || [];
+    prodData.map(item => {
+      item['key'] = item.id.toString();
+      item['id'] = item.id.toString();
+    });
+    _gProdData = prodData;
+    console.log('_gProdData', _gProdData);
 
     return (
       <PageHeaderLayout>
@@ -254,7 +274,6 @@ export default class ProductList extends React.Component {
             <Table bordered dataSource={dataSource} columns={columns} />
           </div>
         </Card>
-
 
         <BatchFormCreate
           ref={this.saveFormRef}

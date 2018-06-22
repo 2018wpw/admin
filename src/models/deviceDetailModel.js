@@ -51,18 +51,7 @@ export default {
         var batchInfo = response.data.batchInfo;
         var deviceData = response.data.deviceData;
         var models = response.data.models;
-        var deviceList = [];
-        devices.map((item, index) => {
-          deviceList.push({
-            key: item.matchDeviceInfo.deviceID,
-            deviceID: item.matchDeviceInfo.deviceID,
-            devicecategory: models[index].prodInfo.name,
-            devicetype: models[index].name,
-            location:item.addrDetail,
-            batch:item.batchInfo.name,
-            groupName:item.groupName,
-          });
-        })
+        var deviceList = devices || [];
         yield put({
           type: 'queryList',
           payload: {

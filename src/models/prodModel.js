@@ -74,7 +74,7 @@ export default {
         yield put({
           type: 'queryList',
           payload: {
-            deviceTypeList: response.data.prods,
+            deviceTypeList: response.data,
           }
         });
       }

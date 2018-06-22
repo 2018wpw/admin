@@ -14,7 +14,7 @@ export default class UserInfo extends React.Component {
     super(props);
     this.columns = [{
       title: '姓名',
-      dataIndex: 'name',
+      dataIndex: 'nickName',
     }, {
       title: '性别',
       dataIndex: 'sex',
