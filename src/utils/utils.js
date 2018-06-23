@@ -176,3 +176,5 @@ export function getTime(seconds) {
   return moment(seconds).format('YYYY-MM-DD HH:mm:ss');
 }
 
+export const upload_url = base_url + "/common/file/upload"
+

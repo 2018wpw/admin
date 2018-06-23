@@ -18,21 +18,21 @@ export default {
       }
     }, 
     *importDevice({ payload }, { call, put }) {
-      var body = {
-        batchID: payload.batchID,
-        prodID: payload.prodID,
-        modelID: payload.modelID,
-      };
       const { resolve, reject } = payload;
-      const response = yield call(importDevice, body);
+      const response = yield call(importDevice, payload.formData);
       if (response.errCode === 0) {
-        yield put({
-          type: 'queryListHistory',
-          payload: response.data,
-        });
         resolve(response.data);
       } else {
         reject(response.errMsg);
+      }
+      if (response.errCode === 0) {
+        var resp = yield call(queryImportHistory, payload);
+        if (resp.errCode === 0) {
+          yield put({
+            type: 'queryListHistory',
+            payload: response.data,
+          });
+        }
       }
     },        
   },

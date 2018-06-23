@@ -10,9 +10,8 @@ const { TextArea } = Input;
 const Option = Select.Option;
 
 
-@connect(({ importModel, prodModel, batchModel, loading }) => ({
+@connect(({ importModel, batchModel, loading }) => ({
   importModel,
-  prodModel,
   batchModel,
   loading: loading.effects['importModel/queryImportHistory'],  
 }))
@@ -20,7 +19,6 @@ const Option = Select.Option;
 export default class ImportDevices extends React.Component {
   constructor(props) {
     super(props);
-
     this.historyColumns = [{
       title: '导入时间',
       dataIndex: 'time',
@@ -44,13 +42,18 @@ export default class ImportDevices extends React.Component {
       dataIndex: 'batchName',
     }];
 
-
     this.state = {
       visible: false,
       fileList: [],
       uploading: false,
+      importBatchData: {
+        id: '',
+        prodName: '',
+        modelName: '',
+      }
     };
   }
+
   onCellChange = (key, dataIndex) => {
     return (value) => {
       const historyData = [...this.state.historyData];
@@ -75,116 +78,26 @@ export default class ImportDevices extends React.Component {
     this.props.dispatch({
       type: 'prodModel/list',
     });            
-  }  
-
-  renderSimpleForm(prodData, batchData, deviceTypeData, props) {
-    const { form } = props;
-    return (
-      <Form layouts="vertical" layout="inline">
-          <Row gutter={{ md: 4, lg: 8, xl: 8 }}>
-              <Col md={5} sm={24}>
-                <FormItem label="导入批次">
-                  {form.getFieldDecorator('batchID', {
-                    rules: [{ required: true, message: '请选择批次' }],
-                  })(
-                    <Select placeholder="请选择批次">
-                      {batchData.map((item, i) => (
-                        <Option  key={item.id} value={item.id}>{item.name}</Option>
-                      ))}  
-                    </Select>                                      
-                  )}                
-                </FormItem>
-              </Col>
-              <Col  md={5} sm={24}>
-                <FormItem label="产品类型">
-                  {form.getFieldDecorator('prodID', {
-                    rules: [{ required: true, message: '请选择产品类型' }],
-                  })(
-                    <Select placeholder="请选择产品类型">
-                      {deviceTypeData.map((item, i) => (
-                        <Option  key={item.id} value={item.id}>{item.name}</Option>
-                      ))} 
-                    </Select>               
-                  )}
-                </FormItem>
-              </Col>
-              <Col md={5} sm={24}>
-                <FormItem label="产品型号">
-                  {form.getFieldDecorator('modelID', {
-                    rules: [{ required: true, message: '请选择产品型号' }],
-                  })(
-                    <Select placeholder="请选择产品型号">
-                      {prodData.map((item, i) => (
-                        <Option key={item.id} value={item.id}>{item.name}</Option>
-                      ))}                  
-                    </Select>                    
-                  )}                
-                </FormItem>
-              </Col> 
-              <Col md={9} sm={24}>
-                  <FormItem label="设备文件">
-                    <Upload showUploadList={false} {...this.props}>
-                      <Button className={styles.upload}>
-                        选择上传设备文件
-                      </Button>
-                      <span style={{ color: 'red' }}>*</span>文件格式: Excel 模板
-                    </Upload>
-                  </FormItem>
-              </Col>              
-          </Row>
-
-          <Row>
-              <Col md={12} sm={24}>
-                <Button type="primary" loading = {this.state.uploading} className={styles.formButton} htmlType="submit" onClick={this.onImport}>导入</Button>
-              </Col>    
-              <Col md={12} sm={24}>
-                <Button type="primary" loading = {this.state.uploading} className={styles.formButton}>下载模板</Button>
-              </Col>                           
-          </Row>
-
-      </Form> 
-    );
   }
 
-  onImport = () => {
-    const { form } = this.props;
-
-    form.validateFields((err, fieldsValue) => {
-        if (err) return;
-        form.resetFields();
-        console.log(fieldsValue);
-        return new Promise((resolve, reject) => {
-          this.props.dispatch({
-            type: 'importModel/importDevice',
-            payload: {
-              ...fieldsValue,
-              resolve: resolve,
-              reject: reject,
-            }
-          });
-          this.setState({
-            uploading: true,
-          });
-        })
-        .then( res => {
-          this.setState({
-            uploading: false,
-           });
-        })
-        .catch(err => {
-          console.log(err);
-          this.setState({
-            uploading: false,
-          });
-          message.error("导入失败");
+  handleBatchChange = (value, batchData) => {
+    for (var i=0; i<batchData.length; i++) {
+      if (batchData[i].id === value) {
+        this.setState({
+          importBatchData: {
+            id: batchData[i].id,
+            prodName: batchData[i].prodName,
+            modelName: batchData[i].modelName,
+          }
         });
-    });    
+        break;
+      }
+    }
   }
 
-  render() {
-    const props = {
-      ...this.props,
-      action: '//admin/device/importDevices',
+  renderSimpleForm(batchData) {
+    const options = {
+      action: '//common/file/upload',
       onRemove: (file) => {
         console.log('onRemove', file);
         this.setState(({ fileList }) => {
@@ -199,14 +112,113 @@ export default class ImportDevices extends React.Component {
       beforeUpload: (file) => {
         console.log('beforeUpload', file);
         this.setState(({ fileList }) => ({
-          fileList: [...fileList, file],
+          fileList: [file],
         }));
         return false;
       },
       fileList: this.state.fileList,
-    }
+    };    
+    const { form } = this.props;
+    return (
+      <Form>
+          <Row gutter={{ md: 4, lg: 8, xl: 8 }}>
+              <Col md={7} sm={24}>
+                <FormItem label="导入批次">
+                  {form.getFieldDecorator('batchID', {
+                    rules: [{ required: true, message: '请选择批次' }],
+                  })(
+                    <Select placeholder="请选择批次" onChange={(value) => {this.handleBatchChange(value, batchData)}}>
+                      {batchData.map((item, i) => (
+                        <Option key={item.id} value={item.id}>{item.name}</Option>
+                      ))}
+                    </Select>
+                  )}                
+                </FormItem>
+              </Col>
+              <Col md={5} sm={24}>
+                <FormItem label="产品类型">
+                  <div>{this.state.importBatchData.prodName}</div>
+                </FormItem>
+              </Col>
+              <Col md={5} sm={24}>
+                <FormItem label="产品型号">
+                  <div>{this.state.importBatchData.modelName}</div>               
+                </FormItem>
+              </Col> 
+              <Col md={7} sm={24}>
+                  <FormItem label="设备文件">
+                    <Upload {...options}>
+                      <Button className={styles.upload}>
+                        选择上传 Excel 模板文件
+                      </Button>
+                    </Upload>
+                  </FormItem>
+              </Col>              
+          </Row>
 
-    const { importModel, prodModel, batchModel } = props;
+          <Row>
+              <div align="center">
+                <Button type="primary" loading = {this.state.uploading} className={styles.button} htmlType="submit" onClick={this.handleImport}>导入</Button>
+                <Button type="primary" className={styles.button} >下载模板</Button>
+              </div>
+          </Row>
+
+      </Form> 
+    );
+  }
+
+  handleImport = () => {
+    const { form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+        if (err) return;
+        console.log(fieldsValue);
+        const { fileList } = this.state;
+        const formData = new FormData();
+        fileList.forEach((file) => {
+          formData.append('file', file);
+        });
+        formData.append('batchID', fieldsValue.batchID);
+
+        this.setState({
+          uploading: true,
+        });
+
+        return new Promise((resolve, reject) => {
+          this.props.dispatch({
+            type: 'importModel/importDevice',
+            payload: {
+              formData: formData,
+              resolve: resolve,
+              reject: reject,
+            }
+          });
+          this.setState({
+            uploading: true,
+          });
+        })
+        .then( res => {
+          this.setState({
+            uploading: false,
+            fileList: [],
+            importBatchData: {
+              id: '',
+              prodName: '',
+              modelName: '',
+            },
+          });
+          message.success('导入成功');
+        })
+        .catch(err => {
+          this.setState({
+            uploading: false,
+          });
+          message.error("导入失败:", err);
+        });
+    });    
+  }
+
+  render() {
+    const { batchModel, importModel } = this.props;
     var historyData = importModel.records || [];
     historyData.map((item, index)=>{
       item['key'] = index;
@@ -214,28 +226,16 @@ export default class ImportDevices extends React.Component {
       item['time'] = getTime(item.time);
     });
 
-    const { deviceTypeList } = prodModel;
-    var deviceTypeData = deviceTypeList || [];
-    deviceTypeData.map(item => {
-      item['key'] = item.id.toString();
-      item['id'] = item.id.toString();
-    });
     var batchData = batchModel.batches || [];
     batchData.map(item => {
       item['key'] = item.id.toString();
       item['id'] = item.id.toString();      
     });
-    var prodData = prodModel.models || [];
-    prodData.map(item => {
-      item['key'] = item.id.toString();
-      item['id'] = item.id.toString();      
-    });
-
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div className={styles.tableListForm}>
-            {this.renderSimpleForm(prodData, batchData, deviceTypeData, props)}
+            {this.renderSimpleForm(batchData)}
           </div>
           
           <div>

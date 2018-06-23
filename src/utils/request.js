@@ -101,23 +101,23 @@ export default function request(url, options) {
       addItemsToForm(form, typeof newOptions.body == 'object' ? [] : [newOptions.name || 'model'], newOptions.body);
       newOptions.body = form.join('&');
     } else {
-      // newOptions.body is FormData
-      newOptions.headers = {
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-        ...newOptions.headers,
-      };
+      // newOptions.body is FormData do nothing
     }
   }
 
     var token = 'Bearer ' + getToken();
-    if (token !== null) {
+    if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
         Authorization: token,
         ...newOptions.headers,
       }
-    }  
+    } else {
+      newOptions.headers = {
+        Authorization: token,
+        ...newOptions.headers,
+      }
+    }
 
   return fetch(base_url + url, newOptions)
     .then(checkStatus)
