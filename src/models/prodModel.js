@@ -1,4 +1,4 @@
-import { create , edit, deleteApi, list, getDeviceTypeList, query } from '../services/prod';
+import { create , edit, deleteApi, list, getProdList, query } from '../services/prod';
 
 export default {
   namespace: 'prodModel',
@@ -68,8 +68,8 @@ export default {
     *check({ payload }, { call, put }) {
       const response = yield call(check, payload);
     },
-    *getDeviceTypeList ({ payload }, { call, put }) {
-      const response = yield call(getDeviceTypeList, payload);
+    *getProdList ({ payload }, { call, put }) {
+      const response = yield call(getProdList, payload);
       if(response.errCode === 0) {
         yield put({
           type: 'queryList',

@@ -70,7 +70,7 @@ export default class ImportDevices extends React.Component {
       type: 'importModel/queryImportHistory',
     });
     this.props.dispatch({
-      type: 'prodModel/getDeviceTypeList',
+      type: 'prodModel/getProdList',
     });
     this.props.dispatch({
       type: 'batchModel/list',

@@ -21,8 +21,9 @@ export default {
         type: 'queryListHistory',
         payload: response.data,
       });
-    },      
+    },
     *createOTAPackage({ payload }, { call, put }) {
+      console.log('createOTAPackage', payload);
       const response = yield call(createOTAPackage, payload);
       if(response.errCode === 0) {
         const response = yield call(quryOTAPackages, payload);
@@ -48,12 +49,17 @@ export default {
           errCode: response.errCode,
         });        
       } else {
-        reject(response.errMsg);
+        reject(response);
       }      
     },
     *uploadPackage({ payload }, { call, put }) {
-      var response = yield call(uploadPackage, payload);    
-
+      const { resolve, reject } = payload;
+      const response = yield call(uploadPackage, payload.formData);
+      if (response.errCode === 0) {
+        resolve(response.data);
+      } else {
+        reject(response.errMsg);
+      }
     },
     *requestOTA({ payload }, { call, put }) {
       console.log('requestOTA', payload);

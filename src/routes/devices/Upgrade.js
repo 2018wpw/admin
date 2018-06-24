@@ -2,40 +2,58 @@ import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row,
 import styles from '../Common.less';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { connect } from 'dva';
-import { uploadFileUrl } from '../../services/common';
-import { getTime } from '../../utils/utils';
+import { getTime, upload_url } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const confirm = Modal.confirm;
+const Option = Select.Option;
 
 const CreateUpgradePackageForm = Form.create()(
   (props) => {
-    const { visible, onCancel, onCratePackage, form, selectedFile, uploading, handleUpload, beforeUpload } = props;
-    const { getFieldDecorator } = form;
+    const { visible, onCancel, onCratePackage, form, uploading, handleUpload, onBeforeUpload, fileList, onRemoveFile, uploadedFileID } = props;
+
     const options = {
-      action: 'ReactUploadFile',
+      action: '//common/file/upload',
+      onRemove: (file) => {
+        console.log('onRemove', file);
+        onRemoveFile(file);
+      },
       beforeUpload: (file) => {
-        beforeUpload(file);
+        onBeforeUpload(file);
         return false;
       },
-      fileList: selectedFile === '' ? [] : new Array(selectedFile),
-    };
+      fileList: fileList,
+    };    
 
-    const onCreate = () => {
+    const okHandler = () => {
       form.validateFields((err, fieldsValue) => {
         if (err) return;
+        if (uploadedFileID === '') {
+          message.error("请先上传升级包");
+          return;
+        }        
         form.resetFields();
+        console.log(fieldsValue);
         onCratePackage(fieldsValue);
       });
-    }
+    };
+
+    const cancelHandle = () => {
+      form.resetFields();
+      onCancel();
+    };
+
+    const onUploadClick = () => {
+      handleUpload();
+    };
 
     return (
       <Modal
         title="创建升级包"
         visible={visible}
-        onOk={onCreate}
-        onCancel={() => onCancel()}
+        onOk={okHandler}
+        onCancel={cancelHandle}
         okText="创建"
         cancelText="取消"
       >
@@ -48,7 +66,7 @@ const CreateUpgradePackageForm = Form.create()(
             {form.getFieldDecorator('verFW', {
               rules: [{ required: true, message: '请输入版本号' }],
             })(
-              <Input placeholder="请输入版本号" />
+              <Input type='number' placeholder="请输入版本号" />
             )}
           </FormItem>
 
@@ -57,19 +75,35 @@ const CreateUpgradePackageForm = Form.create()(
             wrapperCol={{ span: 15 }}
             label="产品类型"
           >
-            {form.getFieldDecorator('modelID', {
-              rules: [{ required: true, message: '请输选择类型' }],
+            {form.getFieldDecorator('prodID', {
+              rules: [{ required: true, message: '请输选择产品类型' }],
             })(
-              <Select placeholder="请输选择类型">
+              <Select placeholder="请选择产品类型">
               {
                 deviceTypeData.map((item, index) => (
-                  <Select.Option value={item.id}>{item.name}</Select.Option>                  
+                  <Select.Option key={index} value={item.id}>{item.name}</Select.Option>                  
                 ))
               }  
               </Select>          
             )}
           </FormItem> 
-
+          <FormItem
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 15 }}
+            label="产品型号"
+          >
+            {form.getFieldDecorator('modelID', {
+              rules: [{ required: true, message: '请输选择产品型号' }],
+            })(
+              <Select placeholder="请选择产品型号">
+              {
+                prodModelData.map((item, index) => (
+                  <Select.Option key={index} value={item.id}>{item.name}</Select.Option>                  
+                ))
+              }  
+              </Select>          
+            )}
+          </FormItem> 
           <FormItem
             labelCol={{ span: 5 }}
             wrapperCol={{ span: 15 }}
@@ -86,24 +120,25 @@ const CreateUpgradePackageForm = Form.create()(
                 }
               ],
             })(
-              <Row>
-                <Col md={18} sm={24}>
-                  <Upload {...options} >
-                    <Button>选择升级包</Button>
-                  </Upload>  
-
-                </Col>
-                <Col md={6} sm={24}>
-                  <Button 
-                    type='primary'
-                    loading={uploading}
-                    onClick={handleUpload}
-                  >上传</Button>              
-                </Col>
-              </Row>
+                <Row>
+                  <Col md={18} sm={24}>
+                    <Upload {...options}>
+                      <Button>{uploadedFileID === '' ? '选择升级包' : '已上传'}</Button>
+                    </Upload>
+                  </Col>
+                  <Col md={6} sm={24}>
+                    <Button 
+                        type='primary'
+                        loading={uploading}
+                        onClick={onUploadClick}
+                    >
+                      上传
+                    </Button>                    
+                  </Col>
+                </Row>
             )}
 
-          </FormItem>                    
+          </FormItem> 
 
           <FormItem
             labelCol={{ span: 5 }}
@@ -154,7 +189,7 @@ const StartUpgradeForm = Form.create()(
               <Select placeholder="请输选择批次">
               {
                 batchData.map((item, index) => (
-                  <Select.Option value={item.id}>{item.name}</Select.Option>                  
+                  <Select.Option key={index} value={item.id}>{item.name}</Select.Option>                  
                 ))
               }
               </Select>
@@ -168,6 +203,7 @@ const StartUpgradeForm = Form.create()(
 
 let deviceTypeData;
 let batchData;
+let prodModelData;
 
 @connect(({ upgrade, loading, prodModel, batchModel }) => ({
   upgrade,
@@ -177,19 +213,7 @@ let batchData;
 export default class UpgradeList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      visible: false,
-      uploading: false,
-      selectedFile: '',
-      upgradeVisible: false,
-      deviceID: '',
-    };
-
-    this.columns = [{
-        title: '升级包',
-        dataIndex: 'id',
-        key: 'id',        
-      }, {
+    this.packageColumns = [{
         title: '描述信息',
         dataIndex: 'descr',
         key: 'descr', 
@@ -246,6 +270,14 @@ export default class UpgradeList extends React.Component {
     }];
   }  
 
+  state = {
+      visible: false,
+      uploading: false,
+      fileList: [],
+      upgradeVisible: false,
+      deviceID: '',
+      uploadedFileID: '',
+  }
 
   componentDidMount() {
     this.props.dispatch({
@@ -258,8 +290,11 @@ export default class UpgradeList extends React.Component {
       type: 'batchModel/list',
     });
     this.props.dispatch({
-      type: 'prodModel/getDeviceTypeList',
-    });          
+      type: 'prodModel/getProdList',
+    });
+    this.props.dispatch({
+      type: 'prodModel/list',
+    });    
   }
 
   handleUpgrade = (values, deviceID) => {
@@ -298,72 +333,118 @@ export default class UpgradeList extends React.Component {
             }
           });
         })
-        .catch((err) => console.log(err));        
+        .catch((err) => {
+          console.log(err)          
+          if (err.errCode === 3) {
+            message.error('没有权限执行该操作');
+          }
+        });
       },
       onCancel() {},
     });
   }
 
+  resetState = () => {
+      this.setState({
+        visible: false,
+        upgradeVisible: false,
+        fileList: [],
+        uploadedFileID: '',
+      });    
+  }  
+
   handleCreatePackage = (values) => {
     this.props.dispatch({
       type: 'upgrade/createOTAPackage',
-      palyload: {
-        ...values,
+      payload: {
+        modelID: values.modelID,
+        verFW: values.verFW,
+        packageFileID: this.state.uploadedFileID,
+        descr: values.descr,
+        prodID: values.prodID,
       }
     });
-    this.setState({
-      visible: false,
-    });    
+    this.resetState();  
   }
 
   showCreateUpgradeModal = () => {
     this.setState({
       visible: true,
-    });
+    }); 
   }
 
   handleCancel = (e) => {
-      console.log(e);
-      this.setState({
-        visible: false,
-        upgradeVisible: false,
-      });
+    console.log(e);
+    this.resetState()
   }
 
   beforeUpload = (file) => {
+    console.log('beforeUpload', file);
     this.setState({
-      selectedFile: file,
+      fileList: [file],
     });
+  }
+
+  onRemoveFile = (file) => {
+    this.setState(({ fileList }) => {
+        const index = fileList.indexOf(file);
+        const newFileList = fileList.slice();
+        newFileList.splice(index, 1);
+        return {
+          fileList: newFileList,
+        };
+    });    
   }
 
   handleUpload = () => {
+    const { fileList } = this.state;
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append('file', file);
+    });
     this.setState({
       uploading: true,
     });
-    this.props.dispatch({
-      type: 'upgrade/uploadPackage',
-      payload: {
-        file: this.state.selectedFile,
-      }
-    }).then( () => {
-      console.log('handleUpload', 'ok');
-      this.setState({
-        uploading: false,
-        selectedFile: '',
-      });
-    });  
+    return new Promise((resolve, reject) => {
+        this.props.dispatch({
+            type: 'upgrade/uploadPackage',
+            payload: {
+              formData: formData,
+              resolve: resolve,
+              reject: reject,
+            }
+        });
+
+        this.setState({
+          uploading: true,
+        });
+
+      })
+      .then( res => {
+          this.setState({
+            uploading: false,
+            fileList: [],
+            uploadedFileID: res.fileID,
+          });
+          message.success('上传成功');
+      })
+      .catch(err => {
+        this.setState({
+            uploading: false,
+        });
+        message.error("上传失败:", err);
+    });   
   }
 
   render() {
-    const columns = this.columns;
     const { upgrade, prodModel, batchModel } = this.props;
-    var dataSource = upgrade.packages || [];
-    dataSource.map((item, index)=>{
+    var packageDataSource = upgrade.packages || [];
+    packageDataSource.map((item, index)=>{
       item['key'] = index;
+      item['id'] = item.id.toString();
     });
   
     var historyData = upgrade.records || [];
-    const historyColumns = this.historyColumns;
     historyData.map((item, index)=>{
       item['key'] = index;
       var count = item.result.failCount + item.result.inprogressCount + item.result.okCount;
@@ -380,21 +461,30 @@ export default class UpgradeList extends React.Component {
 
     const { deviceTypeList } = prodModel;
     deviceTypeData = deviceTypeList || [];
+
+    prodModelData = prodModel.models || [];
+    prodModelData.map(item => {
+      item['key'] = item.id.toString();
+      item['id'] = item.id.toString();
+    });
+
     batchData = batchModel.batches || [];
-    console.log('deviceTypeData', deviceTypeData);
-    console.log('batchData', batchData);
+    batchData.map(item => {
+      item['key'] = item.id.toString();
+      item['id'] = item.id.toString();
+    });
 
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
           <div>
             <Button className={styles.createButton} type="primary" onClick={this.showCreateUpgradeModal}>创建升级包</Button>
-            <Table bordered dataSource={dataSource} columns={columns} />
+            <Table bordered dataSource={packageDataSource} columns={this.packageColumns} />
             <div style={{ marginTop: 50 }} >
               升级记录
             </div>          
             <Divider style={{ margin: '10px 0' }} />            
-            <Table bordered dataSource={historyData} columns={historyColumns} />
+            <Table bordered dataSource={historyData} columns={this.historyColumns} />
           </div>
         </Card>
 
@@ -403,9 +493,11 @@ export default class UpgradeList extends React.Component {
           visible={this.state.visible}
           onCancel={this.handleCancel}
           onCratePackage={this.handleCreatePackage}
-          beforeUpload={this.beforeUpload}
+          onBeforeUpload={this.beforeUpload}
           handleUpload={this.handleUpload}
-          selectedFile={this.state.selectedFile}
+          fileList={this.state.fileList}
+          onRemoveFile={this.onRemoveFile}
+          uploadedFileID={this.state.uploadedFileID}
         />
 
         <StartUpgradeForm
