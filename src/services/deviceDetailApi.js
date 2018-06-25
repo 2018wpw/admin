@@ -9,7 +9,8 @@ export async function listRentUsers(params) {
 }
 
 export async function list(params) {
-  return request('/admin/device/list', {
+  var para = stringify(params);
+  return request('/admin/device/list?' + para, {
     method: 'GET',
     body: params,
   });

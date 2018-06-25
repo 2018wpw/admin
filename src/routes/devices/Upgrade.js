@@ -294,7 +294,7 @@ export default class UpgradeList extends React.Component {
     });
     this.props.dispatch({
       type: 'prodModel/list',
-    });    
+    });
   }
 
   handleUpgrade = (values, deviceID) => {

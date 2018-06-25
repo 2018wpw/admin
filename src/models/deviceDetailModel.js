@@ -44,7 +44,7 @@ export default {
         });
       }
     },
-    *getDeviceList({ payload }, { call, put }) {
+    *getDeviceList({ payload, resolve, reject }, { call, put }) {
       const response = yield call(list, payload);
       if (response.errCode === 0) {
         var devices = response.data.devices;
@@ -58,6 +58,13 @@ export default {
             deviceList: [...deviceList]
           },
         });
+        if (resolve) {
+          resolve(response);
+        }
+      } else {
+        if (reject) {
+          reject(response.errCode);
+        }
       }
     },
   },

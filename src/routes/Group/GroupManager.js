@@ -2,12 +2,14 @@ import { Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Common.less';
 import { connect } from 'dva';
+import { prd_type } from '../../utils/utils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const { Option } = Select;
 const confirm = Modal.confirm;
 
+let prodModelData;
 
 const AssignSubAccountForm = Form.create()((props) => {
   const { assignVisible, form, handleAssign, hideAssignModal } = props;
@@ -18,12 +20,17 @@ const AssignSubAccountForm = Form.create()((props) => {
       handleAssign(fieldsValue);
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    hideAssignModal();
+  };
+
   return (
     <Modal
       title="分配群组"
       visible={assignVisible}
       onOk={okHandle}
-      onCancel={() => hideAssignModal()}
+      onCancel={cancelHandle}
     >
 
       <Form className={styles.formItemGap}>
@@ -55,12 +62,17 @@ const CreateGroupForm = Form.create()((props) => {
       handleCreate(fieldsValue);
     });
   };
+  const cancelHandle = () => {
+    form.resetFields();
+    handleModalVisible();
+  };
+
   return (
     <Modal
       title="创建群组"
       visible={visible}
       onOk={okHandle}
-      onCancel={() => handleModalVisible()}
+      onCancel={cancelHandle}
     >
 
       <Form className={styles.formItemGap}>
@@ -70,9 +82,9 @@ const CreateGroupForm = Form.create()((props) => {
           label="群组名称"
         >
           {form.getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入' }],
+            rules: [{ required: true, message: '请输入群组名称' }],
           })(
-            <Input placeholder="请输入" />
+            <Input placeholder="请输入群组名称" />
           )}
         </FormItem>
 
@@ -82,10 +94,11 @@ const CreateGroupForm = Form.create()((props) => {
           label="设备类型"
         >
           {form.getFieldDecorator('prodName', {
-            rules: [{ required: true, message: '请选择' }],
+            rules: [{ required: true, message: '请选择设备类型' }],
           })(
-            <Select placeholder="请选择">
-              <Option value="0">净化器</Option>
+            <Select placeholder="请选择设备类型">
+              <Option value="0">{prd_type[0]}</Option>
+              <Option value="1">{prd_type[1]}</Option>
             </Select>
           )}
         </FormItem>
@@ -95,14 +108,17 @@ const CreateGroupForm = Form.create()((props) => {
           wrapperCol={{ span: 15 }}
           label="设备型号"
         >
-          {form.getFieldDecorator('modelID', {
-            rules: [{ required: true, message: '请选择' }],
-          })(
-            <Select placeholder="请选择">
-              <Option value="0">M100</Option>
-              <Option value="1">M200</Option>
-            </Select>
-          )}
+            {form.getFieldDecorator('modelID', {
+              rules: [{ required: true, message: '请输选择设备型号' }],
+            })(
+              <Select placeholder="请选择设备型号">
+              {
+                prodModelData.map((item, index) => (
+                  <Select.Option key={index} value={item.id}>{item.name}</Select.Option>                  
+                ))
+              }  
+              </Select>          
+            )}
         </FormItem>        
         <FormItem
           labelCol={{ span: 5 }}
@@ -118,8 +134,9 @@ const CreateGroupForm = Form.create()((props) => {
   );
 });
 
-@connect(({ group, loading }) => ({
+@connect(({ group, prodModel, loading }) => ({
   group,
+  prodModel,
   loading: loading.effects['group/queryList'],
 }))
 export default class GroupManager extends React.Component {
@@ -176,9 +193,11 @@ export default class GroupManager extends React.Component {
   }
 
   componentDidMount() {
-    console.log('componentDidMount')
     this.props.dispatch({
       type: 'group/queryList',
+    });
+    this.props.dispatch({
+      type: 'prodModel/list',
     });
   }
 
@@ -289,10 +308,10 @@ export default class GroupManager extends React.Component {
   render() {
     const { visible } = this.state;
     const columns = this.columns;
-    const { group } = this.props;
+    const { group, prodModel } = this.props;
 
-    var dataSource = group.groups || [];
-    dataSource.map((item, index)=>{
+    var groupData = group.groups || [];
+    groupData.map((item, index)=>{
       item['key'] = index;
       if (item.assignInfo) {
         if(item.assignInfo.accountInfo) {
@@ -304,7 +323,15 @@ export default class GroupManager extends React.Component {
           item['rentInfo'] = item.assignInfo.rentInfo.name;
         }
       }
+      groupData['id'] = item.id.toString();
     });
+
+    prodModelData = prodModel.models || [];
+    prodModelData.map(item => {
+      item['key'] = item.id.toString();
+      item['id'] = item.id.toString();
+    });
+
 
     const parentMethods = {
       handleCreate: this.handleCreate,
@@ -318,7 +345,7 @@ export default class GroupManager extends React.Component {
         <Card bordered={false}>
           <div>
             <Button type="primary" onClick={this.showModal} className={styles.createButton}>创建群组</Button>
-            <Table bordered dataSource={dataSource} columns={columns} />
+            <Table bordered dataSource={groupData} columns={columns} />
           </div>          
         </Card>
 

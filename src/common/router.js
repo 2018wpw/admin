@@ -90,13 +90,13 @@ export const getRouterData = (app) => {
     // },
     //devices
     '/devices/list': {
-      component: dynamicWrapper(app, ['deviceDetailModel'], () => import('../routes/devices/DeviceList')),
+      component: dynamicWrapper(app, ['deviceDetailModel', 'group', 'prodModel', 'batchModel'], () => import('../routes/devices/DeviceList')),
     },
     '/devices/list/list': {
-      component: dynamicWrapper(app, ['deviceDetailModel'], () => import('../routes/devices/DeviceList/list')),
+      component: dynamicWrapper(app, ['deviceDetailModel', 'group', 'prodModel', 'batchModel', 'account'], () => import('../routes/devices/DeviceList/list')),
     },
     '/devices/list/detail': {
-      component: dynamicWrapper(app, ['deviceDetailModel'], () => import('../routes/devices/DeviceList/detail')),
+      component: dynamicWrapper(app, ['deviceDetailModel', 'group', 'batchModel'], () => import('../routes/devices/DeviceList/detail')),
     },
     '/devices/product': {
       component: dynamicWrapper(app, ['prodModel'], () => import('../routes/devices/Product')),
@@ -151,7 +151,7 @@ export const getRouterData = (app) => {
 
     //group
     '/group': {
-      component: dynamicWrapper(app, ['group'], () => import('../routes/Group/GroupManager')),
+      component: dynamicWrapper(app, ['group', 'prodModel'], () => import('../routes/Group/GroupManager')),
     },
     
     '/result/success': {
