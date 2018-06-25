@@ -1,5 +1,6 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
+import { requestWithType } from '../utils/request';
 // export async function query(params) {
 //   return request(`/api/users?${qs.stringify(params)}`);
 // }
@@ -26,21 +27,21 @@ export async function create(params) {
 
 
 export async function removeDevices(params) {
-  return request('/admin/group/removeDevices', {
+  return requestWithType('/admin/group/removeDevices', {
     method: 'POST',
     body: params,
-  });
+  }, 'application/json');
 }
 
+export async function addDevices(params) {
+  return requestWithType('/admin/group/addDevices', {
+    method: 'POST',
+    body: params,
+  }, 'application/json');
+}
 
 export async function assign(params) {
   return request('/admin/group/assign', {
-    method: 'POST',
-    body: params,
-  });
-}
-export async function addDevices(params) {
-  return request('/admin/group/addDevices', {
     method: 'POST',
     body: params,
   });

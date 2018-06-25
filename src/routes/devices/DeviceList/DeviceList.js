@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Row, Col, Card, Form, Input, Select, Button, Menu, DatePicker, message,Table, Cascader} from 'antd';
+import { Row, Col, Card, Form, Input, Select, Button, Menu, DatePicker, message,Table, Cascader, Modal } from 'antd';
 import StandardTable from 'components/StandardTable';
 import deviceListGroup from '../../../assets/deviceListGroup.png';
 import deviceListDelete from '../../../assets/deviceListDelete.png';
@@ -12,12 +12,60 @@ import { getChinaAddr } from '../../../utils/authority';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
-let selectedRowsParam = null;
+let selectedRowsParam = [];
 let _gGroupListData = [];
 let _gProdModelData;
 const CascaderOptions = getChinaAddr();
 let _gBatchData;
 let _gAccountData;
+
+
+const AssignGroupForm = Form.create()((props) => {
+  const { assignGroupFormVisible, form, handleAssignGroup, handleCancelAssignForm, groupAssigning } = props;
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      handleAssignGroup(fieldsValue);
+    });
+  };
+  const cancelHandle = () => {
+    form.resetFields();
+    handleCancelAssignForm();
+  };
+  return (
+    <Modal
+      title='分配群组'
+      visible={assignGroupFormVisible}
+      onOk={okHandle}
+      onCancel={cancelHandle}
+      okText='分配'
+      cancelText='取消'
+      confirmLoading={groupAssigning}
+    >
+
+      <Form className={styles.formItemGap}>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label='群组'
+        >
+            {form.getFieldDecorator('groupID', {
+              rules: [{ required: true, message: '请选择群组' }],                
+              })(
+                <Select placeholder="请选择群组">
+                  {
+                    _gGroupListData.map((item, index) => (
+                      <Select.Option key={index} value={item.id}>{item.name}</Select.Option>                  
+                    ))
+                  }  
+                </Select>          
+            )}
+        </FormItem>
+      </Form>     
+    </Modal>
+  );
+});
+
 
 @connect(({ deviceDetailModel, group, prodModel, batchModel, account, loading }) => ({
   deviceDetailModel,
@@ -35,6 +83,8 @@ export default class DeviceList extends PureComponent {
     selectedRows: [],
     formValues: {},
     searching: false,
+    assignGroupFormVisible: false,
+    groupAssigning: false,
   };
 
   componentDidMount() {
@@ -45,7 +95,7 @@ export default class DeviceList extends PureComponent {
       type: 'group/queryList',
     });
     this.props.dispatch({
-      type: 'prodModel/getProdList',
+      type: 'prodModel/list',
     });
     this.props.dispatch({
       type: 'batchModel/list',
@@ -78,30 +128,95 @@ export default class DeviceList extends PureComponent {
         searching: true,
       });
       return new Promise((resolve, reject) => {
+          this.props.dispatch({
+              type: 'deviceDetailModel/getDeviceList',
+              payload: {
+                ...fieldsValue,
+                selAccountIDs: selAccountIDs,
+                addrCode: addrCode,
+              },
+              resolve: resolve,
+              reject: reject,
+          });
+        })
+        .then(res => {
+            this.setState({
+              searching: false,
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            this.setState({
+              searching: false,
+            });
+        });
+      });
+  };
+
+  onAssginGroup = () => {
+    if (selectedRowsParam.length === 0) {
+      message.warning("请选择要分配的设备");
+      return;
+    }
+    this.setState({
+      assignGroupFormVisible: true,
+    });
+  }
+
+  onDeleteGroup = () => {
+    if (selectedRowsParam.length === 0) {
+      message.warning("请选择要分配的设备");
+      return;
+    }    
+  }
+
+  handleAssignGroup = (values) => {
+    const { form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) {
+        return;
+      }
+      return new Promise((resolve, reject) => {
+        var devices = [];
+        selectedRowsParam.map(item => {
+          devices.push(item.deviceID);
+        });
         this.props.dispatch({
-            type: 'deviceDetailModel/getDeviceList',
-            payload: {
-              ...fieldsValue,
-              selAccountIDs: selAccountIDs,
-              addrCode: addrCode,
-            },
-            resolve: resolve,
-            reject: reject,
-          });
-        }).then(res => {
+          type: 'group/addDevices',
+          payload: {
+            groupID: values.groupID,
+            devices: devices,
+          },
+          resolve: resolve,
+          reject: reject,
+        });
+      })
+      .then(res => {
           this.setState({
-            searching: false,
+            groupAssigning: false,
+            assignGroupFormVisible: false,
           });
-        }).catch((err) => {
-          console.log(err);
+          form.resetFields();
+      })
+      .catch(err => {
           this.setState({
-            searching: false,
-          });
-      });      
+              groupAssigning: false,
+              assignGroupFormVisible: false,
+            });
+          form.resetFields();
+          message.error(err);
+      });
     });
   };
 
-  onChange = (value) => {
+  handleCancelAssignForm = () => {
+    this.setState({
+      assignGroupFormVisible: false,
+      groupAssigning: false,
+    });
+  }
+
+  onAddrChange = (value) => {
     console.log(value);
   };
 
@@ -222,7 +337,7 @@ export default class DeviceList extends PureComponent {
           <Col md={8} sm={24}>
             <FormItem label="位置">
               {form.getFieldDecorator('addrCode')(
-                <Cascader options={CascaderOptions} onChange={this.onChange} changeOnSelect placeholder='请选择' />
+                <Cascader options={CascaderOptions} onChange={this.onAddrChange} changeOnSelect placeholder='请选择' />
               )}                
             </FormItem>
           </Col>
@@ -262,6 +377,9 @@ export default class DeviceList extends PureComponent {
     );
   }
 
+  saveFormRef = (form) => {
+    this.form = form;
+  }
 
   render() {
     const columns = [{
@@ -361,7 +479,7 @@ export default class DeviceList extends PureComponent {
       },
     }];
 
-    const { deviceDetailModel, group, prodModel, batchModel, account } = this.props;
+    const { deviceDetailModel, group, prodModel, batchModel, account, form } = this.props;
     const { deviceList } = deviceDetailModel;
 
     if (deviceList) {
@@ -412,10 +530,18 @@ export default class DeviceList extends PureComponent {
             {this.renderSimpleForm()}
           </div>
           <Table rowSelection={rowSelection} bordered dataSource={deviceList} columns={columns} scroll={{x:2500}}/>
-              <div style={{verticalCenter: 'middle'}}>
-                <span><img style={{ width: 15, height: 15}} src={deviceListGroup} alt="group"/> <a href="">分配群组</a></span>
-                <span style={{marginRight: 20, marginLeft: 50}} ><img style={{ width: 15, height: 15 }} src={deviceListDelete} alt="delete"/> <a onClick={this.middleSet}>删除群组</a></span>
-              </div>
+          <div style={{verticalCenter: 'middle'}}>
+                <span><img style={{ width: 15, height: 15}} src={deviceListGroup} alt="group"/> <a onClick={this.onAssginGroup}>分配群组</a></span>
+                <span style={{marginRight: 20, marginLeft: 50}} ><img style={{ width: 15, height: 15 }} src={deviceListDelete} alt="delete"/> <a onClick={this.onDeleteGroup}>删除群组</a></span>
+          </div>
+
+          <AssignGroupForm
+            form={form}
+            assignGroupFormVisible={this.state.assignGroupFormVisible}
+            handleAssignGroup={this.handleAssignGroup}
+            groupAssigning={this.state.groupAssigning}
+            handleCancelAssignForm={this.handleCancelAssignForm}
+          />
       </Fragment>
     );
   }

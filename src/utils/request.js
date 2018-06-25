@@ -76,6 +76,10 @@ function checkStatus(response) {
   throw error;
 }
 
+export default function request(url, options) {
+  return requestWithType(url, options, 'application/x-www-form-urlencoded;charsets=utf-8');
+}
+
 /**
  * Requests a URL, returning a promise.
  *
@@ -83,7 +87,7 @@ function checkStatus(response) {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default function request(url, options) {
+export function requestWithType(url, options, type) {
   const defaultOptions = {
     mode: 'cors',
     redirect: 'follow',
@@ -94,12 +98,16 @@ export default function request(url, options) {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded;charsets=utf-8',
+        'Content-Type': type,
         ...newOptions.headers,
       };
-      var form = [];
-      addItemsToForm(form, typeof newOptions.body == 'object' ? [] : [newOptions.name || 'model'], newOptions.body);
-      newOptions.body = form.join('&');
+      if (type === 'application/json') {
+        newOptions.body = JSON.stringify(newOptions.body);
+      } else {
+        var form = [];
+        addItemsToForm(form, typeof newOptions.body == 'object' ? [] : [newOptions.name || 'model'], newOptions.body);
+        newOptions.body = form.join('&');
+      }
     } else {
       // newOptions.body is FormData do nothing
     }

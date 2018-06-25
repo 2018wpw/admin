@@ -1,4 +1,4 @@
-import { qureyList, assign ,addDevices, create, removeDevices, exitRent} from '../services/group';
+import { qureyList, assign, addDevices, create, removeDevices, exitRent} from '../services/group';
 
 export default {
   namespace: 'group',
@@ -55,15 +55,22 @@ export default {
         });        
       }      
     },
-    *addDevices({ payload }, { call, put }) {
+    *addDevices({ payload, resolve, reject }, { call, put }) {
       const response = yield call(addDevices, payload);
       if(response.errCode === 0) {
+        if (resolve) {
+          resolve(response);
+        }        
         const response = yield call(qureyList, payload);
         yield put({
           type: 'queryList',
           payload: response.data,
-        });        
-      }      
+        });
+      } else {
+        if (reject) {
+          reject(response.errCode);
+        }
+      }
     }, 
     *exitRent({ payload }, { call, put }) {
       var body = {

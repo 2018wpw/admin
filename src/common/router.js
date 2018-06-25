@@ -93,10 +93,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['deviceDetailModel', 'group', 'prodModel', 'batchModel'], () => import('../routes/devices/DeviceList')),
     },
     '/devices/list/list': {
-      component: dynamicWrapper(app, ['deviceDetailModel', 'group', 'prodModel', 'batchModel', 'account'], () => import('../routes/devices/DeviceList/list')),
+      component: dynamicWrapper(app, ['deviceDetailModel', 'group', 'prodModel', 'batchModel', 'account'], () => import('../routes/devices/DeviceList/DeviceList')),
     },
     '/devices/list/detail': {
-      component: dynamicWrapper(app, ['deviceDetailModel', 'group', 'batchModel'], () => import('../routes/devices/DeviceList/detail')),
+      component: dynamicWrapper(app, ['deviceDetailModel', 'group', 'batchModel'], () => import('../routes/devices/DeviceList/DeviceDetail')),
     },
     '/devices/product': {
       component: dynamicWrapper(app, ['prodModel'], () => import('../routes/devices/Product')),
