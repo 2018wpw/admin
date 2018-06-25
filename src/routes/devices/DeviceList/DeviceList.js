@@ -204,7 +204,17 @@ export default class DeviceList extends PureComponent {
               assignGroupFormVisible: false,
             });
           form.resetFields();
-          message.error(err);
+          var text = err;
+          if (err === 0x320) {
+            text = '有些设备不存在或者型号与群组不匹配';
+          } else if (err === 0x31e) {
+            text = '不允许一个群组分配给多个租赁关系';
+          } else if (err === 0x31f) {
+            text = '不允许一个群组分配给多个子帐号';
+          } else if (err === 0x321) {
+            text = '设备正在租赁中';
+          }
+          message.error(text);
       });
     });
   };
