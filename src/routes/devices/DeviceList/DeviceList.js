@@ -7,7 +7,7 @@ import deviceListGroup from '../../../assets/deviceListGroup.png';
 import deviceListDelete from '../../../assets/deviceListDelete.png';
 import styles from './list.less';
 import commonStyles from '../../Common.less';
-import { connectivity, prd_type } from '../../../utils/utils';
+import { connectivity, prd_type, ventilationMode, airSpeed } from '../../../utils/utils';
 import { getChinaAddr } from '../../../utils/authority';
 
 const FormItem = Form.Item;
@@ -71,7 +71,6 @@ const AssignGroupForm = Form.create()((props) => {
   prodModel,
   batchModel,
   account,
-  loading: loading.effects['deviceDetailModel/getDeviceList'],
 }))
 @Form.create()
 export default class DeviceList extends PureComponent {
@@ -86,6 +85,7 @@ export default class DeviceList extends PureComponent {
   };
 
   componentDidMount() {
+    console.log('componentDidMount');
     this.props.dispatch({
       type: 'deviceDetailModel/getDeviceList',
     });
@@ -442,8 +442,8 @@ export default class DeviceList extends PureComponent {
       key: 'connectivity',     
     }, {
       title: '地理分布',
-      dataIndex: 'location',
-      key: 'location',
+      dataIndex: 'addrDetail',
+      key: 'addrDetail',
     }, {
       title: '批次',
       dataIndex: 'batch',
@@ -454,44 +454,44 @@ export default class DeviceList extends PureComponent {
       key: 'groupName',
     }, {
       title: '滤网是否提醒',
-      dataIndex: 'meshalarm',
-      key: 'meshalarm',
+      dataIndex: 'strainerAlarm',
+      key: 'strainerAlarm',
     }, {
       title: '滤网剩余时间',
       dataIndex: 'meshremaintime',
       key: 'meshremaintime',
     }, {
       title: '在线状态',
-      dataIndex: 'onlinestatus',
-      key: 'onlinestatus',
+      dataIndex: 'online',
+      key: 'online',
     }, {
       title: '新风状态',
-      dataIndex: 'ventilationstatus',
-      key: 'ventilationstatus',
+      dataIndex: 'ventilationMode',
+      key: 'ventilationMode',
     }, {
       title: '开关状态',
-      dataIndex: 'switchstatus',
-      key: 'switchstatus',
+      dataIndex: 'powerOn',
+      key: 'powerOn',
     }, {
       title: '是否定时',
-      dataIndex: 'timer',
-      key: 'timer',
+      dataIndex: 'timing',
+      key: 'timing',
     }, {
       title: 'PM2.5',
       dataIndex: 'pm25',
       key: 'pm25',
     }, {
       title: '二氧化碳',
-      dataIndex: 'CO2',
-      key: 'CO2',
+      dataIndex: 'co2',
+      key: 'co2',
     }, {
       title: '温湿度',
       dataIndex: 'humiture',
       key: 'humiture',
     }, {
       title: '甲醛值',
-      dataIndex: 'hcho',
-      key: 'hcho',
+      dataIndex: 'ch2o',
+      key: 'ch2o',
     }, {
       title: 'TVOC',
       dataIndex: 'tvoc',
@@ -524,6 +524,23 @@ export default class DeviceList extends PureComponent {
       deviceList.map((item, index) => {
         item['key'] = item.deviceID;
         item['deviceID'] = item.deviceID;
+        if(item.batchInfo) {
+          item['batch'] = item.batchInfo.name;
+        }
+        if(item.deviceData) {
+          item['ch2o'] = item.deviceData.ch2o;
+          item['co2'] = item.deviceData.co2;
+          item['pm25'] = item.deviceData.pm25;
+          item['tvoc'] = item.deviceData.tvoc;
+          item['humiture'] = item.deviceData.humidity + ' ' + item.deviceData.temp;
+        }
+        if(item.deviceStatus) {
+          item['ventilationMode'] = ventilationMode[item.deviceStatus.ventilationMode];
+          item['timing'] = item.deviceStatus.timing ? '是' : '否';
+          item['powerOn'] = item.deviceStatus.powerOn ? '是' : '否';
+          item['online'] = item.deviceStatus.online ? '在线':'离线';
+          item['strainerAlarm'] = item.deviceStatus.strainerAlarm ? '是' : '否';
+        }
       });
     }
     if (group.groups) {
@@ -574,7 +591,6 @@ export default class DeviceList extends PureComponent {
           </div>
 
           <AssignGroupForm
-            form={form}
             assignGroupFormVisible={this.state.assignGroupFormVisible}
             handleAssignGroup={this.handleAssignGroup}
             groupAssigning={this.state.groupAssigning}

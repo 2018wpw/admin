@@ -11,10 +11,12 @@ export default {
     *queryList({ payload }, { call, put }) {
       console.log('qurey group List models');
       const response = yield call(qureyList, payload);
-      yield put({
-        type: 'queryList',
-        payload: response.data,
-      });
+      if (response.errCode === 0) {
+        yield put({
+          type: 'queryListCB',
+          payload: response.data,
+        });        
+      }
     },
     *create({ payload }, { call, put }) {
       const response = yield call(create, payload);
@@ -45,6 +47,7 @@ export default {
       } 
     },
     *assign({ payload }, { call, put }) {
+      console.log('assign'); 
       const response = yield call(assign, payload);
       if(response.errCode === 0) {
         const response = yield call(qureyList, payload);
@@ -55,6 +58,7 @@ export default {
       }      
     },
     *addDevices({ payload, resolve, reject }, { call, put }) {
+      console.log('addDevices');  
       const response = yield call(addDevices, payload);
       if(response.errCode === 0) {
         if (resolve) {
@@ -98,5 +102,11 @@ export default {
         ...payload,
       };
     },
+    queryListCB(state, { payload }) {
+      return {
+        ...state,
+        ...payload,
+      };
+    },    
   },
 };

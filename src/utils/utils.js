@@ -171,6 +171,9 @@ export const sex = new Array('男', '女')
 export const connectivity = new Array('wifi', '2g')
 export const prd_type = new Array('空气净化器', '空气检测仪')
 export const account_type = new Array('超级管理员', '管理员', '代理商', '客户', '普通用户')
+export const ventilationMode = new Array('低效', '关闭', '高效')
+export const airSpeed = new Array('风速停','静音','舒适','标准','强力','飓风', '风速 6~7')
+
 
 export function getTime(seconds) {
   return moment(seconds).format('YYYY-MM-DD HH:mm:ss');
