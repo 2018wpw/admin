@@ -4,6 +4,7 @@ import React, { PureComponent, Fragment } from 'react';
 import DescriptionList from 'components/DescriptionList';
 import ReactEcharts from 'echarts-for-react';
 import { connect } from 'dva';
+import { connectivity } from '../../../utils/utils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -120,7 +121,7 @@ export default class DeviceDetail extends React.Component {
       }      
     });
     this.props.dispatch({
-      type: 'deviceDetailModel/getBasicInfo',
+      type: 'deviceDetailModel/getDeviceDetailInfo',
       payload: {
         deviceID: deviceID,
       }      
@@ -168,67 +169,48 @@ export default class DeviceDetail extends React.Component {
   }
 
 
-  renderBasicForm(basicInfo) {
-    if(!basicInfo) {
-      return null;
-    }
-    const { devices , models} = basicInfo;
-    const deviceInfo = devices[0];
-    const { deviceStatus, deviceData } = deviceInfo;
-    const modelItem = models[0];
+  renderDeviceDetailForm(deviceDetailData) {
     var strainer = ['初效', '中效', '高效'];
-
+    var deviceStatus = deviceDetailData.deviceStatus;
+    var deviceData = deviceDetailData.deviceData;
+    var model = deviceDetailData.model;
     return(
       <div>
         <div>设备基础信息</div>
         <Divider className={styles.divider}></Divider>
         <div style={{marginLeft: 180}}>
-          <DescriptionList style={{ marginBottom: 24 }} col={4}>
-            <Description term="设备名称">{deviceInfo.deviceName}</Description>
+          <DescriptionList style={{ marginBottom: 24 }} col={5}>
+            <Description term="设备名称">{deviceDetailData.deviceName}</Description>
             <Description term="设备状态">{deviceStatus.online ? '在线' : '离线'}</Description>
             <Description term="是否开启定时">{deviceStatus.timing ? '是' : '否'}</Description>
-            <Description term="设备类型">{modelItem.prodInfo.name}</Description>
-            <Description term="CO2值">{deviceData.co2}</Description>
-            <Description term="群组">{deviceInfo.groupName}</Description>
-            <Description term="TVOC">{deviceData.tvoc}</Description>
-            <Description term="设备型号">{modelItem.name}</Description>
+            <Description term="设备类型">{model.prodInfo.name + ''}</Description>
+            <Description term="CO2值">{deviceData.co2 + ''}</Description>
+            <Description term="群组">{deviceDetailData.groupName + ''}</Description>
+            <Description term="TVOC">{deviceData.tvoc + ''}</Description>
+            <Description term="设备型号">{model.name}</Description>
             <Description term="滤网提醒">{deviceStatus.strainerAlarm ? '是' : '否'}</Description>
-            <Description term="是否租赁">{deviceInfo.rent ? '是' : '否'}</Description>
-            <Description term="MAC地址">{deviceInfo.deivceID}</Description>
-            <Description term="位置">{deviceInfo.addrDetail}</Description>
-            <Description term="链接方式">{modelItem.connWay === 0 ? 'WIFI' : '2G'}</Description>
-            <Description term="PM2.5">{deviceData.pm25}</Description>
-            <Description term="甲醛值">{deviceData.ch2o}</Description>
-            <Description term="温度">{deviceData.temp}</Description>
-            <Description term="档位状态">{deviceStatus.airSpeed} 档</Description>
-            <Description term="滤网状态">{strainer[deviceStatus.strainerStatus.index]}</Description>
-            <Description term="湿度">{deviceData.humidity}</Description>
+            <Description term="是否租赁">{deviceDetailData.rent ? '是' : '否'}</Description>
+            <Description term="MAC地址">{deviceDetailData.deivceID}</Description>
+            <Description term="位置">{deviceDetailData.addrDetail}</Description>
+            <Description term="链接方式">{connectivity[model.connWay]}</Description>
+            <Description term="PM2.5">{ deviceData.pm25 + ''}</Description>
+            <Description term="甲醛值">{ deviceData.ch2o + ''}</Description>
+            <Description term="温度">{ deviceData.temp + ''}</Description>
+            <Description term="档位状态">{ deviceStatus.airSpeed } 档</Description>
+            <Description term="滤网状态">{strainer[deviceStatus.strainerStatus.length]}</Description>
+            <Description term="湿度">{deviceData.humidity + ''}</Description>
           </DescriptionList>          
         </div>
       </div>
     )
   }
 
-  renderRemoteForm(basicInfo) {
-    if(!basicInfo) {
-      return null;
-    }    
-    const { devices } = basicInfo;
-    const { deviceStatus } = devices[0];
-
-    var airSpeed = deviceStatus.airSpeed;
-    //TODO
-    airSpeed = 4;
-
-    var fanMode = deviceStatus.fanMode;
-    //TODO
-    fanMode = 2;
-
-    var powerOn = deviceStatus.powerOn;
-
-    var ventilationMode = deviceStatus.ventilationMode;
-    //TODO
-    ventilationMode = 1;
+  renderRemoteForm(deviceDetailData) { 
+    var  deviceStatus = deviceDetailData.deviceStatus;
+    var  airSpeed = deviceStatus.airSpeed;
+    var  fanMode = deviceStatus.fanMode;
+    var  powerOn = deviceStatus.powerOn;
+    var  ventilationMode = deviceStatus.ventilationMode;
 
     return(
       <div className={styles.divGap}>
@@ -236,41 +218,22 @@ export default class DeviceDetail extends React.Component {
         <Divider className={styles.divider}></Divider>
         <Form layout="inline" className={styles.tableListForm}>
           <Row gutter={{ md: 8, lg: 16, xl: 24 }}>
-          <Col md={8} sm={24}>
+          <Col md={12} sm={24}>
             <FormItem label="设备状态">
               <RemoteTag checkState={powerOn === true}>开</RemoteTag>
               <RemoteTag checkState={powerOn === false}>关</RemoteTag>
             </FormItem>
           </Col>
-          <Col md={16} sm={24}>
-            <FormItem label="定时">
-              <RemoteTag checkState={airSpeed === 1}>1档</RemoteTag>
-              <RemoteTag checkState={airSpeed === 2}>2档</RemoteTag>
-              <RemoteTag checkState={airSpeed === 4}>4档</RemoteTag>
-              <RemoteTag checkState={airSpeed === 8}>8档</RemoteTag>
-              <RemoteTag checkState={airSpeed === 0}>关闭</RemoteTag>
-              <span className={styles.smallSize}>起始时间<Input style={{width: 40}}></Input>结束时间<Input style={{width: 40}}></Input></span>
-            </FormItem>
-          </Col>                                   
-        </Row>
-        <Row gutter={{ md: 8, lg: 16, xl: 24 }}>  
-          <Col md={8} sm={24}>
-            <FormItem label="模式">
-              <RemoteTag checkState={fanMode === 0}>全循环</RemoteTag>
-              <RemoteTag checkState={fanMode === 1}>大循环</RemoteTag>
-              <RemoteTag checkState={fanMode === 2}>自循环</RemoteTag>              
-            </FormItem>
-          </Col>          
-          <Col md={16} sm={24}>
+          <Col md={12} sm={24}>
             <FormItem label="新风">
               <RemoteTag checkState={ventilationMode === 0}>低效</RemoteTag>
               <RemoteTag checkState={ventilationMode === 1}>高效</RemoteTag>
               <RemoteTag checkState={ventilationMode === 2}>关闭</RemoteTag>
             </FormItem>
-          </Col>                                         
+          </Col>                                            
         </Row>
         <Row>
-          <Col md={19} sm={24}>
+          <Col md={12} sm={24}>
             <FormItem label="风速档位">
               <RemoteTag checkState={airSpeed === 0}>自动挡</RemoteTag>
               <RemoteTag checkState={airSpeed === 1}>静音档</RemoteTag>
@@ -280,12 +243,24 @@ export default class DeviceDetail extends React.Component {
               <RemoteTag checkState={airSpeed === 5}>飓风档</RemoteTag>
             </FormItem>
           </Col>          
-          <Col md={5} sm={24}>
+          <Col md={12} sm={24}>
             <FormItem label="升级">
               <RemoteTag>升级</RemoteTag>
             </FormItem>
           </Col>        
         </Row>
+        <Row gutter={{ md: 8, lg: 16, xl: 24 }}>           
+          <Col md={24} sm={24}>
+            <FormItem label="定时">
+              <RemoteTag checkState={airSpeed === 1}>1档</RemoteTag>
+              <RemoteTag checkState={airSpeed === 2}>2档</RemoteTag>
+              <RemoteTag checkState={airSpeed === 4}>4档</RemoteTag>
+              <RemoteTag checkState={airSpeed === 8}>8档</RemoteTag>
+              <RemoteTag checkState={airSpeed === 0}>关闭</RemoteTag>
+              <span className={styles.smallSize}>起始时间<Input style={{width: 40}}></Input>结束时间<Input style={{width: 40}}></Input></span>
+            </FormItem>
+          </Col>  
+        </Row>        
       </Form>
     </div>
     )
@@ -343,23 +318,17 @@ export default class DeviceDetail extends React.Component {
     )
   }
 
-  renderMatch(basicInfo) {
-    if(!basicInfo) {
-      return null;
-    }    
-    const { devices , models} = basicInfo;
-    const deviceInfo = devices[0];
-    const { matchDeviceInfo } = deviceInfo;
-    var dataSource = [{
-      'key': matchDeviceInfo.deviceID,
-      'deviceName': matchDeviceInfo.deviceName,
-      'deviceID': matchDeviceInfo.deviceID
-    }];
+  renderMatch(deviceDetailData) {
+    var matchDeviceInfo = deviceDetailData.matchDeviceInfo;
+    matchDeviceInfo.map(item=>{
+      item['key'] = item.deviceID.toString();
+      item['deviceID'] = item.deviceID.toString();
+    })
     return(
       <div className={styles.divGap}>
         <div>已配对设备信息</div>
         <Divider className={styles.divider}></Divider>
-        <Table bordered dataSource={dataSource} columns={this.matchColumns} pagination={this.state.pagination} />
+        <Table bordered dataSource={matchDeviceInfo} columns={this.matchColumns} pagination={this.state.pagination} />
       </div>
     )
   }
@@ -387,19 +356,15 @@ export default class DeviceDetail extends React.Component {
   }
 
   render() {
-    const { historyData } = this.state;
-    const columns = this.columns;
-    const historyColumns = this.historyColumns;
     const { deviceDetailModel } = this.props;
-    const { basicInfo, } = deviceDetailModel;
-    console.log('device detail', basicInfo);
+    const { deviceDetailData } = deviceDetailModel;
     return (
       <Fragment>
         <div>
-            {this.renderBasicForm(basicInfo)}
-            {this.renderRemoteForm(basicInfo)}
+            {this.renderDeviceDetailForm(deviceDetailData)}
+            {this.renderRemoteForm(deviceDetailData)}
             {this.renderHostiry(deviceDetailModel)}
-            {this.renderMatch(basicInfo)}
+            {this.renderMatch(deviceDetailData)}
             {this.renderBindUserList(deviceDetailModel)}
             {this.renderRentUserList(deviceDetailModel)}
         </div>
