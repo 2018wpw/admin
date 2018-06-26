@@ -214,9 +214,9 @@ export default class GroupManager extends React.Component {
             payload: {
               groupID: record.id,
               devices: new Array(2),//TODO
-              resolve: resolve,
-              reject: reject,
-            }
+            },
+            resolve: resolve,
+            reject: reject,
           });
         })
         .catch((err) => console.log(err));        

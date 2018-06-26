@@ -49,9 +49,7 @@ const AssignGroupForm = Form.create()((props) => {
           wrapperCol={{ span: 15 }}
           label='群组'
         >
-            {form.getFieldDecorator('groupID', {
-              rules: [{ required: true, message: '请选择群组' }],                
-              })(
+            {form.getFieldDecorator('groupId')(
                 <Select placeholder="请选择群组">
                   {
                     _gGroupListData.map((item, index) => (
@@ -165,9 +163,39 @@ export default class DeviceList extends PureComponent {
 
   onDeleteGroup = () => {
     if (selectedRowsParam.length === 0) {
-      message.warning("请选择要分配的设备");
+      message.warning("请先选择设备");
       return;
-    }    
+    }
+    return new Promise((resolve, reject) => {
+        var devices = [];
+        selectedRowsParam.map(item => {
+          devices.push(item.deviceID);
+        });
+        this.props.dispatch({
+          type: 'group/removeDevices',
+          payload: {
+            devices: devices,
+          },
+          resolve: resolve,
+          reject: reject,
+        });
+      })
+      .then(res => {
+          message.success('删除成功');
+      })
+      .catch(err => {
+          var text = err;
+          if (err === 0x320) {
+            text = '有些设备不存在或者型号与群组不匹配';
+          } else if (err === 0x31e) {
+            text = '不允许一个群组分配给多个租赁关系';
+          } else if (err === 0x31f) {
+            text = '不允许一个群组分配给多个子帐号';
+          } else if (err === 0x321) {
+            text = '设备正在租赁中';
+          }
+          message.error(text);
+      });
   }
 
   handleAssignGroup = (values) => {
@@ -184,7 +212,7 @@ export default class DeviceList extends PureComponent {
         this.props.dispatch({
           type: 'group/addDevices',
           payload: {
-            groupID: values.groupID,
+            groupID: values.groupId,
             devices: devices,
           },
           resolve: resolve,

@@ -12,7 +12,7 @@ export default {
       console.log('qurey group List models');
       const response = yield call(qureyList, payload);
       yield put({
-        type: 'queryListCb',
+        type: 'queryList',
         payload: response.data,
       });
     },
@@ -26,13 +26,12 @@ export default {
         });        
       }
     },
-    *removeDevices({ payload }, { call, put }) {
+    *removeDevices({ payload, resolve, reject }, { call, put }) {
       console.log('removeDevices');  
       var body = {
         groupID: payload.groupID,
         devices: payload.devices,
       };
-      const { resolve, reject } = payload;          
       const response = yield call(removeDevices, body);
       if (response.errCode === 0) {
         resolve();
@@ -40,7 +39,7 @@ export default {
         yield put({
           type: 'queryList',
           payload: response.data,
-        });        
+        });
       } else {
         reject(response.errCode);
       } 
@@ -93,7 +92,7 @@ export default {
   },
 
   reducers: {
-    queryListCb(state, { payload }) {
+    queryList(state, { payload }) {
       return {
         ...state,
         ...payload,
