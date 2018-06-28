@@ -10,7 +10,9 @@ const map = {
       placeholder: '手机号',
     },
     rules: [{
-      required: true, message: 'Please enter username!',
+      required: true, message: '请输入手机号',
+    }, {
+      pattern: /^1\d{10}$/, message: '手机号码格式错误',
     }],
   },
   Password: {
@@ -21,7 +23,7 @@ const map = {
       placeholder: '密码',
     },
     rules: [{
-      required: true, message: 'Please enter password!',
+      required: true, message: '请输入密码',
     }],
   },
   Mobile: {
@@ -32,9 +34,9 @@ const map = {
       placeholder: 'mobile number',
     },
     rules: [{
-      required: true, message: 'Please enter mobile number!',
+      required: true, message: '请输入手机号',
     }, {
-      pattern: /^1\d{10}$/, message: 'Wrong mobile number format!',
+      pattern: /^1\d{10}$/, message: '手机号码格式错误',
     }],
   },
   Captcha: {
@@ -45,7 +47,7 @@ const map = {
       placeholder: 'captcha',
     },
     rules: [{
-      required: true, message: 'Please enter Captcha!',
+      required: true, message: '请输入验证码',
     }],
   },
 };

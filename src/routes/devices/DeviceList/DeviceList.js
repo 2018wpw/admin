@@ -7,7 +7,7 @@ import deviceListGroup from '../../../assets/deviceListGroup.png';
 import deviceListDelete from '../../../assets/deviceListDelete.png';
 import styles from './list.less';
 import commonStyles from '../../Common.less';
-import { connectivity, prd_type, ventilationMode, airSpeed } from '../../../utils/utils';
+import { connectivity, prd_type, ventilationMode} from '../../../utils/utils';
 import { getChinaAddr } from '../../../utils/authority';
 
 const FormItem = Form.Item;

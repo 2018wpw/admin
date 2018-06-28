@@ -1,16 +1,127 @@
-import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Divider, Tag, DatePicker, Timepicker } from 'antd';
+import { Card, Table, Input, Button, Modal, Form, Select, Row, Col, Divider, Tag, TimePicker, Checkbox } from 'antd';
+import { Radio } from 'antd';
 import styles from './list.less';
 import React, { PureComponent, Fragment } from 'react';
 import DescriptionList from 'components/DescriptionList';
 import ReactEcharts from 'echarts-for-react';
 import { connect } from 'dva';
-import { connectivity, getTime } from '../../../utils/utils';
+import { connectivity, getTime, airSpeed, ventilationMode } from '../../../utils/utils';
 
 const FormItem = Form.Item;
+const Option = Select.Option;
 const { TextArea } = Input;
 const { Description } = DescriptionList;
 const { CheckableTag } = Tag;
-const RangePicker = DatePicker.RangePicker;
+const RadioGroup = Radio.Group;
+
+const AddNewTimingFormModal = Form.create()((props) => {
+  const { timingModalVisible, form, handleAddNewTiming, handleCloseTimingModal } = props;
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      handleAddNewTiming(fieldsValue);
+    });
+  };
+  const cancelHandle = () => {
+    form.resetFields();
+    handleCloseTimingModal();
+  };
+  const onCheckBoxChanged = (value) => {
+    console.log('onCheckBoxChanged', value);
+  }
+  const auxiliaryHeatOptions = ['关', '开'];
+
+
+  return (
+    <Modal
+      title="添加新定时"
+      visible={timingModalVisible}
+      onOk={okHandle}
+      onCancel={cancelHandle}
+    >
+
+      <Form className={styles.formItemGap}>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="时间"
+        >
+          {form.getFieldDecorator('startTime', {
+            rules: [{ required: true, message: '请选择时间' }],
+          })(
+            <TimePicker format='HH:mm'></TimePicker>
+          )}
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="重复"
+        >
+          {form.getFieldDecorator('repetition', {
+            rules: [{ required: true, message: '请勾选重复日期' }],
+          })(
+            <Checkbox.Group style={{ width: '100%' }} onChange={onCheckBoxChanged}>
+              <Row>
+                <Col span={8}><Checkbox value="1">星期一</Checkbox></Col>
+                <Col span={8}><Checkbox value="2">星期二</Checkbox></Col>
+                <Col span={8}><Checkbox value="3">星期三</Checkbox></Col>
+                <Col span={8}><Checkbox value="4">星期四</Checkbox></Col>
+                <Col span={8}><Checkbox value="5">星期五</Checkbox></Col>
+                <Col span={8}><Checkbox value="6">星期六</Checkbox></Col>
+                <Col span={8}><Checkbox value="7">星期日</Checkbox></Col>
+                <Col span={8}><Checkbox value="0">永不</Checkbox></Col>
+              </Row>
+            </Checkbox.Group>
+          )}
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="档位"
+        >
+          {form.getFieldDecorator('airSpeed', {
+            rules: [{ required: true, message: '请选择档位' }],
+          })(
+            <Select placeholder="请选择档位">
+              {airSpeed.map((item, index) => (
+                <Option key={index} value={index}>{item}</Option>
+              ))}
+            </Select>
+          )}
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="新风"
+        >
+          {form.getFieldDecorator('ventilationMode', {
+            rules: [{ required: true, message: '请选择新风' }],
+          })(
+          <Select placeholder="请选择新风">
+            {ventilationMode.map((item, index) => (
+              <Option key={index} value={index}>{item}</Option>
+            ))}
+          </Select>            
+          )}
+        </FormItem>
+        <FormItem
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 15 }}
+          label="热辅"
+        >
+          {form.getFieldDecorator('auxiliaryHeat', {
+            rules: [{ required: true, message: '请选择新风' }],
+          })(
+            <RadioGroup>
+              <Radio value='0'>关</Radio>
+              <Radio value='1'>开</Radio>            
+            </RadioGroup>
+          )}
+        </FormItem>         
+      </Form>     
+    </Modal>
+  );
+});
 
 class RemoteTag extends React.Component {
   state = { checked: false };
@@ -38,6 +149,7 @@ export default class DeviceDetail extends React.Component {
       pagination: {
         hideOnSinglePage: true
       },
+      timingModalVisible: false,
     };
 
     this.matchColumns = [{
@@ -310,8 +422,21 @@ export default class DeviceDetail extends React.Component {
     console.log('onPowerOnChanged');
   }
 
+  handleCloseTimingModal = () => {
+    this.setState({
+      timingModalVisible: false,
+    });
+  }
+
+  handleAddNewTiming = (values) => {
+    console.log('handleAddNewTiming', values);
+  }
+
   onAddNewTiming = () => {
     console.log('onAddNewTiming');
+    this.setState({
+      timingModalVisible: true,
+    });
   }
 
   renderTimingForm(deviceDetailData, timingListData) {   
@@ -335,10 +460,6 @@ export default class DeviceDetail extends React.Component {
         </div>
       </div>
     );
-  }
-
-  onTimeRangeChanged = (dates, dateStrings) => {
-    console.log('onTimeRangeChanged', dates, dateStrings);
   }
 
   renderRemoteForm(deviceDetailData) { 
@@ -498,6 +619,11 @@ export default class DeviceDetail extends React.Component {
             {this.renderBindUserList(deviceDetailModel)}
             {this.renderRentUserList(deviceDetailModel)}
         </div>
+        <AddNewTimingFormModal
+          timingModalVisible={this.state.timingModalVisible}
+          handleAddNewTiming={this.handleAddNewTiming}
+          handleCloseTimingModal={this.handleCloseTimingModal}
+        />
       </Fragment>
     );
   }
