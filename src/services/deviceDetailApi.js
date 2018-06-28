@@ -43,3 +43,37 @@ export async function control(params) {
     body: params,
   });	
 }
+
+export async function getTimingList(params) {
+  return request('/admin/timing/query', {
+    method: 'GET',
+    body: params,
+  });
+}
+
+export async function getDevAirLevelList(params) {
+  return request('/admin/device/queryDevAirLevel', {
+    method: 'GET',
+  });
+}
+
+export async function setDevAirLevel(params) {
+  return request('/admin/device/setDevAirLevel', {
+    method: 'GET',
+    body: params,
+  });
+}
+
+export async function getDevSmartParas(params) {
+  return request('/admin/device/queryDevSmartParas', {
+    method: 'GET',
+  });
+}
+
+export async function setDevSmartParas(params) {
+  return request('/admin/device/setDevSmartParas', {
+    method: 'GET',
+    body: params,
+  });
+}
+

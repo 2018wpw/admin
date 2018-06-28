@@ -1,4 +1,11 @@
-import { listRentUsers, listBoundUsers, list } from '../services/deviceDetailApi';
+import { listRentUsers, 
+  listBoundUsers, 
+  list, 
+  getTimingList,
+  getDevAirLevelList,
+  setDevAirLevel,
+  setDevSmartParas,
+  getDevSmartParas } from '../services/deviceDetailApi';
 
 export default {
   namespace: 'deviceDetailModel',
@@ -44,6 +51,9 @@ export default {
       }
     },
     deviceList: [],
+    timingListData: [],
+    devAirLevelListData: [],
+    devSmartParasListData: [],
   },
 
   effects: {
@@ -78,7 +88,7 @@ export default {
         yield put({
           type: 'queryList',
           payload: {
-            deviceDetailData: deviceDetail,
+            deviceDetailData: deviceDetailData,
           },
         });
       }
@@ -106,6 +116,67 @@ export default {
         }
       }
     },
+    *getTimingList({ payload }, { call, put }) {
+      const response = yield call(getTimingList, payload);
+      if ( response.errCode === 0 ) {
+        yield put({
+          type: 'queryList',
+          payload: {
+            timingListData: response.data,
+          },
+        });        
+      }
+    },
+    *getDevAirLevelList({ payload }, { call, put }) {
+      const response = yield call(getDevAirLevelList, payload);
+      if ( response.errCode === 0 ) {
+        yield put({
+          type: 'queryList',
+          payload: {
+            devAirLevelListData: response.data,
+          },
+        });        
+      }
+    },
+    *setDevAirLevel({ payload }, { call, put }) {
+      const response = yield call(setDevAirLevel, payload);
+      if ( response.errCode === 0 ) {
+        const response = yield call(getDevAirLevelList, payload);
+        if ( response.errCode === 0 ) {
+          yield put({
+            type: 'queryList',
+            payload: {
+              devAirLevelListData: response.data,
+            },
+          });        
+        }
+      }
+    },
+    *getDevSmartParas({ payload }, { call, put }) {
+      const response = yield call(getDevSmartParas, payload);
+      if ( response.errCode === 0 ) {
+        yield put({
+          type: 'queryList',
+          payload: {
+            devSmartParasListData: response.data,
+          },
+        });
+      }
+    },
+    *setDevSmartParas({ payload }, { call, put }) {
+      const response = yield call(setDevSmartParas, payload);
+      if ( response.errCode === 0 ) {
+        const response = yield call(getDevSmartParas, payload);
+        if ( response.errCode === 0 ) {
+          yield put({
+            type: 'queryList',
+            payload: {
+              devSmartParasListData: response.data,
+            },
+          });
+        }
+      }
+    }    
   },
 
   reducers: {

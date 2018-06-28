@@ -1,24 +1,28 @@
-import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Divider, Tag } from 'antd';
+import { Card, Table, Input, Icon, Button, Popconfirm, Modal, Form, Select, Row, Col, Divider, Tag, DatePicker, Timepicker } from 'antd';
 import styles from './list.less';
 import React, { PureComponent, Fragment } from 'react';
 import DescriptionList from 'components/DescriptionList';
 import ReactEcharts from 'echarts-for-react';
 import { connect } from 'dva';
-import { connectivity } from '../../../utils/utils';
+import { connectivity, getTime } from '../../../utils/utils';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const { Description } = DescriptionList;
 const { CheckableTag } = Tag;
+const RangePicker = DatePicker.RangePicker;
 
 class RemoteTag extends React.Component {
   state = { checked: false };
-  handleChange = (checked) => {
-    this.setState({ checked });
+
+  onChange = () => {
+    const { onCheckChange } = this.props;
+    onCheckChange();
   }
+
   render() {
-    const {checkState} = this.props;
-    return <CheckableTag {...this.props} checked={checkState} onChange={this.handleChange} />;
+    const { checkState } = this.props;
+    return <CheckableTag {...this.props} checked={checkState} onChange={this.onChange} />;
   }
 }
 
@@ -31,7 +35,6 @@ export default class DeviceDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
       pagination: {
         hideOnSinglePage: true
       },
@@ -100,7 +103,92 @@ export default class DeviceDetail extends React.Component {
     }, {
       title: '时间',
       dataIndex: 'time'
-    }];   
+    }];
+
+    this.timingColumns = [{
+      title: '时间',
+      dataIndex: 'time',      
+    }, {
+      title: '重复',
+      dataIndex: 'repeat',
+    }, {
+      title: '功能',
+      dataIndex: 'function',
+    }, {
+      title: '操作',
+      dataIndex: 'operation',
+      width: '20%',
+      render: (text, record) => {
+        return (
+            <div>
+              <a className={styles.right} onClick={() => {alert("alert")}}>编辑</a>
+              <a className={styles.left} onClick={() => {alert("alert")}}>删除</a>
+            </div>
+        );
+      },
+    }];
+
+    this.airLevelColumns = [{
+      title: '项目',
+      dataIndex: 'name',
+      width: '10%',
+    }, {
+      title: '标准',
+      dataIndex: 'strandard',
+    }, {
+      title: '轻度污染',
+      dataIndex: 'mild',
+    }, {
+      title: '中度污染',
+      dataIndex: 'medium',
+    }, {
+      title: '严重污染',
+      dataIndex: 'heavily',
+    }, {
+      title: '操作',
+      dataIndex: 'operation',
+      width: '10%',
+      render: (text, record) => {
+        return (
+            <div>
+              <a className={styles.right} onClick={() => {alert("alert")}}>编辑</a>
+            </div>
+        );
+      },
+    }];
+
+    this.smartParasCumns = [{
+      title: '项目',
+      dataIndex: 'name',
+      width: '10%',
+    }, {
+      title: '静音',
+      dataIndex: 'mute',
+    }, {
+      title: '舒适',
+      dataIndex: 'comfort',
+    }, {
+      title: '标准',
+      dataIndex: 'standard',
+    }, {
+      title: '强力',
+      dataIndex: 'strong',
+    }, {
+      title: '飓风',
+      dataIndex: 'typhoon',
+    }, {
+      title: '操作',
+      dataIndex: 'operation',
+      width: '10%',
+      render: (text, record) => {
+        return (
+            <div>
+              <a className={styles.right} onClick={() => {alert("alert")}}>编辑</a>
+            </div>
+        );
+      },
+    }];
+
     var query = this.props.location.search;
     var arr = query.split('=');//?id=1    
     deviceID = arr[1];
@@ -125,49 +213,20 @@ export default class DeviceDetail extends React.Component {
       payload: {
         deviceID: deviceID,
       }      
-    });    
+    });
+    this.props.dispatch({
+      type: 'deviceDetailModel/getTimingList',
+      payload: {
+        deviceID: deviceID,
+      }      
+    });
+    this.props.dispatch({
+      type: 'deviceDetailModel/getDevAirLevelList',
+      payload: {
+        deviceID: deviceID,
+      }      
+    });
   }  
-
-  handleCreate = () => {
-    const { count, dataSource } = this.state;
-    const form = this.form;
-    const newData = {
-        key: count,
-        package: '升级包0',
-        description: '我是描述信息',
-        version: '100',
-        type: '产品类型1',
-        model: '产品型号1',
-        time: '2018-01-01'
-    };
-    this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
-      visible: false
-    });
-  }
-
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  }
-
-  handleCancel = (e) => {
-      console.log(e);
-      this.setState({
-        visible: false,
-      });
-  }
-
-  onSubmit = (e) => {
-
-  }
-
-  saveFormRef = (form) => {
-    this.form = form;
-  }
-
 
   renderDeviceDetailForm(deviceDetailData) {
     var strainer = ['初效', '中效', '高效'];
@@ -203,6 +262,83 @@ export default class DeviceDetail extends React.Component {
         </div>
       </div>
     )
+  }
+
+  renderSmartParasSetting(deviceDetailData, devSmartParasListData) {
+    const itemList = ['风机转速', 'PM2.5', 'CO2', '甲醛', 'TVOC'];
+    const itemLevel = ['mute', 'comfort', 'standard', 'strong', 'typhoon'];
+    devSmartParasListData.map((item, index) => {
+      item['name'] = itemList[index];
+      item['id'] = index;
+      item[itemLevel[index]] = item.rpm + '转/分钟';
+      item[itemLevel[index]] = item.pm25Min + ' - ' + item.pm25Max;
+      item[itemLevel[index]] = item.co2Min + ' - ' + item.co2Max;
+      item[itemLevel[index]] = item.ch2oMin + ' - ' + item.ch2oMax;
+      item[itemLevel[index]] = item.tvocMin + ' - ' + item.tvocMax;
+    });
+    return(
+      <div style={{marginBottom: 24}}>
+        <div>智能模式运行参数设置</div>
+        <Divider className={styles.divider}></Divider>
+        <Table bordered dataSource={devSmartParasListData} columns={this.smartParasCumns} pagination={this.state.pagination} />
+      </div>
+    );
+  }
+
+  renderDevAirLevel(deviceDetailData, devAirLevelListData) {
+    const itemList = ['PM2.5', 'CO2', '甲醛', 'TVOC'];
+    const itemLevel = ['standard', 'mild', 'medium', 'heavily'];
+    var columnsData = [];
+    devAirLevelListData.map((item, index) => {
+      item['name'] = itemList[index];
+      item['id'] = index;
+      item[itemLevel[index]] = item.pm25Min + ' - ' + item.pm25Max;
+      item[itemLevel[index]] = item.co2Min + ' - ' + item.co2Max;
+      item[itemLevel[index]] = item.ch2oMin + ' - ' + item.ch2oMax;
+      item[itemLevel[index]] = item.tvocMin + ' - ' + item.tvocMax;
+    });
+    return(
+      <div style={{marginBottom: 24}}>
+        <div>空气质量等级参数设置</div>
+        <Divider className={styles.divider}></Divider>
+        <Table bordered dataSource={devAirLevelListData} columns={this.airLevelColumns} pagination={this.state.pagination} />
+      </div>      
+    );
+  }
+
+  onPowerOnChanged = () => {
+    console.log('onPowerOnChanged');
+  }
+
+  onAddNewTiming = () => {
+    console.log('onAddNewTiming');
+  }
+
+  renderTimingForm(deviceDetailData, timingListData) {   
+    var deviceStatus = deviceDetailData.deviceStatus;
+    timingListData.map(item=> {
+      item['id'] = item.id.toString();
+      item['deviceID'] = item.deivceID.toString();
+      item['groupID'] = item.groupID.toString();
+      item['startTime'] = getTime(item.startTime);
+    });
+    return(
+      <div style={{marginBottom: 24}}>
+        <div> 定时: 
+            <RemoteTag style={{marginLeft: 30}} checkState={deviceStatus.powerOn === true} onCheckChange={this.onPowerOnChanged} >开</RemoteTag>
+            <RemoteTag checkState={deviceStatus.powerOn !== true} onCheckChange={this.onPowerOnChanged} >关</RemoteTag>         
+        </div>        
+        <Divider className={styles.divider}></Divider>
+        <Table bordered dataSource={timingListData} columns={this.timingColumns} pagination={this.state.pagination} />
+        <div className={styles.buttonCenter} >
+          <Button type='primary' onClick={this.onAddNewTiming}>添加新定时</Button>        
+        </div>
+      </div>
+    );
+  }
+
+  onTimeRangeChanged = (dates, dateStrings) => {
+    console.log('onTimeRangeChanged', dates, dateStrings);
   }
 
   renderRemoteForm(deviceDetailData) { 
@@ -248,19 +384,7 @@ export default class DeviceDetail extends React.Component {
               <RemoteTag>升级</RemoteTag>
             </FormItem>
           </Col>        
-        </Row>
-        <Row gutter={{ md: 8, lg: 16, xl: 24 }}>           
-          <Col md={24} sm={24}>
-            <FormItem label="定时">
-              <RemoteTag checkState={airSpeed === 1}>1档</RemoteTag>
-              <RemoteTag checkState={airSpeed === 2}>2档</RemoteTag>
-              <RemoteTag checkState={airSpeed === 4}>4档</RemoteTag>
-              <RemoteTag checkState={airSpeed === 8}>8档</RemoteTag>
-              <RemoteTag checkState={airSpeed === 0}>关闭</RemoteTag>
-              <span className={styles.smallSize}>起始时间<Input style={{width: 40}}></Input>结束时间<Input style={{width: 40}}></Input></span>
-            </FormItem>
-          </Col>  
-        </Row>        
+        </Row>       
       </Form>
     </div>
     )
@@ -326,7 +450,7 @@ export default class DeviceDetail extends React.Component {
     })
     return(
       <div className={styles.divGap}>
-        <div>已配对设备信息</div>
+        <div>已配对设备列表</div>
         <Divider className={styles.divider}></Divider>
         <Table bordered dataSource={matchDeviceInfo} columns={this.matchColumns} pagination={this.state.pagination} />
       </div>
@@ -358,11 +482,17 @@ export default class DeviceDetail extends React.Component {
   render() {
     const { deviceDetailModel } = this.props;
     const { deviceDetailData } = deviceDetailModel;
+    const { timingListData } = deviceDetailModel;
+    const { devAirLevelListData } = deviceDetailModel;
+    const { devSmartParasListData } = deviceDetailModel;
     return (
       <Fragment>
         <div>
             {this.renderDeviceDetailForm(deviceDetailData)}
             {this.renderRemoteForm(deviceDetailData)}
+            {this.renderTimingForm(deviceDetailData, timingListData)}
+            {this.renderDevAirLevel(deviceDetailData, devAirLevelListData)}
+            {this.renderSmartParasSetting(deviceDetailData, devSmartParasListData)}
             {this.renderHostiry(deviceDetailModel)}
             {this.renderMatch(deviceDetailData)}
             {this.renderBindUserList(deviceDetailModel)}
