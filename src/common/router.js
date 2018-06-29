@@ -148,12 +148,18 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['strainer'], () => import('../routes/Filter/FilterList')),
     },
 
-
     //group
     '/group': {
       component: dynamicWrapper(app, ['group', 'prodModel'], () => import('../routes/Group/GroupManager')),
     },
-    
+
+    '/feedback/list': {
+      component: dynamicWrapper(app, ['feedbackModel'], () => import('../routes/Feedback/FeedbackList')),
+    },
+    '/feedback/category': {
+      component: dynamicWrapper(app, ['feedbackModel'], () => import('../routes/Feedback/FeedbackCategory')),
+    },
+
     '/result/success': {
       component: dynamicWrapper(app, [], () => import('../routes/Result/Success')),
     },

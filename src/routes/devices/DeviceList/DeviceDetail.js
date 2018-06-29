@@ -58,7 +58,7 @@ const AddNewTimingFormModal = Form.create()((props) => {
           label="重复"
         >
           {form.getFieldDecorator('repetition', {
-            rules: [{ required: true, message: '请勾选重复日期' }],
+            rules: [{ required: true, message: '请选择日期' }],
           })(
             <Checkbox.Group style={{ width: '100%' }} onChange={onCheckBoxChanged}>
               <Row>
@@ -301,6 +301,38 @@ export default class DeviceDetail extends React.Component {
       },
     }];
 
+    this.strainerParasCumns = [{
+      title: '项目',
+      dataIndex: 'name',
+      width: '10%',
+    }, {
+      title: '初效滤网',
+      dataIndex: 'initialStrainer',
+    }, {
+      title: '除TVOC复合滤网',
+      dataIndex: 'tvocStrainer',
+    }, {
+      title: '除菌滤网',
+      dataIndex: 'bacteriaStrainer',
+    }, {
+      title: '除甲醛',
+      dataIndex: 'ch2oStrainer',
+    }, {
+      title: '超高效滤网',
+      dataIndex: 'hightStrainer',
+    }, {
+      title: '操作',
+      dataIndex: 'operation',
+      width: '10%',
+      render: (text, record) => {
+        return (
+            <div>
+              <a className={styles.right} onClick={() => {alert("alert")}}>编辑</a>
+            </div>
+        );
+      },
+    }];    
+
     var query = this.props.location.search;
     var arr = query.split('=');//?id=1    
     deviceID = arr[1];
@@ -375,6 +407,27 @@ export default class DeviceDetail extends React.Component {
       </div>
     )
   }
+
+  renderStrainerSetting(deviceDetailData, devSmartParasListData) {
+    const itemList = ['风机转速', 'PM2.5', 'CO2', '甲醛', 'TVOC'];
+    const itemLevel = ['mute', 'comfort', 'standard', 'strong', 'typhoon'];
+    devSmartParasListData.map((item, index) => {
+      item['name'] = itemList[index];
+      item['id'] = index;
+      item[itemLevel[index]] = item.rpm + '转/分钟';
+      item[itemLevel[index]] = item.pm25Min + ' - ' + item.pm25Max;
+      item[itemLevel[index]] = item.co2Min + ' - ' + item.co2Max;
+      item[itemLevel[index]] = item.ch2oMin + ' - ' + item.ch2oMax;
+      item[itemLevel[index]] = item.tvocMin + ' - ' + item.tvocMax;
+    });
+    return(
+      <div style={{marginBottom: 24}}>
+        <div>滤网寿命参数设置</div>
+        <Divider className={styles.divider}></Divider>
+        <Table bordered dataSource={devSmartParasListData} columns={this.strainerParasCumns} pagination={this.state.pagination} />
+      </div>
+    );
+  }  
 
   renderSmartParasSetting(deviceDetailData, devSmartParasListData) {
     const itemList = ['风机转速', 'PM2.5', 'CO2', '甲醛', 'TVOC'];
@@ -514,9 +567,15 @@ export default class DeviceDetail extends React.Component {
   renderHostiry(deviceDetailModel) {
     const warningCount = {
       title: {
-        subtext: "滤网报警数量",
+        subtext: "PM2.5",
         x:'left',
         y: 'top'
+      },
+      legend: {
+        left: 0,
+        top: 30,
+        bottom: 20,
+        data:[ {name: '室外', icon: 'react'},{name: '室内', icon: 'react'}],
       },
       xAxis: {
           type: 'category',
@@ -526,16 +585,19 @@ export default class DeviceDetail extends React.Component {
           type: 'value'
       },
       series: [{
+          name: '室外',
           data: [820, 932, 901, 934, 1290, 1330, 1320],
           type: 'line',
-          color: '#12938a',
+          color: '#c23531',
       }, {
+        name: '室内',
         data: [202, 300, 190, 193, 1200, 1300, 1300],
         type: 'line',
         color: '#12938a',
       }],
       grid: {
-        x: 30
+        x: 30,
+        y: 80,
       }
     };
 
@@ -545,7 +607,14 @@ export default class DeviceDetail extends React.Component {
         <Divider className={styles.divider}></Divider>
         <Row>
           <Col span={12}>
-            <ReactEcharts option={warningCount} />          
+          <div>
+            <div className={styles.echartTag}>
+              <RemoteTag>DAY</RemoteTag>            
+              <RemoteTag>WEEK</RemoteTag>
+              <RemoteTag>MONTH</RemoteTag>
+            </div>
+            <ReactEcharts option={warningCount} />
+          </div>
           </Col>
           <Col span={12}>
             <ReactEcharts option={warningCount} />          
@@ -614,6 +683,7 @@ export default class DeviceDetail extends React.Component {
             {this.renderTimingForm(deviceDetailData, timingListData)}
             {this.renderDevAirLevel(deviceDetailData, devAirLevelListData)}
             {this.renderSmartParasSetting(deviceDetailData, devSmartParasListData)}
+            {this.renderStrainerSetting(deviceDetailData, devSmartParasListData)}
             {this.renderHostiry(deviceDetailModel)}
             {this.renderMatch(deviceDetailData)}
             {this.renderBindUserList(deviceDetailModel)}

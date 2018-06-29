@@ -86,6 +86,38 @@ const menuData = [{
   name: '群组管理',
   authority: 'token',
   path: 'group',
+}, {
+  name: '意见反馈',
+  authority: 'token',
+  path: 'feedback',
+  children: [{
+    name: '反馈列表',
+    path: 'list',
+  }, {
+    name: '反馈类型',
+    path: 'category',
+  }],  
+}, {
+  name: '文案',
+  authority: 'token',
+  path: 'document',
+  children: [{
+    name: ' 空气文案',
+    path: 'document-air',
+  }, {
+    name: '空气告警文案',
+    path: 'document-warning',
+  }, {
+    name: '排名文案',
+    path: 'document-order',
+  }, {
+    name: '支付文案',
+    path: 'document-pay',
+  }],
+}, {
+  name: 'App版本管理',
+  authority: 'token',
+  path: 'version',
 }];
 
 function formatter(data, parentPath = '/', parentAuthority) {
