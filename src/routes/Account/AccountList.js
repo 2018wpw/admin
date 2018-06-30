@@ -284,8 +284,8 @@ class AccountList extends React.Component {
   searchAccount = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, fieldsValue) => {
-        if (err) return;
-        var code = fieldsValue.addrCode ? fieldsValue.addrCode[fieldsValue.addrCode.length - 1] : undefined;
+      if (err) return;
+      var code = fieldsValue.addrCode ? fieldsValue.addrCode[fieldsValue.addrCode.length - 1] : undefined;
 	    return new Promise((resolve, reject) => {
 	      this.props.dispatch({
 	        type: 'account/searchAccount',
@@ -294,8 +294,8 @@ class AccountList extends React.Component {
 	          reject: reject,
 	          name: fieldsValue.name,
 	          addrDetail: fieldsValue.addrDetail,
-	          phone: fieldsValue.phone,
-			  addrCode: code,
+	          phone: fieldsValue.phone === '' ? undefined : fieldsValue.phone,
+			      addrCode: code,
 	        },
 	      });
 	    }).then(res => {

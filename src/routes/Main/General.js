@@ -56,25 +56,17 @@ export default class General extends Component {
     const { general, loading } = this.props;
     const { strainerStatis, accountLinearStatis, deviceWorkStatis, deviceStatis, accountStatis } = general;
 
-    console.log(strainerStatis);
-    console.log(accountLinearStatis);
-    console.log(deviceWorkStatis);
-    console.log(deviceStatis);
-    console.log(accountStatis);
-
-    var data = [];
-    var d = [];
-    if(accountStatis) {
-      accountStatis.map( item => {
-        d['vaule'] = item.count;
-        d['name'] = item.roleName;
-        data.push(d);
-      })    
-    }
-    const accountSize = {
+    var accountCount = 0;
+    accountStatis.map( item => {
+      item['name'] = item.roleName;
+      item['value'] = item.count;
+      accountCount = accountCount + item.count
+    })
+    const accountStatisData = {
         title : {
             text: '账户数量统计',
-            x:'center'
+            x:'left',
+            subtext: '账户数量：' + accountCount,
         },
         tooltip : {
             trigger: 'item',
@@ -91,7 +83,7 @@ export default class General extends Component {
                 type: 'pie',
                 radius : '55%',
                 center: ['50%', '60%'],
-                data: [...data],
+                data: accountStatis,
                 itemStyle: {
                     emphasis: {
                         shadowBlur: 10,
@@ -166,57 +158,50 @@ export default class General extends Component {
       }
     };
 
-    
-    var deviceCountData = [];
-    if(deviceStatis) {
-      deviceStatis.map( item => {
-        var d = [];        
-        d['vaule'] = item.count;
-        d['name'] = item.modelName;
-        deviceCountData.push(d);
-      })    
-    }    
-    const deviceCount = {
+    var deviceCount = 0;
+    var deviceSeriesData = [];
+    deviceStatis.map( (item, index) => {
+      item['value'] = item.count;
+      item['name'] = item.modelName;
+      deviceCount = deviceCount + item.count;
+    });
+    const deviceStatisData = {
       title: {
-        text: "设备数量",
-        x:'center'
-      },      
-        tooltip: {
+        text: "设备数量统计",
+        x:'left',
+        subtext: '总设备数量：' + deviceCount,
+      },
+      tooltip: {
             trigger: 'item',
             formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'left',
-            data:['','','','','']
-        },
-        series: [
-            {
-                name:'设备数量',
-                type:'pie',
-                radius: ['50%', '70%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '30',
-                            fontWeight: 'bold'
-                        }
-                    }
+      },
+      series: [
+        {
+            name:'设备数量',
+            type:'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+                normal: {
+                    show: false,
+                    position: 'center'
                 },
-                labelLine: {
-                    normal: {
-                        show: false
+                emphasis: {
+                    show: true,
+                    textStyle: {
+                        fontSize: '30',
+                        fontWeight: 'bold'
                     }
-                },
-                data:[...deviceCountData]
-            }
-        ]
+                }
+            },
+            labelLine: {
+                normal: {
+                    show: false
+                }
+            },
+            data: deviceStatis,
+        }
+      ]
     };
 
     var onlineData = [];
@@ -250,13 +235,12 @@ export default class General extends Component {
       }
     };
 
-
     return(
       <Fragment>
         <Row >
           <Col span="8">
             <Card>
-              <ReactEcharts option={accountSize} />
+              <ReactEcharts option={accountStatisData} />
             </Card>
           </Col>
           <Col span="8" >
@@ -273,7 +257,7 @@ export default class General extends Component {
         <Row span="8">
           <Col span="8">
             <Card>
-              <ReactEcharts option={deviceCount} />            
+              <ReactEcharts option={deviceStatisData} />            
             </Card>
           </Col>
           <Col span="8">

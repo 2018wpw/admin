@@ -85,6 +85,9 @@ export default {
         var deviceDetailData = response.data.devices[0];
         var model = response.data.models[0];
         deviceDetailData.model = model;
+        if (!deviceDetailData.deviceStatus) {
+          deviceDetailData['deviceStatus'] = this.state.deviceDetailData.deviceStatus;
+        }
         yield put({
           type: 'queryList',
           payload: {
