@@ -2,21 +2,21 @@ import { stringify } from 'qs';
 import request from '../utils/request';
 
 export async function getStrainerLinearStatistics(params) {
-  return request('/admin/statis/getStrainerLinearStatistics', {
+  return request(`/admin/statis/getStrainerLinearStatistics?${stringify(params)}`, {
     method: 'GET',
     body: params,
   });
 }
 
 export async function getAccountLinearStatistics(params) {
-  return request('/admin/statis/getAccountLinearStatistics', {
+  return request(`/admin/statis/getAccountLinearStatistics?${stringify(params)}`, {
     method: 'GET',
     body: params,
   });
 }
 
 export async function getDeviceWorkLinearStatistics(params) {
-  return request('/admin/statis/getDeviceWorkLinearStatistics', {
+  return request(`/admin/statis/getDeviceWorkLinearStatistics?${stringify(params)}`, {
     method: 'GET',
     body: params,
   });

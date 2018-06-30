@@ -37,7 +37,7 @@ export default {
         yield put({
           type: 'queryList',
           payload: {
-            accountLinearStatis: response.data[0].accountStatis,
+            accountLinearStatis: response.data,
           },
         });
       }

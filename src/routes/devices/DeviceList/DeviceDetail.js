@@ -505,7 +505,7 @@ export default class DeviceDetail extends React.Component {
         <div> 定时: 
             <RemoteTag style={{marginLeft: 30}} checkState={deviceStatus.powerOn === true} onCheckChange={this.onPowerOnChanged} >开</RemoteTag>
             <RemoteTag checkState={deviceStatus.powerOn !== true} onCheckChange={this.onPowerOnChanged} >关</RemoteTag>         
-        </div>        
+        </div>
         <Divider className={styles.divider}></Divider>
         <Table bordered dataSource={timingListData} columns={this.timingColumns} pagination={this.state.pagination} />
         <div className={styles.buttonCenter} >
